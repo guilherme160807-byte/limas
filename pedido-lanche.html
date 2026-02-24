@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cardápio Lima's Burgers</title>
+  <link rel="shortcut icon" href="fundo retirado logo cabeção.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffffff, #f9f9f9);
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #000000;
+      color: white;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .btn-voltar {
+      font-size: 16px;
+      background-color: #ffffff;
+      color: rgb(0, 0, 0);
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-voltar:hover {
+      background-color: #f0f0f0;
+    }
+
+    .titulo-header {
+      margin: 0 auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .produtos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 25px;
+    }
+
+    .produto {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .produto:hover {
+      transform: translateY(-5px);
+    }
+
+    .produto img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .produto h3 {
+      margin: 10px 0;
+      font-size: 18px;
+      color: #333;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .produto .descricao {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+      min-height: 80px;
+      line-height: 1.4;
+    }
+
+    .produto .preco {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #000000;
+      min-height: 30px;
+    }
+
+    .produto button {
+      background-color: #000000;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      width: 100%;
+      transition: background-color 0.3s;
+      margin-top: auto;
+    }
+
+    .produto button:hover {
+      background-color: #333333;
+    }
+
+    .info-extra {
+      font-size: 12px;
+      color: #666;
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    /* Modal - estilo pizza */
+    .modal-personalizar {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 2% auto;
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      animation: modalopen 0.4s;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes modalopen {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .modal-header h2 {
+      color: #333;
+      font-size: 22px;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #333;
+    }
+
+    .opcao-grupo {
+      margin-bottom: 25px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      border-left: 4px solid #000000;
+    }
+
+    .opcao-titulo {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .obrigatorio {
+      color: #ff0000;
+      font-size: 12px;
+    }
+
+    .contador-opcao {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .opcao-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      margin: 8px 0;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid #eee;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .opcao-item:hover {
+      border-color: #ff5722;
+      background: #fff8f6;
+    }
+
+    .opcao-item.selecionado {
+      border-color: #ff5722;
+      background: #fff0eb;
+    }
+
+    .opcao-info {
+      flex: 1;
+    }
+
+    .opcao-nome {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .opcao-descricao {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .opcao-preco {
+      font-weight: bold;
+      color: #ff5722;
+      margin-left: 15px;
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .radio-custom {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      margin-right: 10px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .radio-custom.selecionado::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      background: #ff5722;
+      border-radius: 50%;
+    }
+
+    .checkbox-custom {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+      margin-right: 10px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .checkbox-custom.selecionado::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ff5722;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+      position: sticky;
+      bottom: 0;
+      background: white;
+      padding-bottom: 10px;
+    }
+
+    .preco-total {
+      font-size: 20px;
+      font-weight: bold;
+      color: #ff5722;
+    }
+
+    .btn-confirmar {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-confirmar:hover {
+      background-color: #45a049;
+    }
+
+    .btn-confirmar:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    /* Carrinho */
+    #carrinho-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    #carrinho-icon {
+      background-color: #ffffff;
+      color: #000000;
+      padding: 12px 16px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+      border: 2px solid #000000;
+    }
+
+    #carrinho-abinha {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      width: 350px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+      z-index: 1001;
+    }
+
+    #carrinho-container:hover #carrinho-abinha {
+      display: block;
+    }
+
+    #carrinho-itens {
+      max-height: 300px;
+      overflow-y: auto;
+      margin: 10px 0;
+      font-size: 14px;
+      list-style: none;
+      padding: 0;
+    }
+
+    #carrinho-itens li {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .carrinho-item-nome {
+      font-weight: 600;
+    }
+
+    .carrinho-item-detalhes {
+      font-size: 12px;
+      color: #666;
+      margin-top: 3px;
+      white-space: pre-line;
+    }
+
+    .carrinho-item-preco {
+      font-weight: bold;
+      color: #000000;
+    }
+
+    #carrinho-total {
+      font-weight: bold;
+      font-size: 18px;
+      color: #000000;
+    }
+
+    #btn-finalizar {
+      width: 100%;
+      padding: 12px;
+      background-color: #000000;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    #btn-finalizar:hover {
+      background-color: #333333;
+    }
+
+    .btn-remover {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .btn-remover:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="btn-voltar" href="index.html">🔙 Voltar</a>
+    <div class="titulo-header">LIMA'S BURGERS - Cardápio</div>
+  </header>
+
+  <section class="produtos">
+    <!-- LIMA'S BACON CROCANTE -->
+    <div class="produto">
+      <img src="limas-bacon-crocante.jpg" alt="LIMA'S BACON CROCANTE">
+      <h3>LIMA'S BACON CROCANTE</h3>
+      <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo (cheddar ou mussarela), bacon crocante, tomate selecionado, alface, molho especial</p>
+      <div class="preco">A partir de R$ 33,00</div>
+      <button onclick="abrirModalLimas('LIMA\'S BACON CROCANTE', 33.00, 'queijo', 'molhos')">Personalizar e Adicionar</button>
+      <div class="info-extra">Escolha seu queijo e até 2 molhos</div>
+    </div>
+
+    <!-- LIMA'S BACON DA CASA -->
+    <div class="produto">
+      <img src="limas-bacon-casa.jpg" alt="LIMA'S BACON DA CASA">
+      <h3>LIMA'S BACON DA CASA</h3>
+      <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo cheddar, bacon crocante, molho cheddar</p>
+      <div class="preco">A partir de R$ 33,00</div>
+      <button onclick="abrirModalLimas('LIMA\'S BACON DA CASA', 33.00, null, null, true)">Adicionar ao Carrinho</button>
+      <div class="info-extra">Pronto! Apenas adicione observações se quiser</div>
+    </div>
+
+    <!-- LIMA'S BACON DUPLO -->
+    <div class="produto">
+      <img src="limas-bacon-duplo.jpg" alt="LIMA'S BACON DUPLO">
+      <h3>LIMA'S BACON DUPLO</h3>
+      <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo mussarela ou cheddar, bacon em dobro, tomate e alface</p>
+      <div class="preco">A partir de R$ 38,00</div>
+      <button onclick="abrirModalLimas('LIMA\'S BACON DUPLO', 38.00, 'queijo', 'molhos', false, 'salada')">Personalizar e Adicionar</button>
+      <div class="info-extra">Escolha queijo, molhos e salada</div>
+    </div>
+
+    <!-- LIMA'S CALABRESA GRELHADA -->
+    <div class="produto">
+      <img src="limas-calabresa.jpg" alt="LIMA'S CALABRESA GRELHADA">
+      <h3>LIMA'S CALABRESA GRELHADA</h3>
+      <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo (cheddar ou mussarela), calabresa grelhada, tomate selecionado, alface, molho especial</p>
+      <div class="preco">A partir de R$ 32,00</div>
+      <button onclick="abrirModalLimas('LIMA\'S CALABRESA GRELHADA', 32.00, 'queijo', 'molhos')">Personalizar e Adicionar</button>
+      <div class="info-extra">Escolha seu queijo e até 2 molhos</div>
+    </div>
+
+    <!-- LIMA'S CLASSICO -->
+    <div class="produto">
+      <img src="limas-classico.jpg" alt="LIMA'S CLASSICO">
+      <h3>LIMA'S CLASSICO</h3>
+      <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo (cheddar ou mussarela), tomate selecionado, alface, molho especial</p>
+      <div class="preco">A partir de R$ 28,00</div>
+      <button onclick="abrirModalLimas('LIMA\'S CLASSICO', 28.00, 'queijo', 'molhos')">Personalizar e Adicionar</button>
+      <div class="info-extra">Escolha seu queijo e até 2 molhos</div>
+    </div>
+
+    <!-- LIMA'S DUPLO MAX -->
+    <div class="produto">
+      <img src="limas-duplo-max.jpg" alt="LIMA'S DUPLO MAX">
+      <h3>LIMA'S DUPLO MAX</h3>
+      <p class="descricao">Pão macio, 2 hambúrgueres artesanais 130g, 2 queijos (cheddar ou mussarela), tomate selecionado, alface, molho especial</p>
+      <div class="preco">A partir de R$ 40,00</div>
+      <button onclick="abrirModalLimas('LIMA\'S DUPLO MAX', 40.00, 'queijo', 'molhos')">Personalizar e Adicionar</button>
+      <div class="info-extra">Escolha seu queijo e até 2 molhos</div>
+    </div>
+
+    <!-- LIMA'S EGG -->
+    <div class="produto">
+      <img src="limas-egg.jpg" alt="LIMA'S EGG">
+      <h3>LIMA'S EGG</h3>
+      <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo (cheddar ou mussarela), ovo, tomate selecionado, alface, molho especial</p>
+      <div class="preco">A partir de R$ 28,00</div>
+      <button onclick="abrirModalLimas('LIMA\'S EGG', 28.00, 'queijo', 'molhos')">Personalizar e Adicionar</button>
+      <div class="info-extra">Escolha seu queijo e até 2 molhos</div>
+    </div>
+
+    <!-- LIMA'S BURG -->
+    <div class="produto">
+      <img src="limas-burg.jpg" alt="LIMA'S BURG">
+      <h3>LIMA'S BURG</h3>
+      <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo (cheddar ou mussarela), molho especial</p>
+      <div class="preco">A partir de R$ 25,00</div>
+      <button onclick="abrirModalLimas('LIMA\'S BURG', 25.00, 'queijo', 'molhos')">Personalizar e Adicionar</button>
+      <div class="info-extra">Escolha seu queijo e até 2 molhos</div>
+    </div>
+  </section>
+
+  <!-- Modal de Personalização para LIMA'S -->
+  <div id="modal-limas" class="modal-personalizar">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-titulo">Personalizar Lanche</h2>
+        <span class="close" onclick="fecharModal()">&times;</span>
+      </div>
+      
+      <div id="opcoes-container">
+        <!-- Opções serão inseridas dinamicamente aqui -->
+      </div>
+      
+      <div class="observacoes-container" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid #000000;">
+        <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px; color: #333;">Alguma observação? (opcional)</div>
+        <textarea id="observacoes-text" placeholder="Ex: Sem cebola, pão bem tostado, molho à parte..." 
+                  style="width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 5px; resize: vertical; min-height: 80px; font-family: 'Poppins', sans-serif; font-size: 14px;"></textarea>
+      </div>
+      
+      <div class="modal-footer">
+        <div class="preco-total">Total: R$ <span id="preco-total-modal">0.00</span></div>
+        <button class="btn-confirmar" id="btn-confirmar-pedido" onclick="confirmarPedidoLimas()">Confirmar Pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carrinho -->
+  <div id="carrinho-container">
+    <div id="carrinho-icon">🛒</div>
+    <div id="carrinho-abinha">
+      <strong>🛍️ Seu Carrinho</strong>
+      <ul id="carrinho-itens"></ul>
+      <p><strong>Total:</strong> R$ <span id="carrinho-total">0.00</span></p>
+      <button id="btn-finalizar" onclick="window.location.href='carrinho.html'">Finalizar Pedido</button>
+    </div>
+  </div>
+
+  <script>
+    // Opções disponíveis
+    const opcoesQueijo = [
+      { nome: "Cheddar", preco: 0 },
+      { nome: "Mussarela", preco: 0 }
+    ];
+
+    const opcoesMolhos = [
+      { nome: "Barbecue", preco: 0 },
+      { nome: "Maionese", preco: 0 },
+      { nome: "Molho Cheddar", preco: 0 },
+      { nome: "Maionese Temperada", preco: 0 }
+    ];
+
+    const opcoesSalada = [
+      { nome: "Com Salada", preco: 0 },
+      { nome: "Sem Salada", preco: 0 }
+    ];
+
+    let produtoAtual = null;
+    let precoBase = 0;
+    let temQueijo = false;
+    let temMolhos = false;
+    let temSalada = false;
+    let simples = false;
+    
+    let queijoSelecionado = null;
+    let molhosSelecionados = [];
+    let saladaSelecionada = null;
+    let observacoes = '';
+
+    function abrirModalLimas(nome, preco, temQueijoParam, temMolhosParam, simplesParam = false, temSaladaParam = null) {
+      produtoAtual = nome;
+      precoBase = preco;
+      temQueijo = temQueijoParam;
+      temMolhos = temMolhosParam;
+      temSalada = temSaladaParam;
+      simples = simplesParam;
+      
+      // Resetar seleções
+      queijoSelecionado = null;
+      molhosSelecionados = [];
+      saladaSelecionada = null;
+      observacoes = '';
+      
+      document.getElementById('modal-titulo').textContent = `Personalizar ${nome}`;
+      document.getElementById('preco-total-modal').textContent = preco.toFixed(2);
+      document.getElementById('observacoes-text').value = '';
+      
+      const container = document.getElementById('opcoes-container');
+      container.innerHTML = '';
+      
+      // Opção de queijo (AGORA OPICIONAL)
+      if (temQueijo) {
+        const queijoGroup = document.createElement('div');
+        queijoGroup.className = 'opcao-grupo';
+        queijoGroup.innerHTML = `
+          <div class="opcao-titulo">
+            <span>Escolha seu queijo (opcional):</span>
+            <div class="contador-opcao" id="contador-queijo">0/1</div>
+          </div>
+          <div style="color: #666; font-size: 12px;">Opcional - Escolha se quiser trocar</div>
+          <div id="lista-queijos"></div>
+        `;
+        
+        container.appendChild(queijoGroup);
+        
+        // Carregar queijos
+        const listaQueijos = document.getElementById('lista-queijos');
+        listaQueijos.innerHTML = '';
+        
+        opcoesQueijo.forEach((queijo, index) => {
+          const item = document.createElement('div');
+          item.className = `opcao-item ${queijoSelecionado === index ? 'selecionado' : ''}`;
+          item.onclick = () => selecionarQueijo(index);
+          
+          item.innerHTML = `
+            <div style="display: flex; align-items: center; width: 100%;">
+              <div class="radio-custom ${queijoSelecionado === index ? 'selecionado' : ''}"></div>
+              <div class="opcao-info">
+                <div class="opcao-nome">${queijo.nome}</div>
+              </div>
+              <div class="opcao-preco">+ R$ ${queijo.preco.toFixed(2)}</div>
+            </div>
+          `;
+          
+          listaQueijos.appendChild(item);
+        });
+      }
+      
+      // Opção de molhos (AGORA OPICIONAL)
+      if (temMolhos) {
+        const molhosGroup = document.createElement('div');
+        molhosGroup.className = 'opcao-grupo';
+        molhosGroup.innerHTML = `
+          <div class="opcao-titulo">
+            <span>Escolha molhos extras (opcional):</span>
+            <div class="contador-opcao" id="contador-molhos">0/2</div>
+          </div>
+          <div style="color: #666; font-size: 12px;">Opcional - Até 2 escolhas</div>
+          <div id="lista-molhos"></div>
+        `;
+        
+        container.appendChild(molhosGroup);
+        
+        // Carregar molhos
+        const listaMolhos = document.getElementById('lista-molhos');
+        listaMolhos.innerHTML = '';
+        
+        opcoesMolhos.forEach((molho, index) => {
+          const item = document.createElement('div');
+          item.className = `opcao-item ${molhosSelecionados.includes(index) ? 'selecionado' : ''}`;
+          item.onclick = () => selecionarMolho(index);
+          
+          item.innerHTML = `
+            <div style="display: flex; align-items: center; width: 100%;">
+              <div class="checkbox-custom ${molhosSelecionados.includes(index) ? 'selecionado' : ''}"></div>
+              <div class="opcao-info">
+                <div class="opcao-nome">${molho.nome}</div>
+              </div>
+              <div class="opcao-preco">+ R$ ${molho.preco.toFixed(2)}</div>
+            </div>
+          `;
+          
+          listaMolhos.appendChild(item);
+        });
+      }
+      
+      // Opção de salada (AGORA OPICIONAL)
+      if (temSalada) {
+        const saladaGroup = document.createElement('div');
+        saladaGroup.className = 'opcao-grupo';
+        saladaGroup.innerHTML = `
+          <div class="opcao-titulo">
+            <span>Salada? (opcional)</span>
+            <div class="contador-opcao" id="contador-salada">0/1</div>
+          </div>
+          <div style="color: #666; font-size: 12px;">Opcional - Escolha se quiser mudar</div>
+          <div id="lista-salada"></div>
+        `;
+        
+        container.appendChild(saladaGroup);
+        
+        // Carregar salada
+        const listaSalada = document.getElementById('lista-salada');
+        listaSalada.innerHTML = '';
+        
+        opcoesSalada.forEach((salada, index) => {
+          const item = document.createElement('div');
+          item.className = `opcao-item ${saladaSelecionada === index ? 'selecionado' : ''}`;
+          item.onclick = () => selecionarSalada(index);
+          
+          item.innerHTML = `
+            <div style="display: flex; align-items: center; width: 100%;">
+              <div class="radio-custom ${saladaSelecionada === index ? 'selecionado' : ''}"></div>
+              <div class="opcao-info">
+                <div class="opcao-nome">${salada.nome}</div>
+              </div>
+              <div class="opcao-preco">+ R$ ${salada.preco.toFixed(2)}</div>
+            </div>
+          `;
+          
+          listaSalada.appendChild(item);
+        });
+      }
+      
+      // Se for simples (como Bacon da Casa)
+      if (simples) {
+        const simplesGroup = document.createElement('div');
+        simplesGroup.className = 'opcao-grupo';
+        simplesGroup.innerHTML = `
+          <div class="opcao-titulo" style="color: #4CAF50;">
+            <span>✔️ Pronto para adicionar!</span>
+            <div class="contador-opcao">1/1</div>
+          </div>
+          <div style="color: #666; font-size: 14px; margin-top: 10px;">
+            Este lanche já vem completo. Apenas adicione observações se necessário.
+          </div>
+        `;
+        container.appendChild(simplesGroup);
+      }
+      
+      // Atualizar contadores
+      atualizarContadores();
+      
+      // Ativar botão de confirmação sempre (pois tudo é opcional agora)
+      document.getElementById('btn-confirmar-pedido').disabled = false;
+      document.getElementById('btn-confirmar-pedido').style.opacity = '1';
+      
+      // Mostrar modal
+      document.getElementById('modal-limas').style.display = 'block';
+    }
+
+    function selecionarQueijo(index) {
+      queijoSelecionado = queijoSelecionado === index ? null : index;
+      
+      // Atualizar visual
+      const listaQueijos = document.getElementById('lista-queijos');
+      if (listaQueijos) {
+        const items = listaQueijos.querySelectorAll('.opcao-item');
+        items.forEach((item, i) => {
+          item.className = `opcao-item ${queijoSelecionado === i ? 'selecionado' : ''}`;
+          const radio = item.querySelector('.radio-custom');
+          radio.className = `radio-custom ${queijoSelecionado === i ? 'selecionado' : ''}`;
+        });
+      }
+      
+      atualizarContadores();
+    }
+
+    function selecionarMolho(index) {
+      const posicao = molhosSelecionados.indexOf(index);
+      
+      if (posicao === -1) {
+        if (molhosSelecionados.length < 2) {
+          molhosSelecionados.push(index);
+        }
+      } else {
+        molhosSelecionados.splice(posicao, 1);
+      }
+      
+      // Atualizar visual
+      const listaMolhos = document.getElementById('lista-molhos');
+      if (listaMolhos) {
+        const items = listaMolhos.querySelectorAll('.opcao-item');
+        items.forEach((item, i) => {
+          item.className = `opcao-item ${molhosSelecionados.includes(i) ? 'selecionado' : ''}`;
+          const checkbox = item.querySelector('.checkbox-custom');
+          checkbox.className = `checkbox-custom ${molhosSelecionados.includes(i) ? 'selecionado' : ''}`;
+        });
+      }
+      
+      atualizarContadores();
+    }
+
+    function selecionarSalada(index) {
+      saladaSelecionada = saladaSelecionada === index ? null : index;
+      
+      // Atualizar visual
+      const listaSalada = document.getElementById('lista-salada');
+      if (listaSalada) {
+        const items = listaSalada.querySelectorAll('.opcao-item');
+        items.forEach((item, i) => {
+          item.className = `opcao-item ${saladaSelecionada === i ? 'selecionado' : ''}`;
+          const radio = item.querySelector('.radio-custom');
+          radio.className = `radio-custom ${saladaSelecionada === i ? 'selecionado' : ''}`;
+        });
+      }
+      
+      atualizarContadores();
+    }
+
+    function atualizarContadores() {
+      if (temQueijo) {
+        const contadorQueijo = document.getElementById('contador-queijo');
+        if (contadorQueijo) {
+          contadorQueijo.textContent = `${queijoSelecionado !== null ? 1 : 0}/1`;
+        }
+      }
+      
+      if (temMolhos) {
+        const contadorMolhos = document.getElementById('contador-molhos');
+        if (contadorMolhos) {
+          contadorMolhos.textContent = `${molhosSelecionados.length}/2`;
+        }
+      }
+      
+      if (temSalada) {
+        const contadorSalada = document.getElementById('contador-salada');
+        if (contadorSalada) {
+          contadorSalada.textContent = `${saladaSelecionada !== null ? 1 : 0}/1`;
+        }
+      }
+    }
+
+    function fecharModal() {
+      document.getElementById('modal-limas').style.display = 'none';
+    }
+
+    function confirmarPedidoLimas() {
+      observacoes = document.getElementById('observacoes-text').value;
+      
+      // Montar descrição do pedido
+      let descricao = '';
+      
+      if (temQueijo && queijoSelecionado !== null) {
+        const queijo = opcoesQueijo[queijoSelecionado];
+        descricao += `Queijo: ${queijo.nome}\n`;
+      } else if (temQueijo) {
+        descricao += `Queijo: Padrão do lanche\n`;
+      }
+      
+      if (temMolhos && molhosSelecionados.length > 0) {
+        descricao += `Molhos extras: `;
+        molhosSelecionados.forEach((index, i) => {
+          const molho = opcoesMolhos[index];
+          descricao += molho.nome;
+          if (i < molhosSelecionados.length - 1) descricao += ', ';
+        });
+        descricao += '\n';
+      }
+      
+      if (temSalada && saladaSelecionada !== null) {
+        const salada = opcoesSalada[saladaSelecionada];
+        descricao += `Salada: ${salada.nome}\n`;
+      } else if (temSalada) {
+        descricao += `Salada: Padrão do lanche\n`;
+      }
+      
+      if (observacoes.trim()) {
+        descricao += `Observações: ${observacoes}`;
+      }
+      
+      // Adicionar ao carrinho
+      adicionarAoCarrinho(produtoAtual, precoBase, descricao.trim());
+      
+      // Fechar modal
+      fecharModal();
+      
+      // Feedback
+      alert('Lanche adicionado ao carrinho!');
+    }
+
+    // Sistema do carrinho (igual ao das pizzas)
+    function adicionarAoCarrinho(nome, preco, detalhes = '') {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      
+      const itemExistenteIndex = cart.findIndex(item => 
+        item.name === nome && item.detalhes === detalhes
+      );
+      
+      if (itemExistenteIndex !== -1) {
+        cart[itemExistenteIndex].quantity += 1;
+      } else {
+        cart.push({
+          name: nome,
+          price: preco,
+          quantity: 1,
+          detalhes: detalhes
+        });
+      }
+      
+      localStorage.setItem("cart", JSON.stringify(cart));
+      atualizarAbinhaCarrinho();
+    }
+
+    function removerItemCarrinho(index) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      
+      if (index >= 0 && index < cart.length) {
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        atualizarAbinhaCarrinho();
+      }
+    }
+
+    function atualizarAbinhaCarrinho() {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const lista = document.getElementById("carrinho-itens");
+      const totalSpan = document.getElementById("carrinho-total");
+      lista.innerHTML = "";
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const li = document.createElement("li");
+        const valorTotalItem = item.price * item.quantity;
+        li.innerHTML = `
+          <div style="flex: 1;">
+            <div class="carrinho-item-nome">${item.name} - ${item.quantity}x</div>
+            ${item.detalhes ? `<div class="carrinho-item-detalhes">${item.detalhes}</div>` : ''}
+          </div>
+          <div style="text-align: right;">
+            <div class="carrinho-item-preco">R$ ${valorTotalItem.toFixed(2)}</div>
+            <button class="btn-remover" onclick="removerItemCarrinho(${index})">Remover</button>
+          </div>
+        `;
+        
+        lista.appendChild(li);
+        total += valorTotalItem;
+      });
+
+      totalSpan.textContent = total.toFixed(2);
+      
+      if (cart.length === 0) {
+        document.getElementById('carrinho-abinha').style.display = 'none';
+      }
+    }
+
+    // Fechar modal ao clicar fora
+    window.addEventListener('click', function(event) {
+      if (event.target === document.getElementById('modal-limas')) {
+        fecharModal();
+      }
+    });
+
+    // Gerenciar carrinho hover
+    document.getElementById('carrinho-container').addEventListener('mouseenter', function() {
+      document.getElementById('carrinho-abinha').style.display = 'block';
+    });
+
+    document.getElementById('carrinho-container').addEventListener('mouseleave', function(e) {
+      if (!e.relatedTarget || !e.relatedTarget.closest('#carrinho-container')) {
+        document.getElementById('carrinho-abinha').style.display = 'none';
+      }
+    });
+
+    // Inicializar carrinho
+    document.addEventListener("DOMContentLoaded", function() {
+      atualizarAbinhaCarrinho();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cardápio de Calzone</title>
+  <link rel="shortcut icon" href="ca.jpg" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffffff, #f9f9f9);
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #000000;
+      color: white;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .btn-voltar {
+      font-size: 16px;
+      background-color: #ffffff;
+      color: rgb(0, 0, 0);
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-voltar:hover {
+      background-color: #f0f0f0;
+    }
+
+    .titulo-header {
+      margin: 0 auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .produtos {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 25px;
+    }
+
+    /* CARD MENOR - IGUAL AOS OUTROS */
+    .produto {
+      background: white;
+      border-radius: 12px;
+      padding: 15px; /* MENOR padding */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      height: auto;
+      width: 280px; /* LARGURA FIXA MENOR */
+    }
+
+    .produto:hover {
+      transform: translateY(-5px);
+    }
+
+    /* IMAGEM MELHOR ENQUADRADA */
+    .produto img {
+      width: 100%;
+      height: 140px; /* ALTURA MENOR */
+      object-fit: cover; /* MANTÉM PROPORÇÃO */
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .produto h3 {
+      margin: 8px 0; /* MENOR margem */
+      font-size: 16px; /* FONTE MENOR */
+      color: #333;
+      min-height: 40px; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .produto p {
+      color: #666;
+      font-size: 13px; 
+      margin-bottom: 15px; 
+      line-height: 1.4;
+      min-height: 60px; 
+    }
+
+    .produto .preco {
+      font-weight: bold;
+      font-size: 16px;
+      margin-bottom: 15px; 
+      color: #000000;
+    }
+
+    .produto button {
+      background-color: #000000;
+      color: white;
+      border: none;
+      padding: 10px 16px; 
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px; 
+      width: 100%;
+      transition: background-color 0.3s;
+      margin-top: auto;
+    }
+
+    .produto button:hover {
+      background-color: #333333;
+    }
+
+    .modal-personalizar {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 2% auto;
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      animation: modalopen 0.4s;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes modalopen {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .modal-header h2 {
+      color: #333;
+      font-size: 22px;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #333;
+    }
+
+    .opcao-grupo {
+      margin-bottom: 25px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      border-left: 4px solid #000000;
+    }
+
+    .opcao-titulo {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .obrigatorio {
+      color: #ff0000;
+      font-size: 12px;
+    }
+
+    .contador-opcao {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .opcao-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      margin: 8px 0;
+      background: white;
+      border-radius: 6px;
+      border: 1px solid #eee;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .opcao-item:hover {
+      border-color: #ff5722;
+      background: #fff8f6;
+    }
+
+    .opcao-item.selecionado {
+      border-color: #ff5722;
+      background: #fff0eb;
+    }
+
+    .opcao-info {
+      flex: 1;
+    }
+
+    .opcao-nome {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .opcao-descricao {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    .opcao-preco {
+      font-weight: bold;
+      color: #ff5722;
+      margin-left: 15px;
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .radio-custom {
+      width: 18px;
+      height: 18px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      margin-right: 10px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .radio-custom.selecionado::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      background: #ff5722;
+      border-radius: 50%;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 25px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+      position: sticky;
+      bottom: 0;
+      background: white;
+      padding-bottom: 10px;
+    }
+
+    .preco-total {
+      font-size: 20px;
+      font-weight: bold;
+      color: #ff5722;
+    }
+
+    .btn-confirmar {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    .btn-confirmar:hover {
+      background-color: #45a049;
+    }
+
+    .btn-confirmar:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    /* CARRINHO NORMAL */
+    #carrinho-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    #carrinho-icon {
+      background-color: #ffffff;
+      color: #000000;
+      padding: 12px 16px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+      border: 2px solid #000000;
+    }
+
+    #carrinho-abinha {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      width: 350px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+      z-index: 1001;
+    }
+
+    #carrinho-container:hover #carrinho-abinha {
+      display: block;
+    }
+
+    #carrinho-itens {
+      max-height: 300px;
+      overflow-y: auto;
+      margin: 10px 0;
+      font-size: 14px;
+      list-style: none;
+      padding: 0;
+    }
+
+    #carrinho-itens li {
+      border-bottom: 1px solid #eee;
+      padding: 10px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .carrinho-item-nome {
+      font-weight: 600;
+    }
+
+    .carrinho-item-detalhes {
+      font-size: 12px;
+      color: #666;
+      margin-top: 3px;
+      white-space: pre-line;
+    }
+
+    .carrinho-item-preco {
+      font-weight: bold;
+      color: #000000;
+    }
+
+    #carrinho-total {
+      font-weight: bold;
+      font-size: 18px;
+      color: #000000;
+    }
+
+    #btn-finalizar {
+      width: 100%;
+      padding: 12px;
+      background-color: #000000;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    #btn-finalizar:hover {
+      background-color: #333333;
+    }
+
+    .btn-remover {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .btn-remover:hover {
+      background-color: #c82333;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="btn-voltar" href="index.html">🔙 Voltar</a>
+    <div class="titulo-header">Cardápio de Calzone</div>
+  </header>
+
+  <section class="produtos">
+    <!-- Calzone Principal - CARD MENOR -->
+    <div class="produto">
+      <img src="calzone.png" alt="Calzone">
+      <h3>Calzone</h3>
+      <p>Sabores Frango com Requeijão e Pizza (mussarela, presunto, tomate e orégano)</p>
+      <div class="preco">A partir de R$ 35,00</div>
+      <button onclick="abrirModalCalzone()">Personalizar e Adicionar</button>
+    </div>
+  </section>
+
+  <!-- Modal de Personalização do Calzone -->
+  <div id="modal-calzone" class="modal-personalizar">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Calzone</h2>
+        <span class="close" onclick="fecharModal('modal-calzone')">&times;</span>
+      </div>
+      
+      <div class="opcao-grupo">
+        <div class="opcao-titulo">
+          <span>Escolha o seu calzone:</span>
+          <div class="contador-opcao" id="contador-sabor-calzone">0/1</div>
+        </div>
+        <div class="obrigatorio">Obrigatório</div>
+        <div id="lista-sabores-calzone"></div>
+      </div>
+      
+      <div class="opcao-grupo">
+        <div class="opcao-titulo">
+          <span>Deseja borda recheada?</span>
+          <div class="contador-opcao" id="contador-borda-calzone">0/1</div>
+        </div>
+        <div>Opcional</div>
+        <div id="lista-bordas-calzone"></div>
+      </div>
+      
+      <div class="opcao-grupo">
+        <div class="opcao-titulo">
+          <span>Alguma observação?</span>
+          <div class="contador-opcao" id="contador-obs-calzone">0/100</div>
+        </div>
+        <textarea id="observacoes-calzone" placeholder="Ex: Bem assado, menos sal..." 
+                  oninput="atualizarContadorObs()" 
+                  style="width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 5px; resize: vertical; min-height: 80px; font-family: 'Poppins', sans-serif; font-size: 14px;"></textarea>
+      </div>
+      
+      <div class="modal-footer">
+        <div class="preco-total">Total: R$ <span id="preco-total-calzone">35.00</span></div>
+        <button class="btn-confirmar" id="btn-confirmar-calzone" onclick="confirmarCalzone()" disabled>Confirmar Pedido</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carrinho -->
+  <div id="carrinho-container">
+    <div id="carrinho-icon">🛒</div>
+    <div id="carrinho-abinha">
+      <strong>🛍️ Seu Carrinho</strong>
+      <ul id="carrinho-itens"></ul>
+      <p><strong>Total:</strong> R$ <span id="carrinho-total">0.00</span></p>
+      <button id="btn-finalizar" onclick="window.location.href='carrinho.html'">Finalizar Pedido</button>
+    </div>
+  </div>
+
+  <script>
+    // Dados do Calzone
+    const saboresCalzone = [
+      { 
+        nome: "Calzone Frango com Requeijão", 
+        preco: 35.00, 
+        descricao: "Frango desfiado com requeijão cremoso" 
+      },
+      { 
+        nome: "Calzone Pizza", 
+        preco: 35.00, 
+        descricao: "Mussarela, presunto, tomate e orégano" 
+      }
+    ];
+
+    const bordasCalzone = [
+      { nome: "Borda de Cheddar", preco: 8.00 },
+      { nome: "Borda de Requeijão Cremoso", preco: 8.00 }
+    ];
+
+    // Variáveis de estado
+    let saborSelecionadoCalzone = null;
+    let bordaSelecionadaCalzone = null;
+    let observacoesCalzone = '';
+
+    function abrirModalCalzone() {
+      saborSelecionadoCalzone = null;
+      bordaSelecionadaCalzone = null;
+      observacoesCalzone = '';
+      
+      document.getElementById('modal-calzone').style.display = 'block';
+      carregarSaboresCalzone();
+      carregarBordasCalzone();
+      atualizarContadorSaborCalzone();
+      atualizarContadorBordaCalzone();
+      atualizarContadorObs();
+      atualizarPrecoTotalCalzone();
+      atualizarBotaoConfirmarCalzone();
+    }
+
+    function fecharModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    function carregarSaboresCalzone() {
+      const lista = document.getElementById('lista-sabores-calzone');
+      lista.innerHTML = '';
+      
+      saboresCalzone.forEach((sabor, index) => {
+        const item = document.createElement('div');
+        item.className = `opcao-item ${saborSelecionadoCalzone === index ? 'selecionado' : ''}`;
+        item.onclick = () => selecionarSaborCalzone(index);
+        
+        item.innerHTML = `
+          <div style="display: flex; align-items: center; width: 100%;">
+            <div class="radio-custom ${saborSelecionadoCalzone === index ? 'selecionado' : ''}"></div>
+            <div class="opcao-info">
+              <div class="opcao-nome">${sabor.nome}</div>
+              <div class="opcao-descricao">${sabor.descricao}</div>
+            </div>
+          </div>
+        `;
+        
+        lista.appendChild(item);
+      });
+    }
+
+    function carregarBordasCalzone() {
+      const lista = document.getElementById('lista-bordas-calzone');
+      lista.innerHTML = '';
+      
+      bordasCalzone.forEach((borda, index) => {
+        const item = document.createElement('div');
+        item.className = `opcao-item ${bordaSelecionadaCalzone === index ? 'selecionado' : ''}`;
+        item.onclick = () => selecionarBordaCalzone(index);
+        
+        item.innerHTML = `
+          <div style="display: flex; align-items: center; width: 100%;">
+            <div class="radio-custom ${bordaSelecionadaCalzone === index ? 'selecionado' : ''}"></div>
+            <div class="opcao-info">
+              <div class="opcao-nome">${borda.nome}</div>
+            </div>
+            <div class="opcao-preco">+ R$ ${borda.preco.toFixed(2)}</div>
+          </div>
+        `;
+        
+        lista.appendChild(item);
+      });
+    }
+
+    function selecionarSaborCalzone(index) {
+      saborSelecionadoCalzone = saborSelecionadoCalzone === index ? null : index;
+      carregarSaboresCalzone();
+      atualizarContadorSaborCalzone();
+      atualizarPrecoTotalCalzone();
+      atualizarBotaoConfirmarCalzone();
+    }
+
+    function selecionarBordaCalzone(index) {
+      bordaSelecionadaCalzone = bordaSelecionadaCalzone === index ? null : index;
+      carregarBordasCalzone();
+      atualizarContadorBordaCalzone();
+      atualizarPrecoTotalCalzone();
+    }
+
+    function atualizarContadorSaborCalzone() {
+      const contador = document.getElementById('contador-sabor-calzone');
+      contador.textContent = `${saborSelecionadoCalzone !== null ? 1 : 0}/1`;
+    }
+
+    function atualizarContadorBordaCalzone() {
+      const contador = document.getElementById('contador-borda-calzone');
+      contador.textContent = `${bordaSelecionadaCalzone !== null ? 1 : 0}/1`;
+    }
+
+    function atualizarContadorObs() {
+      const texto = document.getElementById('observacoes-calzone').value;
+      observacoesCalzone = texto;
+      const contador = document.getElementById('contador-obs-calzone');
+      contador.textContent = `${texto.length}/100`;
+    }
+
+    function atualizarPrecoTotalCalzone() {
+      let total = 0;
+      
+      if (saborSelecionadoCalzone !== null) {
+        total += saboresCalzone[saborSelecionadoCalzone].preco;
+      }
+      
+      if (bordaSelecionadaCalzone !== null) {
+        total += bordasCalzone[bordaSelecionadaCalzone].preco;
+      }
+      
+      document.getElementById('preco-total-calzone').textContent = total.toFixed(2);
+    }
+
+    function atualizarBotaoConfirmarCalzone() {
+      const botao = document.getElementById('btn-confirmar-calzone');
+      const habilitado = saborSelecionadoCalzone !== null;
+      
+      if (habilitado) {
+        botao.disabled = false;
+        botao.style.opacity = '1';
+      } else {
+        botao.disabled = true;
+        botao.style.opacity = '0.6';
+      }
+    }
+
+    function confirmarCalzone() {
+      if (saborSelecionadoCalzone === null) {
+        alert('Por favor, selecione um sabor!');
+        return;
+      }
+      
+      const sabor = saboresCalzone[saborSelecionadoCalzone];
+      const total = parseFloat(document.getElementById('preco-total-calzone').textContent);
+      
+      let detalhes = `Sabor: ${sabor.nome} (R$ ${sabor.preco.toFixed(2)})`;
+      
+      if (bordaSelecionadaCalzone !== null) {
+        const borda = bordasCalzone[bordaSelecionadaCalzone];
+        detalhes += `\nBorda: ${borda.nome} (+R$ ${borda.preco.toFixed(2)})`;
+      }
+      
+      if (observacoesCalzone.trim()) {
+        detalhes += `\nObservações: ${observacoesCalzone}`;
+      }
+      
+      adicionarAoCarrinho('Calzone', total, detalhes);
+      
+      fecharModal('modal-calzone');
+      alert('Calzone adicionado ao carrinho!');
+    }
+
+    // Sistema do carrinho
+    function adicionarAoCarrinho(nome, preco, detalhes = '') {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      
+      const itemExistenteIndex = cart.findIndex(item => 
+        item.name === nome && item.detalhes === detalhes
+      );
+      
+      if (itemExistenteIndex !== -1) {
+        cart[itemExistenteIndex].quantity += 1;
+      } else {
+        cart.push({
+          name: nome,
+          price: preco,
+          quantity: 1,
+          detalhes: detalhes
+        });
+      }
+      
+      localStorage.setItem("cart", JSON.stringify(cart));
+      atualizarAbinhaCarrinho();
+    }
+
+    function removerItemCarrinho(index) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      
+      if (index >= 0 && index < cart.length) {
+        cart.splice(index, 1);
+        localStorage.setItem("cart", JSON.stringify(cart));
+        atualizarAbinhaCarrinho();
+      }
+    }
+
+    function atualizarAbinhaCarrinho() {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const lista = document.getElementById("carrinho-itens");
+      const totalSpan = document.getElementById("carrinho-total");
+      lista.innerHTML = "";
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const li = document.createElement("li");
+        const valorTotalItem = item.price * item.quantity;
+        li.innerHTML = `
+          <div style="flex: 1;">
+            <div class="carrinho-item-nome">${item.name} - ${item.quantity}x</div>
+            ${item.detalhes ? `<div class="carrinho-item-detalhes">${item.detalhes}</div>` : ''}
+          </div>
+          <div style="text-align: right;">
+            <div class="carrinho-item-preco">R$ ${valorTotalItem.toFixed(2)}</div>
+            <button class="btn-remover" onclick="removerItemCarrinho(${index})">Remover</button>
+          </div>
+        `;
+        
+        lista.appendChild(li);
+        total += valorTotalItem;
+      });
+
+      totalSpan.textContent = total.toFixed(2);
+      
+      if (cart.length === 0) {
+        document.getElementById('carrinho-abinha').style.display = 'none';
+      }
+    }
+
+    // Fechar modal ao clicar fora
+    window.addEventListener('click', function(event) {
+      if (event.target === document.getElementById('modal-calzone')) {
+        fecharModal('modal-calzone');
+      }
+    });
+
+    // Gerenciar carrinho hover
+    document.getElementById('carrinho-container').addEventListener('mouseenter', function() {
+      document.getElementById('carrinho-abinha').style.display = 'block';
+    });
+
+    document.getElementById('carrinho-container').addEventListener('mouseleave', function(e) {
+      if (!e.relatedTarget || !e.relatedTarget.closest('#carrinho-container')) {
+        document.getElementById('carrinho-abinha').style.display = 'none';
+      }
+    });
+
+    // Inicializar carrinho
+    document.addEventListener("DOMContentLoaded", function() {
+      atualizarAbinhaCarrinho();
+    });
+  </script>
+</body>
+</html>

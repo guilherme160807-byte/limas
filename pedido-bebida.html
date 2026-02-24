@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Bebidas</title>
+  <link rel="shortcut icon" href="fundo retirado logo cabeção.png" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffffff, #ffffff);
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #000000;
+      color: white;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .btn-voltar {
+      font-size: 16px;
+      background-color: #fff9f9;
+      color: rgb(0, 0, 0);
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-voltar:hover {
+      background-color: #fff8f8;
+    }
+
+    .titulo-header {
+      margin: 0 auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    h2 {
+      text-align: center;
+      margin: 30px 0 20px;
+      color: #000000;
+    }
+
+    .produtos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .produto {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease;
+      margin-top: 20px;
+    }
+
+    .produto:hover {
+      transform: translateY(-5px);
+    }
+
+    .produto img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
+    .produto div {
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #242121;
+    }
+
+    .produto button {
+      background-color: #000000;
+      color: white;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .produto button:hover {
+      background-color: #0e0e0e;
+    }
+
+    .ver-carrinho {
+      display: block;
+      text-align: center;
+      margin: 30px 0;
+      font-size: 18px;
+      color: #000000;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="btn-voltar" href="index.html">🔙 Voltar</a>
+    <div class="titulo-header">Cardápio de Bebidas</div>
+  </header>
+
+  <section id="produtos">
+  <div class="produto">
+    <img src="coca 2L.jpg" alt="Produto 1">
+    <h3>Coca Cola</h3>
+    <p>R$ 16,00</p>
+    <button onclick="adicionarAoCarrinho('Coca cola', 16)">Adicionar ao Carrinho</button>
+  </div>
+  
+    <div class="produto">
+      <img src="guarana 2L.jpg" alt="Produto 1">
+      <h3>Guarana Kuat 2L</h3>
+      <p>R$ 14,00</p>
+      <button onclick="adicionarAoCarrinho('Guarana Kuat 2L', 14)">Adicionar ao Carrinho</button>
+    </div>
+    
+    <div class="produto">
+      <img src="coca lata 350ml zero.jfif" alt="Produto 1">
+      <h3>Coca Cola 350ml Zero</h3>
+      <p>R$ 5,00</p>
+      <button onclick="adicionarAoCarrinho('Coca Cola 350ml Zero', 5)">Adicionar ao Carrinho</button>
+    </div>
+    <div class="produto">
+      <img src="coca lata 350ml.jfif" alt="Produto 1">
+      <h3>Coca Cola 350ml</h3>
+      <p>R$ 5,00</p>
+      <button onclick="adicionarAoCarrinho('Coca Cola 350ml', 5)">Adicionar ao Carrinho</button>
+    </div>
+  </section>
+<style>#produtos {
+  display: flex;
+  justify-content: center;  
+  align-items: flex-start;  
+  gap: 40px;               
+  flex-wrap: wrap;       
+  padding: 40px 20px;
+  overflow-x: auto;       
+}
+</style>
+
+<div id="carrinho-container">
+  <div id="carrinho-icon">🛒</div>
+  <div id="carrinho-abinha">
+    <strong>🛍️ Seu Carrinho</strong>
+    <ul id="carrinho-itens"></ul>
+    <p><strong>Total:</strong> R$ <span id="carrinho-total">0.00</span></p>
+    <button id="btn-finalizar" onclick="window.location.href='carrinho.html'">Finalizar Pedido</button>
+  </div>
+</div>
+
+<style>
+  #carrinho-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+  }
+
+  #carrinho-icon {
+    background-color: #ffffff;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  }
+
+  #carrinho-abinha {
+    display: none;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    width: 260px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.3);
+  }
+
+  #carrinho-container:hover #carrinho-abinha {
+    display: block;
+  }
+
+  #carrinho-itens {
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 10px 0;
+    font-size: 14px;
+    list-style: none;
+    padding: 0;
+  }
+
+  #carrinho-itens li {
+    border-bottom: 1px solid #eee;
+    padding: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  #btn-finalizar {
+    width: 100%;
+    padding: 10px;
+    background-color: #030303;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+
+  #btn-finalizar:hover {
+    background-color: #000000;
+  }
+
+  .btn-remover {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .btn-remover:hover {
+    background-color: #c82333;
+  }
+</style>
+
+<script>
+  function adicionarAoCarrinho(nome, preco) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    
+    let itemExistente = cart.find(item => item.name === nome);
+    
+    if (itemExistente) {
+      itemExistente.quantity += 1;
+    } else {
+      cart.push({
+        name: nome,
+        price: preco,
+        quantity: 1
+      });
+    }
+    
+    localStorage.setItem("cart", JSON.stringify(cart));
+    atualizarAbinhaCarrinho();
+  }
+
+  function removerUmaUnidade(nome) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    
+    let itemExistente = cart.find(item => item.name === nome);
+    
+    if (itemExistente && itemExistente.quantity > 1) {
+      itemExistente.quantity -= 1;
+    } else {
+      cart = cart.filter(item => item.name !== nome); 
+    }
+    
+    localStorage.setItem("cart", JSON.stringify(cart));
+    atualizarAbinhaCarrinho(); 
+  }
+
+  function atualizarAbinhaCarrinho() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const lista = document.getElementById("carrinho-itens");
+    const totalSpan = document.getElementById("carrinho-total");
+    lista.innerHTML = "";
+    let total = 0;
+
+    cart.forEach(item => {
+      const li = document.createElement("li");
+
+      const valorTotalItem = item.price * item.quantity;
+      li.innerHTML = `
+        ${item.name} - ${item.quantity} un - R$ ${valorTotalItem.toFixed(2)} 
+        <button class="btn-remover" onclick="removerUmaUnidade('${item.name}')">Remover</button>
+      `;
+      
+      lista.appendChild(li);
+      total += valorTotalItem;
+    });
+
+    totalSpan.textContent = total.toFixed(2);
+  }
+
+  document.addEventListener("DOMContentLoaded", atualizarAbinhaCarrinho);
+</script>
+
+
+</body>
+</html>

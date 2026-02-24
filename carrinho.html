@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Carrinho - Lima's Pizzaria</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #fdfbfb, #ebedee);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    header {
+      background: #000;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .pedido-resumo {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid #000;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #000;
+    }
+
+    .opcoes-grupo {
+      display: flex;
+      gap: 15px;
+      margin: 15px 0;
+      flex-wrap: wrap;
+    }
+
+    .opcao-card {
+      flex: 1;
+      min-width: 180px;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      border: 2px solid #e9ecef;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .opcao-card.selecionado {
+      border-color: #000;
+      background: #fff;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+    }
+
+    .opcao-card label {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+    }
+
+    .opcao-card input[type="radio"] {
+      margin: 0;
+      width: 18px;
+      height: 18px;
+      accent-color: #000;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin: 20px 0;
+      padding: 20px;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #000;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .botoes {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn {
+      flex: 1;
+      padding: 15px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .btn-voltar {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-finalizar {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-voltar:hover { background: #5a6268; }
+    .btn-finalizar:hover { background: #218838; }
+
+    .btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .item-carrinho {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 15px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-nome {
+      font-weight: bold;
+      font-size: 16px;
+      color: #000;
+      margin-bottom: 5px;
+    }
+
+    .item-detalhes {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+      font-style: italic;
+    }
+
+    .item-quantidade {
+      margin: 0 15px;
+      font-weight: bold;
+      font-size: 16px;
+      color: #000;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .item-preco {
+      font-weight: bold;
+      font-size: 16px;
+      min-width: 80px;
+      text-align: right;
+      color: #000;
+    }
+
+    .preco-unitario {
+      font-size: 13px;
+      color: #666;
+      font-weight: normal;
+    }
+
+    .total-container {
+      text-align: right;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 2px solid #000;
+    }
+
+    .total-container h3 {
+      font-size: 22px;
+      color: #000;
+    }
+
+    .carrinho-vazio {
+      text-align: center;
+      padding: 40px 0;
+      color: #666;
+    }
+
+    .carrinho-vazio a {
+      color: #000;
+      font-weight: bold;
+      text-decoration: none;
+      background: #f0f0f0;
+      padding: 10px 20px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .pagamento-section {
+      margin: 20px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .pagamento-section h3 {
+      margin-bottom: 15px;
+      color: #333;
+      font-size: 18px;
+    }
+
+    .pagamento-opcoes {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pagamento-card {
+      flex: 1;
+      min-width: 120px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      border: 2px solid #e9ecef;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .pagamento-card.selecionado {
+      border-color: #28a745;
+      background: #f0fff4;
+      box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2);
+    }
+
+    .pagamento-card label {
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+
+    .pagamento-icon {
+      font-size: 24px;
+    }
+
+    .troco-container {
+      margin-top: 15px;
+      padding: 15px;
+      background: #fff3cd;
+      border-radius: 6px;
+      border: 1px solid #ffeaa7;
+      display: none;
+    }
+
+    .troco-container.mostrar {
+      display: block;
+    }
+
+    .troco-container label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #856404;
+    }
+
+    .troco-container input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ffc107;
+      border-radius: 4px;
+      background: white;
+    }
+
+    .error-message {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 10px 15px;
+      border-radius: 6px;
+      margin: 10px 0;
+      text-align: center;
+      border: 1px solid #f5c6cb;
+      font-size: 14px;
+      display: none;
+    }
+
+    .success-message {
+      background: #d4edda;
+      color: #155724;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 10px 0;
+      text-align: center;
+      border: 1px solid #c3e6cb;
+      font-size: 16px;
+      display: none;
+    }
+
+    .section-title {
+      font-size: 18px;
+      color: #000;
+      margin: 20px 0 10px 0;
+      padding-bottom: 5px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .campo-obrigatorio::after {
+      content: " *";
+      color: #dc3545;
+    }
+
+    .endereco-completo {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .endereco-detalhes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .whatsapp-link {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 15px;
+      background: #25D366;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .voltar-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: #000;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      z-index: 100;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+        margin: 10px;
+      }
+      
+      .opcoes-grupo {
+        flex-direction: column;
+      }
+      
+      .opcao-card {
+        min-width: 100%;
+      }
+      
+      .pagamento-opcoes {
+        flex-direction: column;
+      }
+      
+      .pagamento-card {
+        min-width: 100%;
+      }
+      
+      .endereco-completo,
+      .endereco-detalhes {
+        grid-template-columns: 1fr;
+      }
+      
+      .voltar-btn {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin-bottom: 15px;
+        width: 100%;
+      }
+
+      .botoes {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="voltar-btn" onclick="window.location.href='index.html'">
+    <i class="fas fa-arrow-left"></i> Voltar
+  </button>
+
+  <div class="container">
+    <header>
+      <h1><i class="fas fa-shopping-cart"></i> Finalizar Pedido</h1>
+      <p>Lima's Pizzaria - Confirme seus dados</p>
+    </header>
+
+    <div class="error-message" id="error-message"></div>
+    <div class="success-message" id="success-message"></div>
+
+    <div class="pedido-resumo">
+      <h2><i class="fas fa-clipboard-list"></i> Resumo do Pedido</h2>
+      <div id="resumo-carrinho"></div>
+      <div class="total-container">
+        <h3 id="total-pedido">Subtotal: R$ 0.00</h3>
+        <div id="taxa-entrega-info" style="display: none; margin-top: 10px;">
+          <div style="font-size: 16px; color: #666;">
+            Taxa de entrega: <span id="taxa-valor">R$ 0.00</span>
+          </div>
+        </div>
+        <h3 id="total-com-taxa" style="font-size: 24px; color: #000; margin-top: 10px;">Total: R$ 0.00</h3>
+      </div>
+    </div>
+
+    <h3 class="section-title"><i class="fas fa-user"></i> Dados do Cliente</h3>
+    
+    <div class="form-group">
+      <label for="nome" class="campo-obrigatorio">Nome completo</label>
+      <input type="text" id="nome" placeholder="Digite seu nome completo" required>
+    </div>
+
+    <div class="form-group">
+      <label for="telefone" class="campo-obrigatorio">Telefone para contato</label>
+      <input type="tel" id="telefone" placeholder="(44) 99999-9999" required>
+    </div>
+
+    <h3 class="section-title"><i class="fas fa-truck"></i> Tipo de Entrega</h3>
+    
+    <div class="opcoes-grupo">
+      <div class="opcao-card selecionado" id="card-entrega" onclick="selecionarTipo('entrega')">
+        <label>
+          <input type="radio" id="entrega" name="tipo" value="Entrega" checked> 
+          <i class="fas fa-motorcycle"></i> Entrega em Domicilio
+        </label>
+      </div>
+      
+      <div class="opcao-card" id="card-retirada" onclick="selecionarTipo('retirada')">
+        <label>
+          <input type="radio" id="retirada" name="tipo" value="Retirada">
+          <i class="fas fa-store"></i> Retirada no Local
+        </label>
+      </div>
+    </div>
+
+    <div id="endereco-section">
+      <h3 class="section-title"><i class="fas fa-map-marker-alt"></i> Endereco de Entrega</h3>
+      
+      <div class="form-group">
+        <label for="bairro" class="campo-obrigatorio">Selecione seu bairro</label>
+        <select id="bairro" required onchange="calcularTaxaEntrega(); mostrarDetalhesEndereco()">
+          <option value="">-- Selecione um bairro --</option>
+          <option value="Centro">Centro (Taxa: R$ 3,00)</option>
+          <option value="Coapar 1">Coapar 1 (Taxa: R$ 3,00)</option>
+          <option value="Coapar 2">Coapar 2 (Taxa: R$ 3,00)</option>
+          <option value="Coapar 3">Coapar 3 (Taxa: R$ 3,00)</option>
+          <option value="Coapar 4">Coapar 4 (Taxa: R$ 3,00)</option>
+          <option value="Jardim Bonanza">Jardim Bonanza (Taxa: R$ 3,00)</option>
+          <option value="Vila Nova">Vila Nova (Taxa: R$ 3,00)</option>
+          <option value="Vila Rural 1">Vila Rural 1 (Taxa: R$ 6,00)</option>
+          <option value="Vila Rural 2">Vila Rural 2 (Taxa: R$ 6,00)</option>
+          <option value="Zona Rural">Zona Rural (Taxa: R$ 6,00)</option>
+          <option value="Casa Branca">Casa Branca (Taxa: R$ 10,00)</option>
+        </select>
+      </div>
+
+      <div id="detalhes-endereco" class="hidden">
+        <div class="form-group">
+          <label for="endereco" class="campo-obrigatorio">Endereco</label>
+          <input type="text" id="endereco" placeholder="Rua, Avenida, Logradouro" required>
+        </div>
+
+        <div class="endereco-completo">
+          <div class="form-group">
+            <label for="numero" class="campo-obrigatorio">Numero</label>
+            <input type="text" id="numero" placeholder="No" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="cep">CEP</label>
+            <input type="text" id="cep" placeholder="CEP">
+          </div>
+        </div>
+
+        <div class="endereco-detalhes">
+          <div class="form-group">
+            <label for="cidade">Cidade</label>
+            <input type="text" id="cidade" value="Xambre" readonly>
+          </div>
+          
+          <div class="form-group">
+            <label for="estado">Estado</label>
+            <input type="text" id="estado" value="PR" readonly>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="referencia">Complemento / Referencia</label>
+          <textarea id="referencia" rows="2" placeholder="Ex: Casa com portao azul, apartamento 101, proximo a padaria..."></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="pagamento-section">
+      <h3><i class="fas fa-credit-card"></i> Forma de Pagamento</h3>
+      
+      <div class="pagamento-opcoes">
+        <div class="pagamento-card selecionado" id="card-dinheiro" onclick="selecionarPagamento('dinheiro')">
+          <label>
+            <span class="pagamento-icon"><i class="fas fa-money-bill-wave"></i></span>
+            <span>Dinheiro</span>
+            <input type="radio" id="dinheiro" name="pagamento" value="Dinheiro" checked style="display:none;">
+          </label>
+        </div>
+        
+        <div class="pagamento-card" id="card-pix" onclick="selecionarPagamento('pix')">
+          <label>
+            <span class="pagamento-icon"><i class="fab fa-pix"></i></span>
+            <span>PIX</span>
+            <input type="radio" id="pix" name="pagamento" value="PIX" style="display:none;">
+          </label>
+        </div>
+        
+        <div class="pagamento-card" id="card-cartao" onclick="selecionarPagamento('cartao')">
+          <label>
+            <span class="pagamento-icon"><i class="fas fa-credit-card"></i></span>
+            <span>Cartao</span>
+            <input type="radio" id="cartao" name="pagamento" value="Cartao" style="display:none;">
+          </label>
+        </div>
+      </div>
+
+      <div class="troco-container" id="troco-container">
+        <label for="troco"><i class="fas fa-coins"></i> Precisa de troco para quanto?</label>
+        <input type="text" id="troco" placeholder="Ex: R$ 50,00">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="observacoes"><i class="fas fa-pencil-alt"></i> Observacoes (opcional)</label>
+      <textarea id="observacoes" rows="3" placeholder="Ex: Sem cebola, pedir para o entregador chegar em silencio, etc..."></textarea>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Enviando pedido...</p>
+    </div>
+
+    <div class="botoes">
+      <a href="index.html" class="btn btn-voltar">
+        <i class="fas fa-arrow-left"></i> Continuar Comprando
+      </a>
+      <button onclick="finalizarPedido()" class="btn btn-finalizar" id="btn-finalizar-pedido">
+        <i class="fas fa-check"></i> Finalizar Pedido
+      </button>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <p>Duvidas? Fale conosco:</p>
+      <a href="https://wa.me/5544997671610?text=Ola! Gostaria de fazer um pedido" class="whatsapp-link" target="_blank">
+        <i class="fab fa-whatsapp"></i> Falar no WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // ============================================
+    // CONFIGURAÇÕES - URL DO GOOGLE SCRIPT
+    // ============================================
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-bjhx8jg7yQWGrLcOwagyfEqhfBMF9I5E2SKHMVqvsEJFtJ7H9_S2F6SHHjYsdwK6/exec';
+    const WHATSAPP_NUMERO = '5544997671610';
+
+    // ============================================
+    // TAXAS DE ENTREGA POR BAIRRO
+    // ============================================
+    const TAXAS_ENTREGA = {
+      "Centro": 3.00,
+      "Coapar 1": 3.00,
+      "Coapar 2": 3.00,
+      "Coapar 3": 3.00,
+      "Coapar 4": 3.00,
+      "Jardim Bonanza": 3.00,
+      "Vila Nova": 3.00,
+      "Vila Rural 1": 6.00,
+      "Vila Rural 2": 6.00,
+      "Zona Rural": 6.00,
+      "Casa Branca": 10.00
+    };
+
+    // ============================================
+    // VARIÁVEIS GLOBAIS
+    // ============================================
+    let taxaEntrega = 0.00;
+    let subtotal = 0.00;
+    let totalComTaxa = 0.00;
+    let pedidoEnviado = false;
+
+    // ============================================
+    // FUNÇÃO PRINCIPAL - ENVIAR PEDIDO (SIMPLIFICADA)
+    // ============================================
+    async function enviarParaGoogleScript(dados) {
+      console.log('Enviando pedido para Google Script...');
+      console.log('Dados:', dados);
+      
+      const btnFinalizar = document.getElementById('btn-finalizar-pedido');
+      
+      try {
+        // SOLUÇÃO SIMPLES: Enviar via formulário (evita CORS)
+        await enviarViaForm(dados);
+        
+        // Mostrar sucesso
+        mostrarSucessoCompleto(dados, 'LIMA-' + Date.now().toString().slice(-6));
+        return true;
+        
+      } catch (error) {
+        console.error('Erro no envio:', error);
+        mostrarErro('Erro ao enviar pedido. Tente novamente.');
+        btnFinalizar.disabled = false;
+        btnFinalizar.innerHTML = '<i class="fas fa-check"></i> Finalizar Pedido';
+        pedidoEnviado = false;
+        return false;
+      }
+    }
+
+    // ============================================
+    // ENVIAR VIA FORMULÁRIO (SEM CORS)
+    // ============================================
+    function enviarViaForm(dados) {
+      return new Promise((resolve) => {
+        console.log('Enviando via formulário...');
+        
+        // Criar iframe oculto
+        const iframeName = 'iframe-envio-' + Date.now();
+        const iframe = document.createElement('iframe');
+        iframe.name = iframeName;
+        iframe.style.cssText = 'position:absolute; width:1px; height:1px; border:none; opacity:0; pointer-events:none;';
+        document.body.appendChild(iframe);
+        
+        // Criar formulário
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = SCRIPT_URL;
+        form.target = iframeName;
+        form.style.display = 'none';
+        form.enctype = 'application/x-www-form-urlencoded';
+        
+        // Adicionar campo com dados JSON
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'dados';
+        input.value = JSON.stringify(dados);
+        form.appendChild(input);
+        
+        document.body.appendChild(form);
+        
+        console.log('Submetendo formulário para:', SCRIPT_URL);
+        
+        // Configurar callback
+        iframe.onload = function() {
+          console.log('Formulário enviado com sucesso');
+          setTimeout(() => {
+            if (form.parentNode) document.body.removeChild(form);
+            if (iframe.parentNode) document.body.removeChild(iframe);
+            resolve();
+          }, 2000);
+        };
+        
+        // Enviar
+        form.submit();
+      });
+    }
+
+    // ============================================
+    // MOSTRAR SUCESSO COMPLETO (SIMPLIFICADO)
+    // ============================================
+    function mostrarSucessoCompleto(dados, pedidoId) {
+      // Limpar carrinho
+      localStorage.removeItem('cart');
+      
+      // Gerar mensagem WhatsApp
+      let mensagemWhatsApp = `*LIMA'S PIZZARIA - NOVO PEDIDO* \n\n`;
+      mensagemWhatsApp += `*Pedido:* ${pedidoId}\n`;
+      mensagemWhatsApp += `*Cliente:* ${dados.cliente}\n`;
+      mensagemWhatsApp += `*Telefone:* ${dados.telefone}\n`;
+      mensagemWhatsApp += `*Endereco:* ${dados.endereco}\n`;
+      mensagemWhatsApp += `*Pagamento:* ${dados.metodoPagamento}\n`;
+      if (dados.troco && dados.troco !== "Nao precisa") {
+        mensagemWhatsApp += `*Troco para:* ${dados.troco}\n`;
+      }
+      mensagemWhatsApp += `\n*ITENS:*\n`;
+      
+      dados.itens.forEach(item => {
+        const subtotalItem = item.preco * item.quantidade;
+        mensagemWhatsApp += `- ${item.quantidade}x ${item.nome} - R$ ${subtotalItem.toFixed(2)}\n`;
+        if (item.detalhes) {
+          mensagemWhatsApp += `  ${item.detalhes}\n`;
+        }
+      });
+      
+      mensagemWhatsApp += `\n*Subtotal: R$ ${subtotal.toFixed(2)}*\n`;
+      if (taxaEntrega > 0) {
+        mensagemWhatsApp += `*Taxa de entrega: R$ ${taxaEntrega.toFixed(2)}*\n`;
+      }
+      mensagemWhatsApp += `*TOTAL: R$ ${dados.total}*\n`;
+      
+      if (dados.observacoes && dados.observacoes !== "Nenhuma") {
+        mensagemWhatsApp += `*Observacoes:* ${dados.observacoes}\n`;
+      }
+      
+      mensagemWhatsApp += `\n${new Date().toLocaleString('pt-BR')}\n`;
+      mensagemWhatsApp += `*Pedido via Site Online*`;
+      
+      // Mostrar mensagem de sucesso SIMPLIFICADA
+      const successDiv = document.getElementById('success-message');
+      successDiv.innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+          <h3 style="color: #155724; margin-bottom: 15px;">
+            <i class="fas fa-check-circle" style="font-size: 40px; display: block; margin-bottom: 10px;"></i>
+            Pedido Enviado com Sucesso!
+          </h3>
+          <p><strong>Numero do Pedido:</strong> ${pedidoId}</p>
+          <p><strong>Cliente:</strong> ${dados.cliente}</p>
+          <p><strong>Total:</strong> R$ ${dados.total}</p>
+          
+          <button onclick="window.location.href='index.html'" 
+                  style="background: #000; color: white; border: none; padding: 12px 30px; 
+                         border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 20px;">
+            <i class="fas fa-home"></i> Voltar ao Cardapio
+          </button>
+        </div>
+      `;
+      successDiv.style.display = 'block';
+      
+      // Rolar para cima
+      successDiv.scrollIntoView({ behavior: 'smooth' });
+      
+      // Limpar formulario
+      limparFormulario();
+      
+      document.getElementById('loading').style.display = 'none';
+      pedidoEnviado = false;
+      const btnFinalizar = document.getElementById('btn-finalizar-pedido');
+      btnFinalizar.disabled = false;
+      btnFinalizar.innerHTML = '<i class="fas fa-check"></i> Finalizar Pedido';
+    }
+
+    // ============================================
+    // LIMPAR FORMULARIO
+    // ============================================
+    function limparFormulario() {
+      document.getElementById('nome').value = '';
+      document.getElementById('telefone').value = '';
+      document.getElementById('observacoes').value = '';
+      document.getElementById('troco').value = '';
+      document.getElementById('endereco').value = '';
+      document.getElementById('numero').value = '';
+      document.getElementById('referencia').value = '';
+      document.getElementById('bairro').value = '';
+      document.getElementById('detalhes-endereco').classList.add('hidden');
+      carregarCarrinho();
+    }
+
+    // ============================================
+    // FUNÇÕES DO CARRINHO
+    // ============================================
+    function carregarCarrinho() {
+      const carrinho = JSON.parse(localStorage.getItem("cart")) || [];
+      const container = document.getElementById("resumo-carrinho");
+      const totalSpan = document.getElementById("total-pedido");
+      const btnFinalizar = document.getElementById("btn-finalizar-pedido");
+      
+      container.innerHTML = "";
+      subtotal = 0;
+      pedidoEnviado = false;
+
+      if (carrinho.length === 0) {
+        container.innerHTML = `
+          <div class="carrinho-vazio">
+            <p><i class="fas fa-shopping-cart" style="font-size: 40px; margin-bottom: 15px; display: block; color: #ccc;"></i></p>
+            <p>Seu carrinho esta vazio!</p>
+            <a href="index.html"><i class="fas fa-arrow-left"></i> Voltar ao cardapio</a>
+          </div>
+        `;
+        totalSpan.textContent = "Subtotal: R$ 0.00";
+        btnFinalizar.disabled = true;
+        btnFinalizar.innerHTML = '<i class="fas fa-check"></i> Finalizar Pedido';
+        return;
+      }
+
+      carrinho.forEach((item) => {
+        const valorItem = item.price * item.quantity;
+        subtotal += valorItem;
+        
+        const div = document.createElement("div");
+        div.className = "item-carrinho";
+        div.innerHTML = `
+          <div class="item-info">
+            <div class="item-nome">${item.name}</div>
+            ${item.detalhes ? `<div class="item-detalhes"><i class="fas fa-pencil-alt"></i> ${item.detalhes}</div>` : ''}
+          </div>
+          <div class="item-quantidade">
+            ${item.quantity}x
+          </div>
+          <div class="item-preco">
+            R$ ${valorItem.toFixed(2)}
+            <div class="preco-unitario">(R$ ${item.price.toFixed(2)} cada)</div>
+          </div>
+        `;
+        
+        container.appendChild(div);
+      });
+
+      totalSpan.textContent = `Subtotal: R$ ${subtotal.toFixed(2)}`;
+      btnFinalizar.disabled = false;
+      btnFinalizar.innerHTML = '<i class="fas fa-check"></i> Finalizar Pedido';
+      calcularTotalComTaxa();
+    }
+
+    // ============================================
+    // SELECIONAR TIPO DE ENTREGA
+    // ============================================
+    function selecionarTipo(tipo) {
+      document.getElementById(tipo).checked = true;
+      
+      document.getElementById('card-entrega').classList.remove('selecionado');
+      document.getElementById('card-retirada').classList.remove('selecionado');
+      document.getElementById(`card-${tipo}`).classList.add('selecionado');
+      
+      const enderecoSection = document.getElementById('endereco-section');
+      const bairroSelect = document.getElementById('bairro');
+      const detalhesEndereco = document.getElementById('detalhes-endereco');
+      
+      if (tipo === 'retirada') {
+        enderecoSection.style.display = 'none';
+        bairroSelect.required = false;
+        bairroSelect.value = "";
+        detalhesEndereco.classList.add('hidden');
+        document.getElementById('endereco').value = "Retirada no local - Rua dos Bandeirantes, Tenis Clube, Xambre-PR";
+        document.getElementById('numero').value = "";
+        document.getElementById('cidade').value = "Xambre";
+        document.getElementById('estado').value = "PR";
+        document.getElementById('referencia').value = "";
+        
+        taxaEntrega = 0.00;
+        document.getElementById('taxa-entrega-info').style.display = 'none';
+        calcularTotalComTaxa();
+      } else {
+        enderecoSection.style.display = 'block';
+        bairroSelect.required = true;
+        bairroSelect.value = "";
+        detalhesEndereco.classList.add('hidden');
+        document.getElementById('endereco').value = "";
+        document.getElementById('numero').value = "";
+        document.getElementById('cidade').value = "Xambre";
+        document.getElementById('estado').value = "PR";
+        document.getElementById('referencia').value = "";
+        
+        taxaEntrega = 0.00;
+        document.getElementById('taxa-entrega-info').style.display = 'none';
+        calcularTotalComTaxa();
+      }
+    }
+
+    // ============================================
+    // MOSTRAR DETALHES DO ENDERECO
+    // ============================================
+    function mostrarDetalhesEndereco() {
+      const bairro = document.getElementById('bairro').value;
+      const detalhesEndereco = document.getElementById('detalhes-endereco');
+      
+      if (bairro) {
+        detalhesEndereco.classList.remove('hidden');
+        document.getElementById('referencia').value = "";
+      } else {
+        detalhesEndereco.classList.add('hidden');
+      }
+    }
+
+    // ============================================
+    // CALCULAR TAXA DE ENTREGA
+    // ============================================
+    function calcularTaxaEntrega() {
+      const bairro = document.getElementById('bairro').value;
+      const tipoEntrega = document.querySelector('input[name="tipo"]:checked').value;
+      
+      if (tipoEntrega === 'Retirada') {
+        taxaEntrega = 0.00;
+        document.getElementById('taxa-entrega-info').style.display = 'none';
+      } else if (bairro && TAXAS_ENTREGA[bairro] !== undefined) {
+        taxaEntrega = TAXAS_ENTREGA[bairro];
+        document.getElementById('taxa-valor').textContent = `R$ ${taxaEntrega.toFixed(2)}`;
+        document.getElementById('taxa-entrega-info').style.display = 'block';
+      } else {
+        taxaEntrega = 0.00;
+        document.getElementById('taxa-entrega-info').style.display = 'none';
+      }
+      
+      calcularTotalComTaxa();
+    }
+
+    // ============================================
+    // CALCULAR TOTAL COM TAXA
+    // ============================================
+    function calcularTotalComTaxa() {
+      totalComTaxa = subtotal + taxaEntrega;
+      document.getElementById('total-com-taxa').textContent = `Total: R$ ${totalComTaxa.toFixed(2)}`;
+    }
+
+    // ============================================
+    // SELECIONAR FORMA DE PAGAMENTO
+    // ============================================
+    function selecionarPagamento(pagamento) {
+      document.getElementById(pagamento).checked = true;
+      
+      ['dinheiro', 'pix', 'cartao'].forEach(p => {
+        document.getElementById(`card-${p}`).classList.remove('selecionado');
+      });
+      document.getElementById(`card-${pagamento}`).classList.add('selecionado');
+      
+      const trocoContainer = document.getElementById('troco-container');
+      const btnFinalizar = document.getElementById('btn-finalizar-pedido');
+      
+      // Esconder troco por padrao
+      trocoContainer.classList.remove('mostrar');
+      
+      if (pagamento === 'dinheiro') {
+        trocoContainer.classList.add('mostrar');
+        btnFinalizar.disabled = false;
+        btnFinalizar.innerHTML = '<i class="fas fa-check"></i> Finalizar Pedido';
+      } else {
+        btnFinalizar.disabled = false;
+        btnFinalizar.innerHTML = '<i class="fas fa-check"></i> Finalizar Pedido';
+      }
+      
+      document.getElementById('troco').value = "";
+    }
+
+    // ============================================
+    // EVENT LISTENERS
+    // ============================================
+    document.addEventListener('DOMContentLoaded', function() {
+      // Inicializar
+      carregarCarrinho();
+      selecionarTipo('entrega');
+      selecionarPagamento('dinheiro');
+      
+      // Mascara telefone
+      const telefoneInput = document.getElementById('telefone');
+      telefoneInput.addEventListener('input', function() {
+        mascaraTelefone(this);
+      });
+      
+      // Mascara CEP
+      const cepInput = document.getElementById('cep');
+      cepInput.addEventListener('input', function() {
+        mascaraCEP(this);
+      });
+      
+      // Mascara troco
+      const trocoInput = document.getElementById('troco');
+      trocoInput.addEventListener('input', function(e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value) {
+          value = (parseInt(value) / 100).toFixed(2);
+          e.target.value = 'R$ ' + value.replace('.', ',');
+        }
+      });
+      
+      // Focus no nome
+      document.getElementById('nome').focus();
+      
+      // Verificar carrinho vazio
+      const carrinho = JSON.parse(localStorage.getItem("cart")) || [];
+      if (carrinho.length === 0) {
+        document.getElementById('btn-finalizar-pedido').disabled = true;
+      }
+    });
+
+    // ============================================
+    // MASCARAS
+    // ============================================
+    function mascaraTelefone(telefone) {
+      let valor = telefone.value.replace(/\D/g, '');
+      
+      if (valor.length > 11) {
+        valor = valor.substring(0, 11);
+      }
+      
+      if (valor.length === 11) {
+        telefone.value = valor.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+      } else if (valor.length === 10) {
+        telefone.value = valor.replace(/^(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+      } else if (valor.length > 6) {
+        telefone.value = valor.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+      } else if (valor.length > 2) {
+        telefone.value = valor.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+      } else if (valor.length > 0) {
+        telefone.value = valor.replace(/^(\d*)/, '($1');
+      }
+    }
+
+    function mascaraCEP(cep) {
+      let valor = cep.value.replace(/\D/g, '');
+      
+      if (valor.length > 8) {
+        valor = valor.substring(0, 8);
+      }
+      
+      if (valor.length === 8) {
+        cep.value = valor.replace(/^(\d{5})(\d{3})/, '$1-$2');
+      }
+    }
+
+    // ============================================
+    // MOSTRAR ERRO
+    // ============================================
+    function mostrarErro(mensagem) {
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${mensagem}`;
+      errorDiv.style.display = 'block';
+      
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('btn-finalizar-pedido').disabled = false;
+      document.getElementById('btn-finalizar-pedido').innerHTML = '<i class="fas fa-check"></i> Finalizar Pedido';
+      pedidoEnviado = false;
+      
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 5000);
+      
+      errorDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ============================================
+    // VALIDAR FORMULARIO
+    // ============================================
+    function validarFormulario() {
+      const nome = document.getElementById('nome').value.trim();
+      const telefone = document.getElementById('telefone').value.trim();
+      const tipo = document.querySelector('input[name="tipo"]:checked').value;
+      
+      if (!nome) {
+        mostrarErro('Por favor, digite seu nome completo');
+        document.getElementById('nome').focus();
+        return false;
+      }
+      
+      if (!telefone || telefone.length < 14) {
+        mostrarErro('Por favor, digite um telefone valido (com DDD)');
+        document.getElementById('telefone').focus();
+        return false;
+      }
+      
+      if (tipo === 'Entrega') {
+        const bairro = document.getElementById('bairro').value.trim();
+        const endereco = document.getElementById('endereco').value.trim();
+        const numero = document.getElementById('numero').value.trim();
+        
+        if (!bairro) {
+          mostrarErro('Por favor, selecione seu bairro');
+          document.getElementById('bairro').focus();
+          return false;
+        }
+        
+        if (!endereco) {
+          mostrarErro('Por favor, digite o endereco');
+          document.getElementById('endereco').focus();
+          return false;
+        }
+        
+        if (!numero) {
+          mostrarErro('Por favor, digite o numero');
+          document.getElementById('numero').focus();
+          return false;
+        }
+      }
+      
+      const carrinho = JSON.parse(localStorage.getItem("cart")) || [];
+      if (carrinho.length === 0) {
+        mostrarErro('Seu carrinho esta vazio! Adicione itens antes de finalizar.');
+        return false;
+      }
+      
+      return true;
+    }
+
+    // ============================================
+    // FINALIZAR PEDIDO
+    // ============================================
+    async function finalizarPedido() {
+      if (pedidoEnviado) return;
+      
+      if (!validarFormulario()) return;
+      
+      pedidoEnviado = true;
+      const btnFinalizar = document.getElementById('btn-finalizar-pedido');
+      btnFinalizar.disabled = true;
+      btnFinalizar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
+      
+      const carrinho = JSON.parse(localStorage.getItem("cart")) || [];
+      
+      const nome = document.getElementById('nome').value.trim();
+      const telefone = document.getElementById('telefone').value.trim();
+      const tipo = document.querySelector('input[name="tipo"]:checked').value;
+      const bairro = document.getElementById('bairro').value.trim();
+      const endereco = document.getElementById('endereco').value.trim();
+      const numero = document.getElementById('numero').value.trim();
+      const cep = document.getElementById('cep').value.trim();
+      const cidade = document.getElementById('cidade').value.trim();
+      const estado = document.getElementById('estado').value.trim();
+      const referencia = document.getElementById('referencia').value.trim();
+      const pagamento = document.querySelector('input[name="pagamento"]:checked').value;
+      const troco = document.getElementById('troco').value.trim();
+      const observacoes = document.getElementById('observacoes').value.trim();
+      
+      // Formatar itens
+      const itensFormatados = carrinho.map(item => ({
+        nome: item.name,
+        quantidade: item.quantity,
+        preco: item.price,
+        detalhes: item.detalhes || ""
+      }));
+
+      // Montar endereco completo
+      let enderecoCompleto = "";
+      if (tipo === 'Entrega') {
+        enderecoCompleto = `${endereco}, ${numero} - ${bairro}`;
+        if (referencia) enderecoCompleto += ` (${referencia})`;
+        enderecoCompleto += `, ${cidade}-${estado}`;
+        if (cep) enderecoCompleto = `${endereco}, ${numero} - ${bairro}, ${cep}, ${cidade}-${estado}`;
+      } else {
+        enderecoCompleto = "Retirada no local - Rua dos Bandeirantes, Tenis Clube, Xambre-PR";
+      }
+
+      // Mostrar loading
+      document.getElementById('loading').style.display = 'block';
+
+      try {
+        const dadosParaEnvio = {
+          cliente: nome,
+          telefone: telefone,
+          endereco: enderecoCompleto,
+          metodoPagamento: pagamento,
+          troco: troco || "Nao precisa",
+          itens: itensFormatados,
+          total: totalComTaxa.toFixed(2),
+          observacoes: observacoes || "Nenhuma"
+        };
+
+        // Enviar para Google Script
+        await enviarParaGoogleScript(dadosParaEnvio);
+        
+      } catch (error) {
+        console.error('Erro:', error);
+        document.getElementById('loading').style.display = 'none';
+        pedidoEnviado = false;
+        btnFinalizar.disabled = false;
+        btnFinalizar.innerHTML = '<i class="fas fa-check"></i> Finalizar Pedido';
+        mostrarErro('Erro ao enviar pedido. Tente novamente em alguns instantes.');
+      }
+    }
+  </script>
+</body>
+</html>

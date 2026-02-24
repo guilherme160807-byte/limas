@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin - Lima's Pizzaria</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #f0f2f5;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: #000;
+      color: white;
+      padding: 25px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    /* ===== ABAS ===== */
+    .tabs-menu {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .tab-button {
+      padding: 12px 20px;
+      border: 2px solid #ddd;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-button.active {
+      background: #28a745;
+      color: white;
+      border-color: #28a745;
+    }
+
+    .tab-button:hover {
+      border-color: #28a745;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .stat-card h3 {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .stat-card .number {
+      font-size: 32px;
+      font-weight: bold;
+      color: #000;
+    }
+
+    .controls {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .controls select, .controls input {
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #28a745;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #218838;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+
+    .btn-info {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .btn-info:hover {
+      background: #138496;
+    }
+
+    .btn-dark {
+      background: #000;
+      color: white;
+    }
+
+    .btn-dark:hover {
+      background: #333;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c82333;
+    }
+
+    /* ===== FORMULÁRIO DE PRODUTOS ===== */
+    .form-produto {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .form-produto h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .form-actions button {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px 20px;
+    }
+
+    .preview-foto {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    .preview-foto img {
+      max-width: 100%;
+      max-height: 200px;
+      border-radius: 8px;
+      border: 2px solid #ddd;
+    }
+
+    /* ===== GRID DE PRODUTOS ===== */
+    .produtos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .produto-card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .produto-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .produto-imagem {
+      width: 100%;
+      height: 200px;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .produto-imagem img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .produto-imagem-placeholder {
+      color: #999;
+      font-size: 14px;
+    }
+
+    .produto-info {
+      padding: 15px;
+    }
+
+    .produto-nome {
+      font-size: 16px;
+      font-weight: bold;
+      color: #000;
+      margin-bottom: 5px;
+    }
+
+    .produto-categoria {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .produto-preco {
+      font-size: 20px;
+      font-weight: bold;
+      color: #28a745;
+      margin-bottom: 10px;
+    }
+
+    .produto-descricao {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 12px;
+      line-height: 1.4;
+      max-height: 60px;
+      overflow: hidden;
+    }
+
+    .produto-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .produto-actions button {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .btn-editar {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .btn-editar:hover {
+      background: #138496;
+    }
+
+    .btn-deletar {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-deletar:hover {
+      background: #c82333;
+    }
+
+    .pedidos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+      gap: 20px;
+    }
+
+    .pedido-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+
+    .pedido-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .pedido-card.pix {
+      border-left: 4px solid #28a745;
+    }
+
+    .pedido-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .pedido-id {
+      font-weight: bold;
+      color: #000;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pedido-hora {
+      font-size: 12px;
+      color: #666;
+      margin-top: 3px;
+    }
+
+    .status-badge {
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .status-novo { background: #e3f2fd; color: #1565c0; }
+    .status-preparando { background: #fff3e0; color: #e65100; }
+    .status-pronto { background: #e8f5e9; color: #2e7d32; }
+    .status-entregue { background: #f5f5f5; color: #616161; }
+    .status-cancelado { background: #f8d7da; color: #721c24; }
+
+    .pedido-info {
+      margin-bottom: 15px;
+    }
+
+    .info-row {
+      display: flex;
+      margin: 8px 0;
+      font-size: 14px;
+    }
+
+    .info-label {
+      min-width: 100px;
+      font-weight: 600;
+      color: #666;
+    }
+
+    .info-value {
+      flex: 1;
+      color: #333;
+    }
+
+    .troco-box {
+      background: #fff3cd;
+      padding: 10px;
+      border-radius: 6px;
+      margin: 10px 0;
+      border-left: 4px solid #ffc107;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .comprovante-section {
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border: 2px solid #4caf50;
+    }
+
+    .comprovante-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      color: #2e7d32;
+      font-weight: 600;
+    }
+
+    .comprovante-preview {
+      background: white;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .comprovante-preview img {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .comprovante-preview img:hover {
+      transform: scale(1.02);
+    }
+
+    .comprovante-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .comprovante-actions .btn {
+      flex: 1;
+      justify-content: center;
+      font-size: 13px;
+      padding: 8px 12px;
+    }
+
+    .btn-comprovante {
+      background: #4caf50;
+      color: white;
+    }
+
+    .btn-comprovante:hover {
+      background: #43a047;
+    }
+
+    .btn-drive {
+      background: #1a73e8;
+      color: white;
+    }
+
+    .btn-drive:hover {
+      background: #1557b0;
+    }
+
+    .sem-comprovante {
+      background: #fff3cd;
+      padding: 12px;
+      border-radius: 6px;
+      text-align: center;
+      color: #856404;
+      font-size: 13px;
+    }
+
+    .itens-box {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    .itens-title {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .itens-lista {
+      white-space: pre-wrap;
+      font-size: 14px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .observacoes-box {
+      background: #e8f4fd;
+      padding: 12px 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+      border-left: 4px solid #2196f3;
+    }
+
+    .pedido-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .pedido-actions button {
+      flex: 1;
+      min-width: 80px;
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .btn-imprimir { background: #17a2b8; color: white; }
+    .btn-preparar { background: #ffc107; color: black; }
+    .btn-pronto { background: #28a745; color: white; }
+    .btn-entregue { background: #6c757d; color: white; }
+    .btn-cancelar { background: #dc3545; color: white; }
+
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+      grid-column: 1 / -1;
+    }
+
+    .spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #000;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: center;
+      grid-column: 1 / -1;
+    }
+
+    .no-pedidos, .no-produtos {
+      text-align: center;
+      padding: 60px 20px;
+      color: #666;
+      background: white;
+      border-radius: 10px;
+      grid-column: 1 / -1;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow: auto;
+      position: relative;
+    }
+
+    .modal-header {
+      padding: 15px 20px;
+      background: #28a745;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+    }
+
+    .modal-header h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      padding: 5px;
+    }
+
+    .modal-body {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .modal-body img {
+      max-width: 100%;
+      max-height: 70vh;
+      border-radius: 8px;
+    }
+
+    .modal-body iframe {
+      width: 100%;
+      height: 70vh;
+      border: none;
+      border-radius: 8px;
+    }
+
+    .modal-footer {
+      padding: 15px 20px;
+      background: #f8f9fa;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    @media print {
+      body * {
+        visibility: hidden !important;
+        display: none !important;
+      }
+      
+      #comanda-unica, 
+      #comanda-unica * {
+        visibility: visible !important;
+        display: block !important;
+      }
+      
+      #comanda-unica {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 80mm !important;
+        max-width: 80mm !important;
+        min-width: 80mm !important;
+        margin: 0 !important;
+        padding: 2mm !important;
+        font-family: 'Courier New', monospace !important;
+        font-size: 10pt !important;
+        line-height: 1.2 !important;
+        background: white !important;
+        color: black !important;
+        box-sizing: border-box !important;
+      }
+      
+      .comanda-print {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 2mm !important;
+        border: 1px solid #000 !important;
+        border-radius: 0 !important;
+        background: white !important;
+        font-size: 10pt !important;
+        box-sizing: border-box !important;
+      }
+      
+      .comanda-print h2 {
+        font-size: 14pt !important;
+        margin: 0 0 2mm 0 !important;
+        text-align: center !important;
+      }
+      
+      .comanda-print h3 {
+        font-size: 12pt !important;
+        margin: 2mm 0 !important;
+        text-align: center !important;
+      }
+      
+      .comanda-print p {
+        margin: 1mm 0 !important;
+        font-size: 10pt !important;
+      }
+      
+      .comanda-print hr {
+        margin: 2mm 0 !important;
+        border: 0.5px dashed #000 !important;
+      }
+      
+      .comanda-print strong {
+        font-weight: bold !important;
+      }
+    }
+
+    .comanda-print {
+      font-family: 'Courier New', monospace;
+      max-width: 80mm;
+      margin: 0 auto;
+      padding: 3mm;
+      border: 1px solid #000;
+      background: white;
+      font-size: 10pt;
+      line-height: 1.2;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 768px) {
+      .pedidos-grid {
+        grid-template-columns: 1fr;
+      }
+      .produtos-grid {
+        grid-template-columns: 1fr;
+      }
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .controls select, .controls input, .controls .btn {
+        width: 100%;
+      }
+      .pedido-actions {
+        flex-direction: column;
+      }
+      .comprovante-actions {
+        flex-direction: column;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .form-actions {
+        flex-direction: column;
+      }
+      .form-actions button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>👨‍🍳 Admin Lima's Pizzaria</h1>
+      <p>Gerencie seus pedidos e produtos em tempo real</p>
+    </header>
+
+    <!-- ===== MENU DE ABAS ===== -->
+    <div class="tabs-menu">
+      <button class="tab-button active" onclick="abrirAba('pedidos', event)">
+        <i class="fas fa-receipt"></i> Pedidos
+      </button>
+      <button class="tab-button" onclick="abrirAba('produtos', event)">
+        <i class="fas fa-pizza-slice"></i> Produtos
+      </button>
+    </div>
+
+    <!-- ===== ABA PEDIDOS ===== -->
+    <div id="pedidos" class="tab-content active">
+      <div class="stats-grid" id="header-stats">
+        <div class="stat-card"><h3>📊 Total</h3><div class="number" id="stat-total">0</div></div>
+        <div class="stat-card"><h3>⏳ Novos</h3><div class="number" id="stat-novos">0</div></div>
+        <div class="stat-card"><h3>💰 PIX</h3><div class="number" id="stat-pix">0</div></div>
+        <div class="stat-card"><h3>📎 Comprovantes</h3><div class="number" id="stat-comprovantes">0</div></div>
+      </div>
+
+      <div class="controls">
+        <button onclick="carregarPedidos()" class="btn btn-primary"><i class="fas fa-sync-alt"></i> Atualizar</button>
+        <select id="filtro-status" onchange="filtrarPedidos()">
+          <option value="">Todos os Status</option>
+          <option value="NOVO">Novos</option>
+          <option value="PREPARANDO">Preparando</option>
+          <option value="PRONTO">Prontos</option>
+          <option value="ENTREGUE">Entregues</option>
+        </select>
+        <select id="filtro-pagamento" onchange="filtrarPedidos()">
+          <option value="">Todos os Pagamentos</option>
+          <option value="PIX">PIX</option>
+          <option value="Dinheiro">Dinheiro</option>
+          <option value="Cartao">Cartao</option>
+        </select>
+        <input type="date" id="filter-date" value="" onchange="filtrarPedidos()">
+        <input type="text" id="busca-cliente" placeholder="Buscar cliente..." oninput="filtrarPedidos()">
+        <a href="https://docs.google.com/spreadsheets/d/1IMPwck_qROKy8eyJExuXl-Pw9IG_3ElBuFJVaA7euSc/edit" target="_blank" class="btn btn-secondary"><i class="fas fa-table"></i> Planilha</a>
+        <a href="https://drive.google.com/drive/folders/1cnnY5J_58N9rR0qd45u1XBH4ypfcFTw0" target="_blank" class="btn btn-info"><i class="fab fa-google-drive"></i> Comprovantes</a>
+        <button onclick="exportarParaExcel()" class="btn btn-dark"><i class="fas fa-download"></i> Exportar</button>
+      </div>
+
+      <div class="pedidos-grid" id="pedidos-container">
+        <div class="loading"><div class="spinner"></div><p>Carregando pedidos...</p></div>
+      </div>
+    </div>
+
+    <!-- ===== ABA PRODUTOS ===== -->
+    <div id="produtos" class="tab-content">
+      <div class="form-produto">
+        <h2><i class="fas fa-plus"></i> <span id="form-titulo">Novo Produto</span></h2>
+        <form id="form-produto" onsubmit="salvarProduto(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prod-nome">Nome do Produto *</label>
+              <input type="text" id="prod-nome" placeholder="Ex: Pizza Margherita" required>
+            </div>
+            <div class="form-group">
+              <label for="prod-categoria">Categoria *</label>
+              <select id="prod-categoria" required>
+                <option value="">Selecione a categoria</option>
+                <option value="Pizza">Pizza</option>
+                <option value="Bebida">Bebida</option>
+                <option value="Acompanhamento">Acompanhamento</option>
+                <option value="Sobremesa">Sobremesa</option>
+                <option value="Outros">Outros</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prod-preco">Preço (R$) *</label>
+              <input type="number" id="prod-preco" placeholder="39.90" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+              <label for="prod-foto">Foto do Produto</label>
+              <input type="file" id="prod-foto" accept="image/*" onchange="previewFoto()">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="prod-descricao">Descrição</label>
+            <textarea id="prod-descricao" placeholder="Descrição detalhada do produto..."></textarea>
+          </div>
+
+          <div class="preview-foto" id="preview-foto"></div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> <span id="btn-salvar-txt">Salvar Produto</span></button>
+            <button type="button" class="btn btn-secondary" onclick="limparForm()"><i class="fas fa-times"></i> Limpar</button>
+            <button type="button" class="btn btn-secondary" id="btn-cancelar-edicao" style="display:none;" onclick="cancelarEdicao()"><i class="fas fa-arrow-left"></i> Voltar</button>
+          </div>
+        </form>
+      </div>
+
+      <div id="container-produtos" class="produtos-grid">
+        <div class="no-produtos"><i class="fas fa-box"></i><h3>Nenhum produto cadastrado</h3><p>Adicione seu primeiro produto acima!</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-comprovante">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-file-invoice"></i> <span id="modal-titulo">Comprovante PIX</span></h3>
+        <button class="modal-close" onclick="fecharModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer">
+        <a href="#" id="modal-link-drive" target="_blank" class="btn btn-drive"><i class="fab fa-google-drive"></i> Abrir no Drive</a>
+        <a href="#" id="modal-link-download" target="_blank" class="btn btn-primary"><i class="fas fa-download"></i> Download</a>
+        <button onclick="fecharModal()" class="btn btn-secondary"><i class="fas fa-times"></i> Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="comanda-unica" style="display: none;"></div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-bjhx8jg7yQWGrLcOwagyfEqhfBMF9I5E2SKHMVqvsEJFtJ7H9_S2F6SHHjYsdwK6/exec';
+    const PLANILHA_URL = 'https://docs.google.com/spreadsheets/d/1IMPwck_qROKy8eyJExuXl-Pw9IG_3ElBuFJVaA7euSc/edit';
+    const DRIVE_URL = 'https://drive.google.com/drive/folders/1cnnY5J_58N9rR0qd45u1XBH4ypfcFTw0';
+
+    let todosPedidos = [];
+    let pedidosFiltrados = [];
+    let todosProdutos = [];
+    let produtoEmEdicao = null;
+    let fotoSelecionada = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const hoje = new Date();
+      const ano = hoje.getFullYear();
+      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+      const dia = String(hoje.getDate()).padStart(2, '0');
+      document.getElementById('filter-date').value = `${ano}-${mes}-${dia}`;
+      carregarPedidos();
+      carregarProdutos();
+    });
+
+    function abrirAba(nomeAba, event) {
+      event.preventDefault();
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(nomeAba).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    async function carregarPedidos() {
+      document.getElementById('pedidos-container').innerHTML = `<div class="loading"><div class="spinner"></div><p>Carregando pedidos...</p></div>`;
+      try {
+        const response = await fetch(SCRIPT_URL + '?acao=listar&_=' + Date.now());
+        const resultado = await response.json();
+        if (resultado.success && resultado.pedidos) {
+          todosPedidos = resultado.pedidos;
+          atualizarEstatisticas(resultado.estatisticas || {});
+          filtrarPedidos();
+        } else {
+          mostrarErro('Erro ao carregar pedidos');
+        }
+      } catch (error) {
+        mostrarErro('Erro de conexão');
+      }
+    }
+
+    function atualizarEstatisticas(stats) {
+      document.getElementById('stat-total').textContent = stats.total || 0;
+      document.getElementById('stat-novos').textContent = stats.novos || 0;
+      document.getElementById('stat-pix').textContent = stats.pix || 0;
+      document.getElementById('stat-comprovantes').textContent = stats.comComprovante || 0;
+    }
+
+    function filtrarPedidos() {
+      const filtroStatus = document.getElementById('filtro-status').value;
+      const filtroPagamento = document.getElementById('filtro-pagamento').value;
+      const filtroData = document.getElementById('filter-date').value;
+      const buscaCliente = document.getElementById('busca-cliente').value.toLowerCase();
+      
+      if (todosPedidos.length === 0) {
+        mostrarSemPedidos();
+        return;
+      }
+      
+      pedidosFiltrados = todosPedidos.filter(pedido => {
+        if (filtroData) {
+          if (!pedido.data) return false;
+          try {
+            const dataUTC = new Date(pedido.data);
+            const dataBrasil = new Date(dataUTC.getTime() - (3 * 60 * 60 * 1000));
+            const ano = dataBrasil.getFullYear();
+            const mes = String(dataBrasil.getMonth() + 1).padStart(2, '0');
+            const dia = String(dataBrasil.getDate()).padStart(2, '0');
+            const dataPedidoFormatada = `${ano}-${mes}-${dia}`;
+            
+            if (dataPedidoFormatada !== filtroData) {
+              return false;
+            }
+          } catch (e) {
+            return false;
+          }
+        }
+        
+        if (filtroStatus && pedido.status !== filtroStatus) return false;
+        if (filtroPagamento && pedido.pagamento !== filtroPagamento) return false;
+        if (buscaCliente && pedido.cliente && !pedido.cliente.toLowerCase().includes(buscaCliente)) return false;
+        
+        return true;
+      });
+      
+      pedidosFiltrados.sort((a, b) => {
+        try {
+          return new Date(b.data).getTime() - new Date(a.data).getTime();
+        } catch {
+          return 0;
+        }
+      });
+      
+      const stats = {
+        total: pedidosFiltrados.length,
+        novos: pedidosFiltrados.filter(p => p.status === 'NOVO').length,
+        pix: pedidosFiltrados.filter(p => p.pagamento === 'PIX').length,
+        comComprovante: pedidosFiltrados.filter(p => p.temComprovante).length
+      };
+      
+      atualizarEstatisticas(stats);
+      mostrarPedidos();
+    }
+
+    function mostrarPedidos() {
+      const container = document.getElementById('pedidos-container');
+      if (pedidosFiltrados.length === 0) {
+        mostrarSemPedidos();
+        return;
+      }
+      
+      let html = '';
+      pedidosFiltrados.forEach(pedido => {
+        let dataExibicao = pedido.data || '';
+        if (dataExibicao.includes('T')) {
+          try {
+            const dataUTC = new Date(dataExibicao);
+            const dataBrasil = new Date(dataUTC.getTime() - (3 * 60 * 60 * 1000));
+            const dia = String(dataBrasil.getDate()).padStart(2, '0');
+            const mes = String(dataBrasil.getMonth() + 1).padStart(2, '0');
+            const ano = dataBrasil.getFullYear();
+            const hora = String(dataBrasil.getHours()).padStart(2, '0');
+            const min = String(dataBrasil.getMinutes()).padStart(2, '0');
+            dataExibicao = `${dia}/${mes}/${ano} ${hora}:${min}`;
+          } catch (e) {}
+        }
+        
+        const isPix = pedido.pagamento === 'PIX';
+        let statusClass = 'status-novo';
+        if (pedido.status === 'PREPARANDO') statusClass = 'status-preparando';
+        if (pedido.status === 'PRONTO') statusClass = 'status-pronto';
+        if (pedido.status === 'ENTREGUE') statusClass = 'status-entregue';
+        
+        html += `<div class="pedido-card ${isPix ? 'pix' : ''}">
+          <div class="pedido-header">
+            <div>
+              <div class="pedido-id">${isPix ? '<i class="fab fa-pix" style="color: #32BCAD;"></i>' : '<i class="fas fa-receipt"></i>'} ${pedido.id || 'Sem ID'}</div>
+              <div class="pedido-hora">${dataExibicao}</div>
+            </div>
+            <div class="status-badge ${statusClass}">${pedido.status || 'NOVO'}</div>
+          </div>
+          <div class="pedido-info">
+            <div class="info-row"><div class="info-label">Cliente:</div><div class="info-value">${pedido.cliente || 'Não informado'}</div></div>
+            <div class="info-row"><div class="info-label">Telefone:</div><div class="info-value">${pedido.telefone || 'Não informado'}</div></div>
+            <div class="info-row"><div class="info-label">${pedido.tipo || 'Entrega'}:</div><div class="info-value">${pedido.endereco || 'Não informado'}</div></div>
+            <div class="info-row"><div class="info-label">Pagamento:</div><div class="info-value">${pedido.pagamento || 'Não informado'}</div></div>
+            <div class="info-row"><div class="info-label">Total:</div><div class="info-value" style="color: #28a745; font-weight: bold;">${pedido.total || 'R$ 0,00'}</div></div>
+          </div>
+          ${pedido.troco && pedido.troco !== 'Nao precisa' && pedido.troco !== 'Não precisa' ? `<div class="troco-box"><i class="fas fa-coins"></i><span><strong>Troco para:</strong> ${pedido.troco}</span></div>` : ''}
+          ${pedido.itens ? `<div class="itens-box"><div class="itens-title"><i class="fas fa-pizza-slice"></i> Itens do Pedido</div><div class="itens-lista">${pedido.itens.replace(/\n/g, '<br>')}</div></div>` : ''}
+          ${pedido.observacoes && pedido.observacoes !== 'Nenhuma' ? `<div class="observacoes-box"><strong><i class="fas fa-comment"></i> Observações:</strong><p style="margin-top: 5px;">${pedido.observacoes}</p></div>` : ''}
+          <div class="pedido-actions">
+            <button class="btn-imprimir" onclick="imprimirComanda('${pedido.id}')"><i class="fas fa-print"></i> Imprimir</button>
+            <button class="btn-preparar" onclick="mudarStatus('${pedido.id}', 'PREPARANDO')"><i class="fas fa-fire"></i> Preparar</button>
+            <button class="btn-pronto" onclick="mudarStatus('${pedido.id}', 'PRONTO')"><i class="fas fa-check"></i> Pronto</button>
+            <button class="btn-entregue" onclick="mudarStatus('${pedido.id}', 'ENTREGUE')"><i class="fas fa-truck"></i> Entregue</button>
+          </div>
+        </div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function imprimirComanda(pedidoId) {
+      const pedido = pedidosFiltrados.find(p => p.id === pedidoId) || todosPedidos.find(p => p.id === pedidoId);
+      if (!pedido) { alert('Pedido não encontrado!'); return; }
+      
+      let dataExibicao = pedido.data || '';
+      if (dataExibicao.includes('T')) {
+        try {
+          const dataUTC = new Date(dataExibicao);
+          const dataBrasil = new Date(dataUTC.getTime() - (3 * 60 * 60 * 1000));
+          const dia = String(dataBrasil.getDate()).padStart(2, '0');
+          const mes = String(dataBrasil.getMonth() + 1).padStart(2, '0');
+          const ano = dataBrasil.getFullYear();
+          const hora = String(dataBrasil.getHours()).padStart(2, '0');
+          const min = String(dataBrasil.getMinutes()).padStart(2, '0');
+          dataExibicao = `${dia}/${mes}/${ano} ${hora}:${min}`;
+        } catch (e) {}
+      }
+      
+      const comandaHTML = `<div class="comanda-print">
+        <div style="text-align: center; margin-bottom: 2mm;">
+          <h2 style="margin: 0; font-size: 14pt;">LIMA'S PIZZARIA</h2>
+          <p style="margin: 1mm 0; font-size: 10pt;">Comanda de Pedido</p>
+          <hr style="border: 0.5px dashed #000; margin: 2mm 0;">
+        </div>
+        
+        <div style="margin-bottom: 2mm; font-size: 10pt;">
+          <p style="margin: 0.5mm 0;"><strong>Pedido:</strong> ${pedido.id || 'N/A'}</p>
+          <p style="margin: 0.5mm 0;"><strong>Data/Hora:</strong> ${dataExibicao}</p>
+          <p style="margin: 0.5mm 0;"><strong>Cliente:</strong> ${pedido.cliente || 'Não informado'}</p>
+          <p style="margin: 0.5mm 0;"><strong>Telefone:</strong> ${pedido.telefone || 'Não informado'}</p>
+          <p style="margin: 0.5mm 0;"><strong>Tipo:</strong> ${pedido.tipo || 'Entrega'}</p>
+          <p style="margin: 0.5mm 0;"><strong>Endereço:</strong> ${pedido.endereco || 'Não informado'}</p>
+          <p style="margin: 0.5mm 0;"><strong>Pagamento:</strong> ${pedido.pagamento || 'Não informado'}</p>
+          ${pedido.troco && pedido.troco !== 'Não precisa' ? `<p style="margin: 0.5mm 0;"><strong>Troco para:</strong> ${pedido.troco}</p>` : ''}
+        </div>
+        
+        <hr style="border: 0.5px solid #000; margin: 2mm 0;">
+        
+        <div style="margin-bottom: 2mm;">
+          <h3 style="text-align: center; margin: 1mm 0; font-size: 12pt;">ITENS DO PEDIDO</h3>
+          <div style="border: 0.5px solid #ddd; padding: 1mm; border-radius: 0; font-size: 10pt;">
+            ${pedido.itens ? pedido.itens.replace(/\n/g, '<br>') : 'Nenhum item'}
+          </div>
+        </div>
+        
+        ${pedido.observacoes && pedido.observacoes !== 'Nenhuma' ? `
+        <div style="margin-bottom: 2mm; padding: 1mm; background: #f5f5f5; border-radius: 0; font-size: 10pt;">
+          <p style="margin: 0.5mm 0;"><strong>Observações:</strong> ${pedido.observacoes}</p>
+        </div>
+        ` : ''}
+        
+        <hr style="border: 1px solid #000; margin: 2mm 0;">
+        
+        <div style="text-align: center; font-size: 12pt;">
+          <p style="margin: 1mm 0;"><strong>TOTAL: ${pedido.total || 'R$ 0,00'}</strong></p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 3mm; color: #666; font-size: 9pt;">
+          <p style="margin: 0.5mm 0;">_________________________________</p>
+          <p style="margin: 0.5mm 0;">Assinatura do Entregador</p>
+        </div>
+      </div>`;
+      
+      const printDiv = document.getElementById('comanda-unica');
+      printDiv.innerHTML = '';
+      printDiv.innerHTML = comandaHTML;
+      printDiv.style.display = 'block';
+      
+      setTimeout(() => {
+        window.print();
+        setTimeout(() => {
+          printDiv.innerHTML = '';
+          printDiv.style.display = 'none';
+        }, 100);
+      }, 50);
+    }
+
+    async function mudarStatus(pedidoId, novoStatus) {
+      if (!confirm(`Mudar pedido ${pedidoId} para "${novoStatus}"?`)) return;
+      try {
+        await fetch(`${SCRIPT_URL}?acao=atualizarStatus&id=${pedidoId}&status=${novoStatus}&_=${Date.now()}`);
+        const pedido = todosPedidos.find(p => p.id === pedidoId);
+        if (pedido) pedido.status = novoStatus;
+        filtrarPedidos();
+        alert('Status atualizado!');
+      } catch (error) {
+        alert('Erro ao atualizar status');
+      }
+    }
+
+    function exportarParaExcel() {
+      if (pedidosFiltrados.length === 0) { alert('Não há dados para exportar!'); return; }
+      let csv = 'ID,Data/Hora,Cliente,Telefone,Tipo,Endereço,Pagamento,Troco,Total,Status,Observações,Itens\n';
+      pedidosFiltrados.forEach(p => { csv += `"${p.id}","${p.data}","${p.cliente}","${p.telefone}","${p.tipo}","${p.endereco}","${p.pagamento}","${p.troco}","${p.total}","${p.status}","${p.observacoes}","${p.itens}"\n`; });
+      const blob = new Blob(["\ufeff" + csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `pedidos_${new Date().toISOString().slice(0,10)}.csv`;
+      link.click();
+    }
+
+    function fecharModal() {
+      document.getElementById('modal-comprovante').classList.remove('show');
+      document.body.style.overflow = 'auto';
+    }
+
+    function abrirModalComprovante(pedidoId, fileId, viewUrl) {
+      const modal = document.getElementById('modal-comprovante');
+      const modalBody = document.getElementById('modal-body');
+      const modalTitulo = document.getElementById('modal-titulo');
+      const linkDrive = document.getElementById('modal-link-drive');
+      const linkDownload = document.getElementById('modal-link-download');
+      
+      modalTitulo.textContent = `Comprovante - ${pedidoId}`;
+      
+      if (!fileId && !viewUrl) {
+        modalBody.innerHTML = `<div style="padding: 40px 20px; text-align: center;"><i class="fas fa-exclamation-triangle" style="font-size: 60px; color: #ffc107; margin-bottom: 20px;"></i><h3>Comprovante não disponível</h3><p>Este comprovante não foi encontrado.</p></div>`;
+        linkDrive.href = DRIVE_URL;
+        linkDownload.style.display = 'none';
+      } else {
+        const embedUrl = fileId ? `https://drive.google.com/file/d/${fileId}/preview` : viewUrl;
+        const downloadUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : '#';
+        linkDrive.href = viewUrl || DRIVE_URL;
+        linkDownload.href = downloadUrl;
+        linkDownload.style.display = fileId ? 'inline-block' : 'none';
+        modalBody.innerHTML = `<iframe src="${embedUrl}" style="width: 100%; height: 70vh; border: none;"></iframe>`;
+      }
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function mostrarSemPedidos() {
+      const dataSelecionada = document.getElementById('filter-date').value;
+      const dataFormatada = dataSelecionada.split('-').reverse().join('/');
+      document.getElementById('pedidos-container').innerHTML = `<div class="no-pedidos"><i class="fas fa-inbox"></i><h3>Nenhum pedido encontrado</h3><p style="margin-top: 10px;">Não há pedidos para ${dataFormatada}</p><button onclick="carregarPedidos()" class="btn btn-primary" style="margin-top: 20px;"><i class="fas fa-sync-alt"></i> Recarregar</button></div>`;
+    }
+
+    function mostrarErro(msg) {
+      document.getElementById('pedidos-container').innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i><p>${msg}</p><button onclick="carregarPedidos()" class="btn btn-primary" style="margin-top: 15px;"><i class="fas fa-sync-alt"></i> Tentar Novamente</button></div>`;
+    }
+
+    // ===== PRODUTOS =====
+    async function carregarProdutos() {
+      try {
+        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
+        const resultado = await response.json();
+        if (resultado.success && resultado.produtos) {
+          todosProdutos = resultado.produtos;
+          mostrarProdutos();
+        }
+      } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+      }
+    }
+
+    function mostrarProdutos() {
+      const container = document.getElementById('container-produtos');
+      
+      if (todosProdutos.length === 0) {
+        container.innerHTML = `<div class="no-produtos"><i class="fas fa-box"></i><h3>Nenhum produto cadastrado</h3><p>Adicione seu primeiro produto acima!</p></div>`;
+        return;
+      }
+
+      let html = '';
+      todosProdutos.forEach(produto => {
+        html += `<div class="produto-card">
+          <div class="produto-imagem">
+            ${produto.foto ? `<img src="${produto.foto}" alt="${produto.nome}">` : `<div class="produto-imagem-placeholder"><i class="fas fa-image"></i> Sem foto</div>`}
+          </div>
+          <div class="produto-info">
+            <div class="produto-nome">${produto.nome}</div>
+            <div class="produto-categoria"><i class="fas fa-tag"></i> ${produto.categoria || 'Sem categoria'}</div>
+            <div class="produto-preco">R$ ${parseFloat(produto.preco || 0).toFixed(2)}</div>
+            <div class="produto-descricao">${produto.descricao || 'Sem descrição'}</div>
+            <div class="produto-actions">
+              <button class="btn-editar" onclick="editarProduto('${produto.id}')"><i class="fas fa-edit"></i> Editar</button>
+              <button class="btn-deletar" onclick="confirmarDelecao('${produto.id}', '${produto.nome}')"><i class="fas fa-trash"></i> Deletar</button>
+            </div>
+          </div>
+        </div>`;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function previewFoto() {
+      const input = document.getElementById('prod-foto');
+      const preview = document.getElementById('preview-foto');
+      
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          fotoSelecionada = e.target.result;
+          preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function salvarProduto(event) {
+      event.preventDefault();
+      
+      const id = produtoEmEdicao?.id || 'prod_' + Date.now();
+      const nome = document.getElementById('prod-nome').value;
+      const categoria = document.getElementById('prod-categoria').value;
+      const preco = document.getElementById('prod-preco').value;
+      const descricao = document.getElementById('prod-descricao').value;
+      
+      const produto = {
+        id,
+        nome,
+        categoria,
+        preco,
+        descricao,
+        foto: fotoSelecionada || (produtoEmEdicao?.foto || '')
+      };
+
+      console.log('Salvando produto:', produto);
+      
+      if (produtoEmEdicao) {
+        const index = todosProdutos.findIndex(p => p.id === produtoEmEdicao.id);
+        if (index >= 0) {
+          todosProdutos[index] = produto;
+        }
+        alert('Produto atualizado com sucesso!');
+        cancelarEdicao();
+      } else {
+        todosProdutos.push(produto);
+        alert('Produto adicionado com sucesso!');
+        limparForm();
+      }
+      
+      mostrarProdutos();
+    }
+
+    function editarProduto(id) {
+      const produto = todosProdutos.find(p => p.id === id);
+      if (!produto) return;
+      
+      produtoEmEdicao = produto;
+      
+      document.getElementById('form-titulo').textContent = 'Editar Produto';
+      document.getElementById('prod-nome').value = produto.nome;
+      document.getElementById('prod-categoria').value = produto.categoria;
+      document.getElementById('prod-preco').value = produto.preco;
+      document.getElementById('prod-descricao').value = produto.descricao;
+      
+      if (produto.foto) {
+        document.getElementById('preview-foto').innerHTML = `<img src="${produto.foto}" alt="${produto.nome}">`;
+        fotoSelecionada = produto.foto;
+      }
+      
+      document.getElementById('btn-salvar-txt').textContent = 'Atualizar Produto';
+      document.getElementById('btn-cancelar-edicao').style.display = 'inline-flex';
+      
+      document.getElementById('form-produto').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelarEdicao() {
+      produtoEmEdicao = null;
+      limparForm();
+      document.getElementById('form-titulo').textContent = 'Novo Produto';
+      document.getElementById('btn-salvar-txt').textContent = 'Salvar Produto';
+      document.getElementById('btn-cancelar-edicao').style.display = 'none';
+    }
+
+    function limparForm() {
+      document.getElementById('form-produto').reset();
+      document.getElementById('preview-foto').innerHTML = '';
+      fotoSelecionada = null;
+    }
+
+    function confirmarDelecao(id, nome) {
+      if (confirm(`Tem certeza que deseja deletar o produto "${nome}"?`)) {
+        todosProdutos = todosProdutos.filter(p => p.id !== id);
+        mostrarProdutos();
+        alert('Produto deletado!');
+      }
+    }
+  </script>
+</body>
+</html>

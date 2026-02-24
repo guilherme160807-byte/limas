@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Cardápio de Pastel</title>
+  <link rel="shortcut icon" href="ca.jpg" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffffff, #f9f9f9);
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #ff0000;
+      color: white;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .btn-voltar {
+      font-size: 16px;
+      background-color: #ff4d4d;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-voltar:hover {
+      background-color: #cc0000;
+    }
+
+    .titulo-header {
+      margin: 0 auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .produtos {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .produto {
+      width: 230px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background-color: #fff;
+    }
+  
+    .produto img {
+      width: 90%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  
+    .produto h3 {
+      margin: 10px 0 5px;
+      text-align: center;
+    }
+  
+    .produto p {
+      font-size: 14px;
+      text-align: center;
+      flex-grow: 1;
+    }
+  
+    .produto .preco {
+      font-weight: bold;
+      margin: 10px 0;
+      color: #000;
+    }
+  
+    .produto button {
+      padding: 8px 12px;
+      background-color: #ff0000;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      align-self: stretch;
+      margin-top: 10px;
+    }
+  
+    .produto button:hover {
+      background-color: #ff0000;
+    }
+
+    .modal-personalizar {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      overflow: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      animation: modalopen 0.4s;
+    }
+
+    @keyframes modalopen {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .modal-header h2 {
+      color: #333;
+      font-size: 22px;
+    }
+
+    .close {
+      color: #aaa;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .close:hover {
+      color: #333;
+    }
+
+    .ingredientes-opcoes {
+      margin-bottom: 20px;
+    }
+
+    .ingrediente-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding: 8px 0;
+      border-bottom: 1px dashed #eee;
+    }
+
+    .ingrediente-nome {
+      font-weight: 600;
+    }
+
+    .ingrediente-controle {
+      display: flex;
+      align-items: center;
+    }
+
+    .ingrediente-controle button {
+      background-color: #f0f0f0;
+      border: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ingrediente-controle span {
+      margin: 0 10px;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .observacoes {
+      margin-top: 20px;
+    }
+
+    .observacoes textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      resize: vertical;
+      min-height: 80px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .preco-total {
+      font-size: 18px;
+      font-weight: bold;
+      color: #ff5722;
+    }
+
+    .btn-confirmar {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .btn-confirmar:hover {
+      background-color: #45a049;
+    }
+
+    #carrinho-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    #carrinho-icon {
+      background-color: #ff0000;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+
+    #carrinho-abinha {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      width: 300px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+    }
+
+    #carrinho-container:hover #carrinho-abinha {
+      display: block;
+    }
+
+    #carrinho-itens {
+      max-height: 300px;
+      overflow-y: auto;
+      margin: 10px 0;
+      font-size: 14px;
+      list-style: none;
+      padding: 0;
+    }
+
+    #carrinho-itens li {
+      border-bottom: 1px solid #eee;
+      padding: 8px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .carrinho-item-nome {
+      font-weight: 600;
+    }
+
+    .carrinho-item-detalhes {
+      font-size: 12px;
+      color: #666;
+      margin-top: 3px;
+    }
+
+    .carrinho-item-preco {
+      font-weight: bold;
+      color: #ff5722;
+    }
+
+    #carrinho-total {
+      font-weight: bold;
+      font-size: 18px;
+      color: #ff5722;
+    }
+
+    #btn-finalizar {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    #btn-finalizar:hover {
+      background-color: #218838;
+    }
+
+    .btn-remover {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-remover:hover {
+      background-color: #c82333;
+    }
+
+    .aviso-sabores {
+      color: red;
+      font-size: 14px;
+      margin: 10px 0;
+      padding: 8px;
+      background-color: #ffeeee;
+      border-radius: 4px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="btn-voltar" href="index.html">🔙 Voltar</a>
+    <div class="titulo-header">Cardápio de Pastel</div>
+  </header>
+
+  <section class="produtos">
+    <div class="produto">
+      <img src="pastel.jpg" alt="Pastel de 1 Sabor">
+      <h3>Pastel de 1 Sabor</h3>
+      <div class="preco">R$ 13,00</div>
+      <button onclick="abrirModalPersonalizar('Pastel de 1 Sabor', 13.00, ['Queijo', 'Bacon', 'Carne','Presunto',], 1)">Adicionar ao Carrinho</button>
+    </div>
+
+    <div class="produto">
+      <img src="pastel.jpg" alt="Pastel de 2 Sabores">
+      <h3>Pastel de 2 Sabores</h3>
+      <div class="preco">R$ 15,00</div>
+      <button onclick="abrirModalPersonalizar('Pastel de 2 Sabores', 15.00, ['Queijo', 'Bacon', 'Carne', 'Presunto'], 2)">Adicionar ao Carrinho</button>
+    </div>
+
+    <div class="produto">
+      <img src="pastel.jpg" alt="Pastel de 3 Sabores">
+      <h3>Pastel de 3 Sabores</h3>
+      <div class="preco">R$ 18,00</div>
+      <button onclick="abrirModalPersonalizar('Pastel de 3 Sabores', 18.00, ['Queijo', 'Bacon', 'Carne', 'Presunto'], 3)">Adicionar ao Carrinho</button>
+    </div>
+  </section>
+
+  <div id="modal-personalizar" class="modal-personalizar">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-titulo">Personalizar Pastel</h2>
+        <span class="close">&times;</span>
+      </div>
+      
+      <div id="aviso-sabores" class="aviso-sabores"></div>
+      
+      <div class="ingredientes-opcoes" id="ingredientes-opcoes">
+      </div>
+      
+      <div class="observacoes">
+        <label for="observacoes-text">Observações especiais:</label>
+        <textarea id="observacoes-text" placeholder="Ex: Sem cebola, massa bem frita..."></textarea>
+      </div>
+      
+      <div class="modal-footer">
+        <div class="preco-total">Total: R$ <span id="preco-total-modal">0.00</span></div>
+        <button class="btn-confirmar" id="btn-confirmar-pedido">Confirmar Pedido</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="carrinho-container">
+    <div id="carrinho-icon">🛒</div>
+    <div id="carrinho-abinha">
+      <strong>🛍️ Seu Carrinho</strong>
+      <ul id="carrinho-itens"></ul>
+      <p><strong>Total:</strong> R$ <span id="carrinho-total">0.00</span></p>
+      <button id="btn-finalizar" onclick="window.location.href='carrinho.html'">Finalizar Pedido</button>
+    </div>
+  </div>
+
+  <script>
+    let produtoAtual = null;
+    let precoBase = 0;
+    let maxSabores = 1;
+    let saborSelecionado = null;
+    function abrirModalPersonalizar(nome, preco, ingredientes, saboresPermitidos) {
+      produtoAtual = nome;
+      precoBase = preco;
+      maxSabores = saboresPermitidos;
+      saborSelecionado = null;
+      
+      document.getElementById('modal-titulo').textContent = `Personalizar ${nome}`;
+      document.getElementById('preco-total-modal').textContent = preco.toFixed(2);
+      document.getElementById('observacoes-text').value = '';
+      document.getElementById('aviso-sabores').style.display = 'none';
+      
+      const container = document.getElementById('ingredientes-opcoes');
+      container.innerHTML = '';
+ 
+      ingredientes.forEach(ingrediente => {
+        const item = document.createElement('div');
+        item.className = 'ingrediente-item';
+        
+        item.innerHTML = `
+          <div class="ingrediente-nome">${ingrediente}</div>
+          <div class="ingrediente-controle">
+            <button onclick="diminuirIngrediente('${ingrediente}')">-</button>
+            <span id="qtd-${ingrediente.replace(/\s+/g, '-')}">0</span>
+            <button onclick="aumentarIngrediente('${ingrediente}')">+</button>
+          </div>
+        `;
+        
+        container.appendChild(item);
+      });
+      
+      document.getElementById('modal-personalizar').style.display = 'block';
+    }
+
+    function aumentarIngrediente(nome) {
+      const id = nome.replace(/\s+/g, '-');
+      const qtdElement = document.getElementById(`qtd-${id}`);
+      const aviso = document.getElementById('aviso-sabores');
+      
+      if (saborSelecionado && saborSelecionado !== nome) {
+        aviso.textContent = `Você só pode selecionar 1 sabor para esta opção.`;
+        aviso.style.display = 'block';
+        return;
+      }
+      
+      if (!saborSelecionado) {
+        saborSelecionado = nome;
+      }
+      
+      qtdElement.textContent = "1";
+      aviso.style.display = 'none';
+    }
+
+    function diminuirIngrediente(nome) {
+      const id = nome.replace(/\s+/g, '-');
+      const qtdElement = document.getElementById(`qtd-${id}`);
+      
+      qtdElement.textContent = "0";
+      saborSelecionado = null;
+      document.getElementById('aviso-sabores').style.display = 'none';
+    }
+
+
+    document.getElementById('btn-confirmar-pedido').addEventListener('click', function() {
+      const aviso = document.getElementById('aviso-sabores');
+      
+      if (!saborSelecionado) {
+        aviso.textContent = `Por favor, selecione 1 sabor para esta opção.`;
+        aviso.style.display = 'block';
+        return;
+      }
+      
+      const observacoes = document.getElementById('observacoes-text').value;
+      const descricao = `1x ${saborSelecionado}${observacoes ? ', Obs: ' + observacoes : ''}`;
+      
+      adicionarAoCarrinho(produtoAtual, precoBase, descricao);
+      
+      document.getElementById('modal-personalizar').style.display = 'none';
+    });
+
+    function adicionarAoCarrinho(nome, preco, detalhes = '') {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      
+      const itemExistenteIndex = cart.findIndex(item => 
+        item.name === nome && item.detalhes === detalhes
+      );
+      
+      if (itemExistenteIndex !== -1) {
+        cart[itemExistenteIndex].quantity += 1;
+      } else {
+        cart.push({
+          name: nome,
+          price: preco,
+          quantity: 1,
+          detalhes: detalhes
+        });
+      }
+      
+      localStorage.setItem("cart", JSON.stringify(cart));
+      atualizarAbinhaCarrinho();
+    }
+
+    function removerItemCarrinho(nome, detalhes) {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart = cart.filter(item => !(item.name === nome && item.detalhes === detalhes));
+      localStorage.setItem("cart", JSON.stringify(cart));
+      atualizarAbinhaCarrinho();
+    }
+
+    function atualizarAbinhaCarrinho() {
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const lista = document.getElementById("carrinho-itens");
+      const totalSpan = document.getElementById("carrinho-total");
+      lista.innerHTML = "";
+      let total = 0;
+
+      cart.forEach(item => {
+        const li = document.createElement("li");
+        const valorTotalItem = item.price * item.quantity;
+        li.innerHTML = `
+          <div>
+            <div class="carrinho-item-nome">${item.name} - ${item.quantity}x</div>
+            ${item.detalhes ? `<div class="carrinho-item-detalhes">${item.detalhes}</div>` : ''}
+          </div>
+          <div>
+            <span class="carrinho-item-preco">R$ ${valorTotalItem.toFixed(2)}</span>
+            <button class="btn-remover" onclick="removerItemCarrinho('${item.name}', '${item.detalhes}')">Remover</button>
+          </div>
+        `;
+        lista.appendChild(li);
+        total += valorTotalItem;
+      });
+
+      totalSpan.textContent = total.toFixed(2);
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+      atualizarAbinhaCarrinho();
+    });
+  </script>
+</body>
+</html>
