@@ -362,6 +362,7 @@
       border-radius: 4px;
       display: none;
     }
+    .pastel-hardcoded { display: none; }
   </style>
 </head>
 <body>
@@ -371,22 +372,23 @@
     <div class="titulo-header">Cardápio de Pastel</div>
   </header>
 
-  <section class="produtos">
-    <div class="produto">
+  <section class="produtos" id="secao-pasteis">
+    <div id="pastel-loading" style="text-align:center;padding:40px 0;width:100%;"><p>Carregando pastéis...</p></div>
+    <div class="produto pastel-hardcoded">
       <img src="pastel.jpg" alt="Pastel de 1 Sabor">
       <h3>Pastel de 1 Sabor</h3>
       <div class="preco">R$ 13,00</div>
       <button onclick="abrirModalPersonalizar('Pastel de 1 Sabor', 13.00, ['Queijo', 'Bacon', 'Carne','Presunto',], 1)">Adicionar ao Carrinho</button>
     </div>
 
-    <div class="produto">
+    <div class="produto pastel-hardcoded">
       <img src="pastel.jpg" alt="Pastel de 2 Sabores">
       <h3>Pastel de 2 Sabores</h3>
       <div class="preco">R$ 15,00</div>
       <button onclick="abrirModalPersonalizar('Pastel de 2 Sabores', 15.00, ['Queijo', 'Bacon', 'Carne', 'Presunto'], 2)">Adicionar ao Carrinho</button>
     </div>
 
-    <div class="produto">
+    <div class="produto pastel-hardcoded">
       <img src="pastel.jpg" alt="Pastel de 3 Sabores">
       <h3>Pastel de 3 Sabores</h3>
       <div class="preco">R$ 18,00</div>
@@ -430,6 +432,48 @@
   </div>
 
   <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-bjhx8jg7yQWGrLcOwagyfEqhfBMF9I5E2SKHMVqvsEJFtJ7H9_S2F6SHHjYsdwK6/exec';
+
+    async function carregarPasteis() {
+      try {
+        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
+        const resultado = await response.json();
+        if (resultado.success && resultado.produtos) {
+          const pasteis = resultado.produtos.filter(p =>
+            p.categoria === 'Pastel' && p.ativo !== false && p.ativo !== 'false'
+          );
+          if (pasteis.length > 0) {
+            renderizarPasteis(pasteis);
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('Usando pastéis locais como fallback.', error);
+      }
+      document.getElementById('pastel-loading').style.display = 'none';
+      document.querySelectorAll('.pastel-hardcoded').forEach(el => el.style.display = 'block');
+    }
+
+    function renderizarPasteis(pasteis) {
+      const secao = document.getElementById('secao-pasteis');
+      document.getElementById('pastel-loading').style.display = 'none';
+      document.querySelectorAll('.pastel-hardcoded').forEach(el => el.remove());
+
+      pasteis.forEach(pastel => {
+        const img = pastel.imagem || 'pastel.jpg';
+        const div = document.createElement('div');
+        div.className = 'produto';
+        const nomeEsc = pastel.nome.replace(/'/g, "\\'");
+        div.innerHTML = `
+          <img src="${img}" alt="${pastel.nome}" onerror="this.src='pastel.jpg'">
+          <h3>${pastel.nome}</h3>
+          <div class="preco">R$ ${parseFloat(pastel.preco || 0).toFixed(2)}</div>
+          <button onclick="abrirModalPersonalizar('${nomeEsc}', ${parseFloat(pastel.preco || 0)}, ['Queijo', 'Bacon', 'Carne', 'Presunto'], 1)">Adicionar ao Carrinho</button>
+        `;
+        secao.appendChild(div);
+      });
+    }
+
     let produtoAtual = null;
     let precoBase = 0;
     let maxSabores = 1;
@@ -571,6 +615,7 @@
     
     document.addEventListener("DOMContentLoaded", function() {
       atualizarAbinhaCarrinho();
+      carregarPasteis();
     });
   </script>
 </body>

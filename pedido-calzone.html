@@ -429,6 +429,7 @@
     .btn-remover:hover {
       background-color: #c82333;
     }
+    .calzone-hardcoded { display: none; }
   </style>
 </head>
 <body>
@@ -438,9 +439,10 @@
     <div class="titulo-header">Cardápio de Calzone</div>
   </header>
 
-  <section class="produtos">
+  <section class="produtos" id="secao-calzones">
+    <div id="calzone-loading" style="text-align:center;padding:40px 0;width:100%;"><p>Carregando calzones...</p></div>
     <!-- Calzone Principal - CARD MENOR -->
-    <div class="produto">
+    <div class="produto calzone-hardcoded">
       <img src="calzone.png" alt="Calzone">
       <h3>Calzone</h3>
       <p>Sabores Frango com Requeijão e Pizza (mussarela, presunto, tomate e orégano)</p>
@@ -504,6 +506,51 @@
   </div>
 
   <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-bjhx8jg7yQWGrLcOwagyfEqhfBMF9I5E2SKHMVqvsEJFtJ7H9_S2F6SHHjYsdwK6/exec';
+
+    async function carregarCalzones() {
+      try {
+        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
+        const resultado = await response.json();
+        if (resultado.success && resultado.produtos) {
+          const calzones = resultado.produtos.filter(p =>
+            p.categoria === 'Calzone' && p.ativo !== false && p.ativo !== 'false'
+          );
+          if (calzones.length > 0) {
+            renderizarCalzones(calzones);
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('Usando calzones locais como fallback.', error);
+      }
+      document.getElementById('calzone-loading').style.display = 'none';
+      document.querySelectorAll('.calzone-hardcoded').forEach(el => el.style.display = 'block');
+    }
+
+    function renderizarCalzones(calzones) {
+      const secao = document.getElementById('secao-calzones');
+      document.getElementById('calzone-loading').style.display = 'none';
+      document.querySelectorAll('.calzone-hardcoded').forEach(el => el.remove());
+
+      // Update saboresCalzone with dynamic data
+      saboresCalzone.length = 0;
+      calzones.forEach(c => {
+        saboresCalzone.push({ nome: c.nome, preco: parseFloat(c.preco || 0), descricao: c.descricao || '' });
+      });
+
+      const div = document.createElement('div');
+      div.className = 'produto';
+      div.innerHTML = `
+        <img src="calzone.png" alt="Calzone">
+        <h3>Calzone</h3>
+        <p>Escolha seu sabor: ${calzones.map(c => c.nome).join(', ')}</p>
+        <div class="preco">A partir de R$ ${Math.min(...calzones.map(c => parseFloat(c.preco || 0))).toFixed(2)}</div>
+        <button onclick="abrirModalCalzone()">Personalizar e Adicionar</button>
+      `;
+      secao.appendChild(div);
+    }
+
     // Dados do Calzone
     const saboresCalzone = [
       { 
@@ -764,6 +811,7 @@
     // Inicializar carrinho
     document.addEventListener("DOMContentLoaded", function() {
       atualizarAbinhaCarrinho();
+      carregarCalzones();
     });
   </script>
 </body>

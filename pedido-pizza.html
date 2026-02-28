@@ -452,7 +452,7 @@
     <div class="titulo-header">Cardápio de Pizza</div>
   </header>
 
-  <section class="produtos">
+  <section class="produtos" id="secao-pizzas">
     <div class="produto">
       <img src="pizza.jpg" alt="Pizza Broto Salgada 1 Sabor">
       <h3>Pizza Broto Salgada 1 Sabor</h3>
@@ -550,7 +550,9 @@
   </div>
 
   <script>
-    // DADOS COMPLETOS DAS PIZZAS (copiados do seu código original)
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-bjhx8jg7yQWGrLcOwagyfEqhfBMF9I5E2SKHMVqvsEJFtJ7H9_S2F6SHHjYsdwK6/exec';
+
+    // DADOS COMPLETOS DAS PIZZAS (fallback hardcoded)
     const saboresBroto = [
       { nome: "4 Queijos - BROTO", preco: 37.00, descricao: "Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano." },
       { nome: "Atum - BROTO", preco: 36.00, descricao: "Molho especial, queijo mussarela, atum, cebola, azeitona e orégano." },
@@ -692,7 +694,57 @@
     let saboresSelecionadosMultiplos = [];
     let bordaSelecionadaIndex = null;
 
-    function fecharModal(modalId) {
+    // Carregamento dinâmico de sabores da planilha
+    let saboresDinamicos = null; // null = usar hardcoded
+
+    async function carregarSaboresDinamicos() {
+      try {
+        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
+        const resultado = await response.json();
+        if (resultado.success && resultado.produtos) {
+          const pizzas = resultado.produtos.filter(p =>
+            p.categoria === 'Pizza' && p.ativo !== false && p.ativo !== 'false'
+          );
+          if (pizzas.length > 0) {
+            saboresDinamicos = pizzas.map(p => ({
+              nome: p.nome,
+              preco: parseFloat(p.preco) || 0,
+              descricao: p.descricao || ''
+            }));
+          }
+        }
+      } catch (error) {
+        console.warn('Usando sabores locais como fallback.', error);
+      }
+    }
+
+    function getSaboresParaTipo(tipo) {
+      if (saboresDinamicos) {
+        // Filtra por tipo se o nome indicar (ex: "BROTO", "GRANDE", "DOCE")
+        const upper = tipo.toUpperCase();
+        let filtrados = saboresDinamicos;
+        if (tipo === 'broto') filtrados = saboresDinamicos.filter(s => /broto/i.test(s.nome));
+        else if (tipo === 'doce') filtrados = saboresDinamicos.filter(s => /doce|brigadeiro|prestígio|sonho|ouro|dois amores|sensação/i.test(s.nome));
+        else if (tipo === 'grande-1') filtrados = saboresDinamicos.filter(s => !/broto/i.test(s.nome) && !/1\/2/i.test(s.nome));
+        else if (tipo === 'grande-2') filtrados = saboresDinamicos.filter(s => /1\/2/i.test(s.nome));
+        if (filtrados.length > 0) return filtrados;
+        return saboresDinamicos; // Fallback to all if filter empty
+      }
+      switch(tipo) {
+        case 'broto': return saboresBroto;
+        case 'doce': return saboresDoce;
+        case 'grande-1': return saboresGrande1;
+        case 'grande-2': return saboresGrande2;
+        default: return saboresBroto;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      carregarSaboresDinamicos();
+      atualizarAbinhaCarrinho();
+    });
+
+
       document.getElementById(modalId).style.display = 'none';
     }
 
@@ -722,14 +774,8 @@
       
       document.getElementById('modal-sabor-subtitulo').textContent = subtitulos[tipo];
       
-      // Carregar sabores corretos
-      let saboresArray;
-      switch(tipo) {
-        case 'broto': saboresArray = saboresBroto; break;
-        case 'doce': saboresArray = saboresDoce; break;
-        case 'grande-1': saboresArray = saboresGrande1; break;
-        case 'grande-2': saboresArray = saboresGrande2; break;
-      }
+      // Carregar sabores corretos (dinâmicos ou hardcoded)
+      const saboresArray = getSaboresParaTipo(tipo);
       
       carregarSaboresModal(saboresArray, tipo === 'grande-2');
       atualizarContadorSaborModal(tipo);
@@ -782,13 +828,7 @@
         saborSelecionadoIndex = saborSelecionadoIndex === index ? null : index;
       }
       
-      let saboresArray;
-      switch(pizzaTipoAtual) {
-        case 'broto': saboresArray = saboresBroto; break;
-        case 'doce': saboresArray = saboresDoce; break;
-        case 'grande-1': saboresArray = saboresGrande1; break;
-        case 'grande-2': saboresArray = saboresGrande2; break;
-      }
+      const saboresArray = getSaboresParaTipo(pizzaTipoAtual);
       
       carregarSaboresModal(saboresArray, multiplos);
       atualizarContadorSaborModal(pizzaTipoAtual);
@@ -1123,9 +1163,6 @@
       });
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
-      atualizarAbinhaCarrinho();
-    });
   </script>
 </body>
 </html>

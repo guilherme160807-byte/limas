@@ -374,8 +374,9 @@
     <div class="titulo-header">Cardápio de Pizza</div>
   </header>
 
-  <section class="produtos">
-    <div class="produto">
+  <section class="produtos" id="secao-marmitas">
+    <div id="marmita-loading" style="text-align:center;padding:40px 0;width:100%;"><p>Carregando marmitas...</p></div>
+    <div class="produto marmita-hardcoded">
       <img src="marmita.jpg" alt="Marmita P">
       <h3>Marmita P</h3>
       <p>Arroz, Feijão, Carne De Frango, Lasanha</p>
@@ -383,7 +384,7 @@
       <button onclick="abrirModalPersonalizar('Marmita P ', 20.00, ['Bife', 'Ovo', ])">Adicionar ao Carrinho</button>
     </div>
 
-    <div class="produto">
+    <div class="produto marmita-hardcoded">
       <img src="marmita.jpg" alt="Marmita M">
       <h3>Marmita M</h3>
       <p>Arroz, Feijão, Carne De Frango, Lasanha</p>
@@ -391,7 +392,7 @@
       <button onclick="abrirModalPersonalizar('Marmita M', 22.00, ['Bife', 'Ovo',])">Adicionar ao Carrinho</button>
     </div>
 
-    <div class="produto">
+    <div class="produto marmita-hardcoded">
       <img src="marmita.jpg" alt="Marmita G">
       <h3>Marmita G</h3>
       <p>Arroz, Feijão, Carne De Frango, Lasanha</p>
@@ -459,6 +460,7 @@
   .produto button:hover {
     background-color: #ff0000;
   }
+  .marmita-hardcoded { display: none; }
   </style>
 
   
@@ -496,6 +498,48 @@
   </div>
 
   <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-bjhx8jg7yQWGrLcOwagyfEqhfBMF9I5E2SKHMVqvsEJFtJ7H9_S2F6SHHjYsdwK6/exec';
+
+    async function carregarMarmitas() {
+      try {
+        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
+        const resultado = await response.json();
+        if (resultado.success && resultado.produtos) {
+          const marmitas = resultado.produtos.filter(p =>
+            p.categoria === 'Marmita' && p.ativo !== false && p.ativo !== 'false'
+          );
+          if (marmitas.length > 0) {
+            renderizarMarmitas(marmitas);
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('Usando marmitas locais como fallback.', error);
+      }
+      document.getElementById('marmita-loading').style.display = 'none';
+      document.querySelectorAll('.marmita-hardcoded').forEach(el => el.style.display = 'block');
+    }
+
+    function renderizarMarmitas(marmitas) {
+      const secao = document.getElementById('secao-marmitas');
+      document.getElementById('marmita-loading').style.display = 'none';
+      document.querySelectorAll('.marmita-hardcoded').forEach(el => el.remove());
+
+      marmitas.forEach(marmita => {
+        const img = marmita.imagem || 'marmita.jpg';
+        const div = document.createElement('div');
+        div.className = 'produto';
+        const nomeEsc = marmita.nome.replace(/'/g, "\\'");
+        div.innerHTML = `
+          <img src="${img}" alt="${marmita.nome}" onerror="this.src='marmita.jpg'">
+          <h3>${marmita.nome}</h3>
+          <p>${marmita.descricao || ''}</p>
+          <div class="preco">R$ ${parseFloat(marmita.preco || 0).toFixed(2)}</div>
+          <button onclick="abrirModalPersonalizar('${nomeEsc}', ${parseFloat(marmita.preco || 0)}, [])">Adicionar ao Carrinho</button>
+        `;
+        secao.appendChild(div);
+      });
+    }
     
     let produtoAtual = null;
     let precoBase = 0;
@@ -670,6 +714,7 @@
 
     document.addEventListener("DOMContentLoaded", function() {
       atualizarAbinhaCarrinho();
+      carregarMarmitas();
     });
   </script>
 </body>

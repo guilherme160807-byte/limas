@@ -129,27 +129,28 @@
   </header>
 
   <section id="produtos">
-  <div class="produto">
+    <div id="bebidas-loading" style="text-align:center;padding:40px 0;width:100%;"><p>Carregando bebidas...</p></div>
+  <div class="produto bebida-hardcoded">
     <img src="coca 2L.jpg" alt="Produto 1">
     <h3>Coca Cola</h3>
     <p>R$ 16,00</p>
     <button onclick="adicionarAoCarrinho('Coca cola', 16)">Adicionar ao Carrinho</button>
   </div>
   
-    <div class="produto">
+    <div class="produto bebida-hardcoded">
       <img src="guarana 2L.jpg" alt="Produto 1">
       <h3>Guarana Kuat 2L</h3>
       <p>R$ 14,00</p>
       <button onclick="adicionarAoCarrinho('Guarana Kuat 2L', 14)">Adicionar ao Carrinho</button>
     </div>
     
-    <div class="produto">
+    <div class="produto bebida-hardcoded">
       <img src="coca lata 350ml zero.jfif" alt="Produto 1">
       <h3>Coca Cola 350ml Zero</h3>
       <p>R$ 5,00</p>
       <button onclick="adicionarAoCarrinho('Coca Cola 350ml Zero', 5)">Adicionar ao Carrinho</button>
     </div>
-    <div class="produto">
+    <div class="produto bebida-hardcoded">
       <img src="coca lata 350ml.jfif" alt="Produto 1">
       <h3>Coca Cola 350ml</h3>
       <p>R$ 5,00</p>
@@ -165,6 +166,7 @@
   padding: 40px 20px;
   overflow-x: auto;       
 }
+.bebida-hardcoded { display: none; }
 </style>
 
 <div id="carrinho-container">
@@ -261,6 +263,48 @@
 </style>
 
 <script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-bjhx8jg7yQWGrLcOwagyfEqhfBMF9I5E2SKHMVqvsEJFtJ7H9_S2F6SHHjYsdwK6/exec';
+
+  async function carregarBebidas() {
+    try {
+      const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
+      const resultado = await response.json();
+      if (resultado.success && resultado.produtos) {
+        const bebidas = resultado.produtos.filter(p =>
+          p.categoria === 'Bebida' && p.ativo !== false && p.ativo !== 'false'
+        );
+        if (bebidas.length > 0) {
+          renderizarBebidas(bebidas);
+          return;
+        }
+      }
+    } catch (error) {
+      console.warn('Usando bebidas locais como fallback.', error);
+    }
+    document.getElementById('bebidas-loading').style.display = 'none';
+    document.querySelectorAll('.bebida-hardcoded').forEach(el => el.style.display = 'block');
+  }
+
+  function renderizarBebidas(bebidas) {
+    const secao = document.getElementById('produtos');
+    document.getElementById('bebidas-loading').style.display = 'none';
+    document.querySelectorAll('.bebida-hardcoded').forEach(el => el.remove());
+
+    bebidas.forEach(bebida => {
+      const img = bebida.imagem || 'bebida.png';
+      const div = document.createElement('div');
+      div.className = 'produto';
+      const nomeEsc = bebida.nome.replace(/'/g, "\\'");
+      div.innerHTML = `
+        <img src="${img}" alt="${bebida.nome}" onerror="this.src='bebida.png'">
+        <h3>${bebida.nome}</h3>
+        <p>R$ ${parseFloat(bebida.preco || 0).toFixed(2)}</p>
+        <button onclick="adicionarAoCarrinho('${nomeEsc}', ${parseFloat(bebida.preco || 0)})">Adicionar ao Carrinho</button>
+      `;
+      secao.appendChild(div);
+    });
+  }
+
   function adicionarAoCarrinho(nome, preco) {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     
@@ -318,7 +362,10 @@
     totalSpan.textContent = total.toFixed(2);
   }
 
-  document.addEventListener("DOMContentLoaded", atualizarAbinhaCarrinho);
+  document.addEventListener("DOMContentLoaded", function() {
+    atualizarAbinhaCarrinho();
+    carregarBebidas();
+  });
 </script>
 
 

@@ -362,6 +362,97 @@
       background: #c82333;
     }
 
+    .btn-toggle {
+      background: #6c757d;
+      color: white;
+    }
+
+    .btn-toggle:hover {
+      background: #545b62;
+    }
+
+    .btn-toggle.ativo {
+      background: #28a745;
+    }
+
+    .btn-toggle.ativo:hover {
+      background: #1e7e34;
+    }
+
+    .badge-inativo {
+      display: inline-block;
+      background: #dc3545;
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+
+    .produto-card.inativo {
+      opacity: 0.65;
+    }
+
+    .produto-card.inativo .produto-imagem {
+      position: relative;
+    }
+
+    .produto-card.inativo .produto-imagem::after {
+      content: 'Sem Estoque';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #dc3545;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 4px;
+    }
+
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .toggle-label input[type="checkbox"] {
+      display: none;
+    }
+
+    .toggle-switch {
+      width: 44px;
+      height: 24px;
+      background: #ccc;
+      border-radius: 12px;
+      position: relative;
+      transition: background 0.3s;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: left 0.3s;
+    }
+
+    .toggle-label input:checked + .toggle-switch {
+      background: #28a745;
+    }
+
+    .toggle-label input:checked + .toggle-switch::after {
+      left: 22px;
+    }
+
     .pedidos-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
@@ -881,6 +972,7 @@
       <div class="form-produto">
         <h2><i class="fas fa-plus"></i> <span id="form-titulo">Novo Produto</span></h2>
         <form id="form-produto" onsubmit="salvarProduto(event)">
+          <input type="hidden" id="prod-id">
           <div class="form-row">
             <div class="form-group">
               <label for="prod-nome">Nome do Produto *</label>
@@ -891,9 +983,14 @@
               <select id="prod-categoria" required>
                 <option value="">Selecione a categoria</option>
                 <option value="Pizza">Pizza</option>
+                <option value="Lanche">Lanche</option>
+                <option value="Calzone">Calzone</option>
                 <option value="Bebida">Bebida</option>
+                <option value="Açaí">Açaí</option>
                 <option value="Acompanhamento">Acompanhamento</option>
                 <option value="Sobremesa">Sobremesa</option>
+                <option value="Marmita">Marmita</option>
+                <option value="Pastel">Pastel</option>
                 <option value="Outros">Outros</option>
               </select>
             </div>
@@ -905,9 +1002,23 @@
               <input type="number" id="prod-preco" placeholder="39.90" step="0.01" min="0" required>
             </div>
             <div class="form-group">
-              <label for="prod-foto">Foto do Produto</label>
-              <input type="file" id="prod-foto" accept="image/*" onchange="previewFoto()">
+              <label>Em Estoque</label>
+              <label class="toggle-label">
+                <input type="checkbox" id="prod-ativo" checked>
+                <span class="toggle-switch"></span>
+                <span id="prod-ativo-txt">Ativo (visível no site)</span>
+              </label>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label for="prod-imagem-url">URL da Imagem</label>
+            <input type="text" id="prod-imagem-url" placeholder="https://... (cole a URL da imagem)" oninput="previewImagemUrl()">
+          </div>
+
+          <div class="form-group">
+            <label for="prod-foto">Ou envie um arquivo de imagem</label>
+            <input type="file" id="prod-foto" accept="image/*" onchange="previewFoto()">
           </div>
 
           <div class="form-group">
@@ -974,7 +1085,8 @@
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
       document.getElementById(nomeAba).classList.add('active');
-      event.target.classList.add('active');
+      const btn = event.currentTarget.closest('.tab-button') || event.currentTarget;
+      btn.classList.add('active');
     }
 
     async function carregarPedidos() {
@@ -1259,16 +1371,27 @@
 
     // ===== PRODUTOS =====
     async function carregarProdutos() {
+      const container = document.getElementById('container-produtos');
+      container.innerHTML = `<div class="loading"><div class="spinner"></div><p>Carregando produtos...</p></div>`;
       try {
         const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
         const resultado = await response.json();
         if (resultado.success && resultado.produtos) {
           todosProdutos = resultado.produtos;
           mostrarProdutos();
+        } else {
+          container.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i><p>Erro ao carregar produtos</p><button onclick="carregarProdutos()" class="btn btn-primary" style="margin-top:15px;"><i class="fas fa-sync-alt"></i> Tentar Novamente</button></div>`;
         }
       } catch (error) {
         console.error('Erro ao carregar produtos:', error);
+        container.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i><p>Erro de conexão ao carregar produtos</p><button onclick="carregarProdutos()" class="btn btn-primary" style="margin-top:15px;"><i class="fas fa-sync-alt"></i> Tentar Novamente</button></div>`;
       }
+    }
+
+    function resolverImagem(imagem) {
+      if (!imagem) return '';
+      if (imagem.startsWith('data:') || imagem.startsWith('http://') || imagem.startsWith('https://')) return imagem;
+      return imagem;
     }
 
     function mostrarProdutos() {
@@ -1281,24 +1404,38 @@
 
       let html = '';
       todosProdutos.forEach(produto => {
-        html += `<div class="produto-card">
+        const ativo = produto.ativo !== false && produto.ativo !== 'false';
+        const imgSrc = resolverImagem(produto.imagem || produto.foto);
+        html += `<div class="produto-card${ativo ? '' : ' inativo'}">
           <div class="produto-imagem">
-            ${produto.foto ? `<img src="${produto.foto}" alt="${produto.nome}">` : `<div class="produto-imagem-placeholder"><i class="fas fa-image"></i> Sem foto</div>`}
+            ${imgSrc ? `<img src="${imgSrc}" alt="${produto.nome}">` : `<div class="produto-imagem-placeholder"><i class="fas fa-image"></i> Sem foto</div>`}
           </div>
           <div class="produto-info">
-            <div class="produto-nome">${produto.nome}</div>
+            <div class="produto-nome">${produto.nome}${ativo ? '' : '<span class="badge-inativo">Sem Estoque</span>'}</div>
             <div class="produto-categoria"><i class="fas fa-tag"></i> ${produto.categoria || 'Sem categoria'}</div>
             <div class="produto-preco">R$ ${parseFloat(produto.preco || 0).toFixed(2)}</div>
             <div class="produto-descricao">${produto.descricao || 'Sem descrição'}</div>
             <div class="produto-actions">
-              <button class="btn-editar" onclick="editarProduto('${produto.id}')"><i class="fas fa-edit"></i> Editar</button>
-              <button class="btn-deletar" onclick="confirmarDelecao('${produto.id}', '${produto.nome}')"><i class="fas fa-trash"></i> Deletar</button>
+              <button class="btn-toggle${ativo ? ' ativo' : ''}" data-id="${produto.id}" data-ativo="${ativo}" onclick="toggleAtivo(this.dataset.id, this.dataset.ativo==='true')"><i class="fas fa-${ativo ? 'eye' : 'eye-slash'}"></i> ${ativo ? 'Ativo' : 'Inativo'}</button>
+              <button class="btn-editar" data-id="${produto.id}" onclick="editarProduto(this.dataset.id)"><i class="fas fa-edit"></i> Editar</button>
+              <button class="btn-deletar" data-id="${produto.id}" data-nome="${produto.nome.replace(/"/g, '&quot;')}" onclick="confirmarDelecao(this.dataset.id, this.dataset.nome)"><i class="fas fa-trash"></i> Deletar</button>
             </div>
           </div>
         </div>`;
       });
       
       container.innerHTML = html;
+    }
+
+    function previewImagemUrl() {
+      const url = document.getElementById('prod-imagem-url').value.trim();
+      const preview = document.getElementById('preview-foto');
+      if (url) {
+        fotoSelecionada = null;
+        preview.innerHTML = `<img src="${url}" alt="Preview" onerror="this.style.display='none'">`;
+      } else {
+        preview.innerHTML = '';
+      }
     }
 
     function previewFoto() {
@@ -1309,63 +1446,98 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           fotoSelecionada = e.target.result;
+          document.getElementById('prod-imagem-url').value = '';
           preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
         };
         reader.readAsDataURL(input.files[0]);
       }
     }
 
-    function salvarProduto(event) {
+    async function salvarProduto(event) {
       event.preventDefault();
       
-      const id = produtoEmEdicao?.id || 'prod_' + Date.now();
+      const idVal = document.getElementById('prod-id').value;
       const nome = document.getElementById('prod-nome').value;
       const categoria = document.getElementById('prod-categoria').value;
       const preco = document.getElementById('prod-preco').value;
       const descricao = document.getElementById('prod-descricao').value;
+      const ativo = document.getElementById('prod-ativo').checked;
+      const imagemUrl = document.getElementById('prod-imagem-url').value.trim();
+      const imagem = fotoSelecionada || imagemUrl || (produtoEmEdicao?.imagem || produtoEmEdicao?.foto || '');
       
       const produto = {
-        id,
         nome,
         categoria,
         preco,
         descricao,
-        foto: fotoSelecionada || (produtoEmEdicao?.foto || '')
+        ativo,
+        imagem
       };
+      if (idVal) produto.id = idVal;
 
-      console.log('Salvando produto:', produto);
-      
-      if (produtoEmEdicao) {
-        const index = todosProdutos.findIndex(p => p.id === produtoEmEdicao.id);
-        if (index >= 0) {
-          todosProdutos[index] = produto;
-        }
-        alert('Produto atualizado com sucesso!');
-        cancelarEdicao();
-      } else {
-        todosProdutos.push(produto);
-        alert('Produto adicionado com sucesso!');
+      const btnSubmit = event.target.querySelector('[type="submit"]');
+      btnSubmit.disabled = true;
+
+      try {
+        const formData = new FormData();
+        formData.append('acao', 'salvarProduto');
+        formData.append('dados', JSON.stringify(produto));
+
+        const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' });
+        alert(idVal ? 'Produto atualizado com sucesso!' : 'Produto adicionado com sucesso!');
         limparForm();
+        if (idVal) cancelarEdicao();
+        carregarProdutos();
+      } catch (error) {
+        console.error('Erro ao salvar produto:', error);
+        alert('Erro ao salvar produto. Verifique a conexão.');
+      } finally {
+        btnSubmit.disabled = false;
       }
-      
-      mostrarProdutos();
+    }
+
+    async function toggleAtivo(id, ativoAtual) {
+      const novoAtivo = !ativoAtual;
+      try {
+        const produto = todosProdutos.find(p => String(p.id) === String(id));
+        if (!produto) return;
+        const dados = { id, nome: produto.nome, categoria: produto.categoria, preco: produto.preco, descricao: produto.descricao, imagem: produto.imagem || produto.foto || '', ativo: novoAtivo };
+        const formData = new FormData();
+        formData.append('acao', 'salvarProduto');
+        formData.append('dados', JSON.stringify(dados));
+        await fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' });
+        alert(novoAtivo ? 'Produto reativado!' : 'Produto desativado (sem estoque)!');
+        carregarProdutos();
+      } catch (error) {
+        console.error('Erro ao alterar status:', error);
+        alert('Erro ao alterar status do produto.');
+      }
     }
 
     function editarProduto(id) {
-      const produto = todosProdutos.find(p => p.id === id);
+      const produto = todosProdutos.find(p => String(p.id) === String(id));
       if (!produto) return;
       
       produtoEmEdicao = produto;
       
       document.getElementById('form-titulo').textContent = 'Editar Produto';
+      document.getElementById('prod-id').value = produto.id;
       document.getElementById('prod-nome').value = produto.nome;
-      document.getElementById('prod-categoria').value = produto.categoria;
+      document.getElementById('prod-categoria').value = produto.categoria || '';
       document.getElementById('prod-preco').value = produto.preco;
-      document.getElementById('prod-descricao').value = produto.descricao;
+      document.getElementById('prod-descricao').value = produto.descricao || '';
+      document.getElementById('prod-ativo').checked = produto.ativo !== false && produto.ativo !== 'false';
+
+      const imgSrc = produto.imagem || produto.foto || '';
+      if (imgSrc && !imgSrc.startsWith('data:')) {
+        document.getElementById('prod-imagem-url').value = imgSrc;
+      } else {
+        document.getElementById('prod-imagem-url').value = '';
+      }
       
-      if (produto.foto) {
-        document.getElementById('preview-foto').innerHTML = `<img src="${produto.foto}" alt="${produto.nome}">`;
-        fotoSelecionada = produto.foto;
+      if (imgSrc) {
+        document.getElementById('preview-foto').innerHTML = `<img src="${imgSrc}" alt="${produto.nome}">`;
+        fotoSelecionada = imgSrc.startsWith('data:') ? imgSrc : null;
       }
       
       document.getElementById('btn-salvar-txt').textContent = 'Atualizar Produto';
@@ -1384,15 +1556,26 @@
 
     function limparForm() {
       document.getElementById('form-produto').reset();
+      document.getElementById('prod-id').value = '';
+      document.getElementById('prod-imagem-url').value = '';
       document.getElementById('preview-foto').innerHTML = '';
+      document.getElementById('prod-ativo').checked = true;
       fotoSelecionada = null;
     }
 
-    function confirmarDelecao(id, nome) {
+    async function confirmarDelecao(id, nome) {
       if (confirm(`Tem certeza que deseja deletar o produto "${nome}"?`)) {
-        todosProdutos = todosProdutos.filter(p => p.id !== id);
-        mostrarProdutos();
-        alert('Produto deletado!');
+        try {
+          const formData = new FormData();
+          formData.append('acao', 'deletarProduto');
+          formData.append('dados', JSON.stringify({ id }));
+          await fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' });
+          alert('Produto deletado!');
+          carregarProdutos();
+        } catch (error) {
+          console.error('Erro ao deletar produto:', error);
+          alert('Erro ao deletar produto. Verifique a conexão.');
+        }
       }
     }
   </script>

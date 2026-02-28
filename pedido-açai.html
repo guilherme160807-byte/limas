@@ -202,14 +202,15 @@
   </header>
 
   <section id="produtos" style="display: flex; justify-content: center; align-items: flex-start; gap: 40px; flex-wrap: wrap; padding: 40px 20px;">
-    <div class="produto">
+    <div id="acai-loading" style="text-align:center;padding:40px 0;width:100%;"><p>Carregando açaís...</p></div>
+    <div class="produto acai-hardcoded">
       <img src="shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png" alt="Produto 1">
       <h3>Açai 300ml</h3>
       <p>R$20,00</p>
       <button onclick="abrirModalPersonalizacao('Açai 300ml', 20)">Adicionar ao Carrinho</button>
     </div>
     
-    <div class="produto">
+    <div class="produto acai-hardcoded">
       <img src="açai 500 ml.png" alt="Produto 1">
       <h3>Açai 500ml</h3>
       <p>R$ 25,00</p>
@@ -359,9 +360,53 @@
       color: #666;
       margin-top: 2px;
     }
+    .acai-hardcoded { display: none; }
   </style>
 
   <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-bjhx8jg7yQWGrLcOwagyfEqhfBMF9I5E2SKHMVqvsEJFtJ7H9_S2F6SHHjYsdwK6/exec';
+
+    async function carregarAcai() {
+      try {
+        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
+        const resultado = await response.json();
+        if (resultado.success && resultado.produtos) {
+          const acais = resultado.produtos.filter(p =>
+            p.categoria === 'Açaí' && p.ativo !== false && p.ativo !== 'false'
+          );
+          if (acais.length > 0) {
+            renderizarAcai(acais);
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('Usando açaís locais como fallback.', error);
+      }
+      document.getElementById('acai-loading').style.display = 'none';
+      document.querySelectorAll('.acai-hardcoded').forEach(el => el.style.display = 'block');
+    }
+
+    function renderizarAcai(acais) {
+      const secao = document.getElementById('produtos');
+      document.getElementById('acai-loading').style.display = 'none';
+      document.querySelectorAll('.acai-hardcoded').forEach(el => el.remove());
+
+      const imgPadrao = "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png";
+      acais.forEach(acai => {
+        const img = acai.imagem || imgPadrao;
+        const div = document.createElement('div');
+        div.className = 'produto';
+        const nomeEsc = acai.nome.replace(/'/g, "\\'");
+        div.innerHTML = `
+          <img src="${img}" alt="${acai.nome}" onerror="this.src='${imgPadrao}'">
+          <h3>${acai.nome}</h3>
+          <p>R$ ${parseFloat(acai.preco || 0).toFixed(2)}</p>
+          <button onclick="abrirModalPersonalizacao('${nomeEsc}', ${parseFloat(acai.preco || 0)})">Adicionar ao Carrinho</button>
+        `;
+        secao.appendChild(div);
+      });
+    }
+
     let produtoAtual = null;
     let precoAtual = 0;
 
@@ -489,7 +534,10 @@
       }
     };
 
-    document.addEventListener("DOMContentLoaded", atualizarAbinhaCarrinho);
+    document.addEventListener("DOMContentLoaded", function() {
+      atualizarAbinhaCarrinho();
+      carregarAcai();
+    });
   </script>
 
 </body>
