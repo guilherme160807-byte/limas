@@ -456,6 +456,7 @@
     .btn-remover:hover {
       background-color: #c82333;
     }
+    .lanche-hardcoded { display: none; }
   </style>
 </head>
 <body>
@@ -465,9 +466,10 @@
     <div class="titulo-header">LIMA'S BURGERS - Cardápio</div>
   </header>
 
-  <section class="produtos">
+  <section class="produtos" id="secao-lanches">
+    <div id="lanches-loading" style="text-align:center;padding:40px 0;grid-column:1/-1;"><p>Carregando lanches...</p></div>
     <!-- LIMA'S BACON CROCANTE -->
-    <div class="produto">
+    <div class="produto lanche-hardcoded">
       <img src="limas-bacon-crocante.jpg" alt="LIMA'S BACON CROCANTE">
       <h3>LIMA'S BACON CROCANTE</h3>
       <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo (cheddar ou mussarela), bacon crocante, tomate selecionado, alface, molho especial</p>
@@ -477,7 +479,7 @@
     </div>
 
     <!-- LIMA'S BACON DA CASA -->
-    <div class="produto">
+    <div class="produto lanche-hardcoded">
       <img src="limas-bacon-casa.jpg" alt="LIMA'S BACON DA CASA">
       <h3>LIMA'S BACON DA CASA</h3>
       <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo cheddar, bacon crocante, molho cheddar</p>
@@ -487,7 +489,7 @@
     </div>
 
     <!-- LIMA'S BACON DUPLO -->
-    <div class="produto">
+    <div class="produto lanche-hardcoded">
       <img src="limas-bacon-duplo.jpg" alt="LIMA'S BACON DUPLO">
       <h3>LIMA'S BACON DUPLO</h3>
       <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo mussarela ou cheddar, bacon em dobro, tomate e alface</p>
@@ -497,7 +499,7 @@
     </div>
 
     <!-- LIMA'S CALABRESA GRELHADA -->
-    <div class="produto">
+    <div class="produto lanche-hardcoded">
       <img src="limas-calabresa.jpg" alt="LIMA'S CALABRESA GRELHADA">
       <h3>LIMA'S CALABRESA GRELHADA</h3>
       <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo (cheddar ou mussarela), calabresa grelhada, tomate selecionado, alface, molho especial</p>
@@ -507,7 +509,7 @@
     </div>
 
     <!-- LIMA'S CLASSICO -->
-    <div class="produto">
+    <div class="produto lanche-hardcoded">
       <img src="limas-classico.jpg" alt="LIMA'S CLASSICO">
       <h3>LIMA'S CLASSICO</h3>
       <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo (cheddar ou mussarela), tomate selecionado, alface, molho especial</p>
@@ -517,7 +519,7 @@
     </div>
 
     <!-- LIMA'S DUPLO MAX -->
-    <div class="produto">
+    <div class="produto lanche-hardcoded">
       <img src="limas-duplo-max.jpg" alt="LIMA'S DUPLO MAX">
       <h3>LIMA'S DUPLO MAX</h3>
       <p class="descricao">Pão macio, 2 hambúrgueres artesanais 130g, 2 queijos (cheddar ou mussarela), tomate selecionado, alface, molho especial</p>
@@ -527,7 +529,7 @@
     </div>
 
     <!-- LIMA'S EGG -->
-    <div class="produto">
+    <div class="produto lanche-hardcoded">
       <img src="limas-egg.jpg" alt="LIMA'S EGG">
       <h3>LIMA'S EGG</h3>
       <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo (cheddar ou mussarela), ovo, tomate selecionado, alface, molho especial</p>
@@ -537,7 +539,7 @@
     </div>
 
     <!-- LIMA'S BURG -->
-    <div class="produto">
+    <div class="produto lanche-hardcoded">
       <img src="limas-burg.jpg" alt="LIMA'S BURG">
       <h3>LIMA'S BURG</h3>
       <p class="descricao">Pão macio, hambúrguer artesanal 130g, queijo (cheddar ou mussarela), molho especial</p>
@@ -584,6 +586,51 @@
   </div>
 
   <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx-bjhx8jg7yQWGrLcOwagyfEqhfBMF9I5E2SKHMVqvsEJFtJ7H9_S2F6SHHjYsdwK6/exec';
+
+    async function carregarLanches() {
+      try {
+        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
+        const resultado = await response.json();
+        if (resultado.success && resultado.produtos) {
+          const lanches = resultado.produtos.filter(p =>
+            p.categoria === 'Lanche' && p.ativo !== false && p.ativo !== 'false'
+          );
+          if (lanches.length > 0) {
+            renderizarLanches(lanches);
+            return;
+          }
+        }
+      } catch (error) {
+        console.warn('Usando lanches locais como fallback.', error);
+      }
+      // Fallback: show hardcoded
+      document.getElementById('lanches-loading').style.display = 'none';
+      document.querySelectorAll('.lanche-hardcoded').forEach(el => el.style.display = 'block');
+    }
+
+    function renderizarLanches(lanches) {
+      const secao = document.getElementById('secao-lanches');
+      document.getElementById('lanches-loading').style.display = 'none';
+      document.querySelectorAll('.lanche-hardcoded').forEach(el => el.remove());
+
+      lanches.forEach(lanche => {
+        const img = lanche.imagem || 'lanche.jpg';
+        const div = document.createElement('div');
+        div.className = 'produto';
+        const nomeEsc = lanche.nome.replace(/'/g, "\\'");
+        div.innerHTML = `
+          <img src="${img}" alt="${lanche.nome}" onerror="this.src='lanche.jpg'">
+          <h3>${lanche.nome}</h3>
+          <p class="descricao">${lanche.descricao || ''}</p>
+          <div class="preco">R$ ${parseFloat(lanche.preco || 0).toFixed(2)}</div>
+          <button onclick="abrirModalLimas('${nomeEsc}', ${parseFloat(lanche.preco || 0)}, 'queijo', 'molhos')">Personalizar e Adicionar</button>
+          <div class="info-extra">Escolha seu queijo e até 2 molhos</div>
+        `;
+        secao.appendChild(div);
+      });
+    }
+
     // Opções disponíveis
     const opcoesQueijo = [
       { nome: "Cheddar", preco: 0 },
@@ -992,6 +1039,7 @@
     // Inicializar carrinho
     document.addEventListener("DOMContentLoaded", function() {
       atualizarAbinhaCarrinho();
+      carregarLanches();
     });
   </script>
 </body>
