@@ -1061,7 +1061,7 @@
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDI4G-ODEtByxxf_9BzfEzW5QJPQjYP4sk8tO8mOT5skWRXk_BoFNq7smRVFZ6kmMK/exec';
-    const PLANILHA_URL = 'https://docs.google.com/spreadsheets/d/1IMPwck_qROKy8eyJExuXl-Pw9IG_3ElBuFJVaA7euSc/edit';
+    const PLANILHA_URL = 'https://docs.google.com/spreadsheets/d/1QPiQTId5d904Q4hRFTiDeRSydRr3D_YhcD1xahQuFTQ/edit';
     const DRIVE_URL = 'https://drive.google.com/drive/folders/1cnnY5J_58N9rR0qd45u1XBH4ypfcFTw0';
 
     let todosPedidos = [];
@@ -1069,6 +1069,41 @@
     let todosProdutos = [];
     let produtoEmEdicao = null;
     let fotoSelecionada = null;
+
+    function enviarParaScriptAdmin(dadosObj, callback) {
+      const iframeName = 'iframe-admin-' + Date.now();
+      const iframe = document.createElement('iframe');
+      iframe.name = iframeName;
+      iframe.style.cssText = 'position:absolute;width:1px;height:1px;border:none;opacity:0;pointer-events:none;';
+      document.body.appendChild(iframe);
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = SCRIPT_URL;
+      form.target = iframeName;
+      form.style.display = 'none';
+
+      const inputAcao = document.createElement('input');
+      inputAcao.type = 'hidden';
+      inputAcao.name = 'acao';
+      inputAcao.value = dadosObj.acao || '';
+      form.appendChild(inputAcao);
+
+      const inputDados = document.createElement('input');
+      inputDados.type = 'hidden';
+      inputDados.name = 'dados';
+      inputDados.value = JSON.stringify(dadosObj);
+      form.appendChild(inputDados);
+
+      document.body.appendChild(form);
+      form.submit();
+
+      setTimeout(function() {
+        try { document.body.removeChild(iframe); } catch(e) {}
+        try { document.body.removeChild(form); } catch(e) {}
+        if (callback) callback();
+      }, 3000);
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
       const hoje = new Date();
@@ -1455,7 +1490,7 @@
 
     async function salvarProduto(event) {
       event.preventDefault();
-      
+
       const idVal = document.getElementById('prod-id').value;
       const nome = document.getElementById('prod-nome').value;
       const categoria = document.getElementById('prod-categoria').value;
@@ -1464,54 +1499,47 @@
       const ativo = document.getElementById('prod-ativo').checked;
       const imagemUrl = document.getElementById('prod-imagem-url').value.trim();
       const imagem = fotoSelecionada || imagemUrl || (produtoEmEdicao?.imagem || produtoEmEdicao?.foto || '');
-      
-      const produto = {
-        nome,
-        categoria,
-        preco,
-        descricao,
-        ativo,
-        imagem
-      };
-      if (idVal) produto.id = idVal;
 
       const btnSubmit = event.target.querySelector('[type="submit"]');
       btnSubmit.disabled = true;
+      btnSubmit.textContent = 'Salvando...';
 
-      try {
-        const formData = new FormData();
-        formData.append('acao', 'salvarProduto');
-        formData.append('dados', JSON.stringify(produto));
+      const dadosObj = {
+        acao: 'salvarProduto',
+        id: idVal || '',
+        nome, categoria, preco, descricao, ativo, imagem
+      };
 
-        const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' });
+      enviarParaScriptAdmin(dadosObj, function() {
         alert(idVal ? 'Produto atualizado com sucesso!' : 'Produto adicionado com sucesso!');
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Salvar Produto';
         limparForm();
         if (idVal) cancelarEdicao();
         carregarProdutos();
-      } catch (error) {
-        console.error('Erro ao salvar produto:', error);
-        alert('Erro ao salvar produto. Verifique a conexão.');
-      } finally {
-        btnSubmit.disabled = false;
-      }
+      });
     }
 
-    async function toggleAtivo(id, ativoAtual) {
+    function toggleAtivo(id, ativoAtual) {
       const novoAtivo = !ativoAtual;
-      try {
-        const produto = todosProdutos.find(p => String(p.id) === String(id));
-        if (!produto) return;
-        const dados = { id, nome: produto.nome, categoria: produto.categoria, preco: produto.preco, descricao: produto.descricao, imagem: produto.imagem || produto.foto || '', ativo: novoAtivo };
-        const formData = new FormData();
-        formData.append('acao', 'salvarProduto');
-        formData.append('dados', JSON.stringify(dados));
-        await fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' });
-        alert(novoAtivo ? 'Produto reativado!' : 'Produto desativado (sem estoque)!');
+      const produto = todosProdutos.find(p => String(p.id) === String(id));
+      if (!produto) return;
+
+      const dadosObj = {
+        acao: 'salvarProduto',
+        id: String(id),
+        nome: produto.nome,
+        categoria: produto.categoria,
+        preco: produto.preco,
+        descricao: produto.descricao,
+        imagem: produto.imagem || produto.foto || '',
+        ativo: novoAtivo
+      };
+
+      enviarParaScriptAdmin(dadosObj, function() {
+        alert(novoAtivo ? 'Produto reativado!' : 'Produto desativado!');
         carregarProdutos();
-      } catch (error) {
-        console.error('Erro ao alterar status:', error);
-        alert('Erro ao alterar status do produto.');
-      }
+      });
     }
 
     function editarProduto(id) {
@@ -1563,20 +1591,13 @@
       fotoSelecionada = null;
     }
 
-    async function confirmarDelecao(id, nome) {
-      if (confirm(`Tem certeza que deseja deletar o produto "${nome}"?`)) {
-        try {
-          const formData = new FormData();
-          formData.append('acao', 'deletarProduto');
-          formData.append('dados', JSON.stringify({ id }));
-          await fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' });
-          alert('Produto deletado!');
-          carregarProdutos();
-        } catch (error) {
-          console.error('Erro ao deletar produto:', error);
-          alert('Erro ao deletar produto. Verifique a conexão.');
-        }
-      }
+    function confirmarDelecao(id, nome) {
+      if (!confirm('Tem certeza que deseja deletar "' + nome + '"?')) return;
+
+      enviarParaScriptAdmin({ acao: 'deletarProduto', id: String(id) }, function() {
+        alert('Produto deletado com sucesso!');
+        carregarProdutos();
+      });
     }
   </script>
 </body>
