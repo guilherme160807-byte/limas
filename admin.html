@@ -969,6 +969,15 @@
 
     <!-- ===== ABA PRODUTOS ===== -->
     <div id="produtos" class="tab-content">
+      <div id="aviso-importar" style="background:#fff3cd;border:1px solid #ffc107;border-radius:10px;padding:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;">
+        <div>
+          <strong>📦 Planilha vazia?</strong>
+          <p style="margin-top:5px;color:#555;font-size:14px;">Clique no botão para importar os produtos padrão da Lima's Pizzaria (Pizza, Lanche, Calzone, Bebida, Açaí, Pastel) para a nova planilha.</p>
+        </div>
+        <button onclick="importarProdutosPadrao()" class="btn btn-primary" id="btn-importar">
+          <i class="fas fa-upload"></i> Importar Produtos Padrão
+        </button>
+      </div>
       <div class="form-produto">
         <h2><i class="fas fa-plus"></i> <span id="form-titulo">Novo Produto</span></h2>
         <form id="form-produto" onsubmit="salvarProduto(event)">
@@ -989,7 +998,6 @@
                 <option value="Açaí">Açaí</option>
                 <option value="Acompanhamento">Acompanhamento</option>
                 <option value="Sobremesa">Sobremesa</option>
-                <option value="Marmita">Marmita</option>
                 <option value="Pastel">Pastel</option>
                 <option value="Outros">Outros</option>
               </select>
@@ -1103,6 +1111,95 @@
         try { document.body.removeChild(form); } catch(e) {}
         if (callback) callback();
       }, 3000);
+    }
+
+    const PRODUTOS_PADRAO = [
+      // PIZZAS BROTO
+      { nome: "4 Queijos - BROTO", categoria: "Pizza", preco: 37.00, descricao: "Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Atum - BROTO", categoria: "Pizza", preco: 36.00, descricao: "Molho especial, queijo mussarela, atum, cebola, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Bacon - BROTO", categoria: "Pizza", preco: 33.00, descricao: "Molho especial, queijo mussarela, bacon, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Calabacon Broto", categoria: "Pizza", preco: 35.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Calabacon Especial Cheddar Broto", categoria: "Pizza", preco: 36.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Calabacon Especial Requeijão Cremoso Broto", categoria: "Pizza", preco: 36.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Calabresa Acebolada Broto", categoria: "Pizza", preco: 32.00, descricao: "Molho especial, calabresa, queijo mussarela, cebola, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Calabresa Especial Cheddar Broto", categoria: "Pizza", preco: 33.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Calabresa Especial Requeijão Cremoso Broto", categoria: "Pizza", preco: 33.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Carne Seca e Catupiry Broto", categoria: "Pizza", preco: 38.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Chicken Strogonoff Broto", categoria: "Pizza", preco: 37.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Frango com Catupiry Broto", categoria: "Pizza", preco: 36.00, descricao: "Molho especial, queijo mussarela, frango desfiado, catupiry, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Margherita Broto", categoria: "Pizza", preco: 30.00, descricao: "Molho especial, queijo mussarela, tomate fresco, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Moda da Casa Broto", categoria: "Pizza", preco: 36.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Portuguesa Broto", categoria: "Pizza", preco: 36.00, descricao: "Molho especial, queijo mussarela, presunto, ovos, cebola, pimentão, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Strogonoff de Carne Broto", categoria: "Pizza", preco: 37.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Toscana Broto", categoria: "Pizza", preco: 36.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      // PIZZAS GRANDE
+      { nome: "4 Queijos - GRANDE", categoria: "Pizza", preco: 57.00, descricao: "Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Atum - GRANDE", categoria: "Pizza", preco: 55.00, descricao: "Molho especial, queijo mussarela, atum, cebola, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Bacon - GRANDE", categoria: "Pizza", preco: 52.00, descricao: "Molho especial, queijo mussarela, bacon, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Calabacon Grande", categoria: "Pizza", preco: 55.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Calabacon Especial Cheddar Grande", categoria: "Pizza", preco: 57.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Calabacon Especial Requeijão Cremoso Grande", categoria: "Pizza", preco: 57.00, descricao: "", imagem: "pizza.jpg", ativo: true },
+      { nome: "Calabresa Acebolada Grande", categoria: "Pizza", preco: 50.00, descricao: "Molho especial, calabresa, queijo mussarela, cebola, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Frango com Catupiry Grande", categoria: "Pizza", preco: 55.00, descricao: "Molho especial, queijo mussarela, frango desfiado, catupiry, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Margherita Grande", categoria: "Pizza", preco: 48.00, descricao: "Molho especial, queijo mussarela, tomate fresco, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Portuguesa Grande", categoria: "Pizza", preco: 55.00, descricao: "Molho especial, queijo mussarela, presunto, ovos, cebola, pimentão, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
+      // LANCHES
+      { nome: "X-Burguer", categoria: "Lanche", preco: 18.00, descricao: "Pão, hamburguer, queijo, alface, tomate e maionese.", imagem: "lanche.jpg", ativo: true },
+      { nome: "X-Bacon", categoria: "Lanche", preco: 22.00, descricao: "Pão, hamburguer, queijo, bacon, alface, tomate e maionese.", imagem: "lanche.jpg", ativo: true },
+      { nome: "X-Tudo", categoria: "Lanche", preco: 25.00, descricao: "Pão, hamburguer, queijo, bacon, ovo, alface, tomate e maionese.", imagem: "lanche.jpg", ativo: true },
+      // CALZONE
+      { nome: "Calzone Tradicional", categoria: "Calzone", preco: 35.00, descricao: "Massa fechada recheada com queijo mussarela e outros ingredientes à escolha.", imagem: "calzone.png", ativo: true },
+      // BEBIDAS
+      { nome: "Coca-Cola 2L", categoria: "Bebida", preco: 12.00, descricao: "Refrigerante Coca-Cola 2 litros.", imagem: "bebida.png", ativo: true },
+      { nome: "Coca-Cola Lata", categoria: "Bebida", preco: 6.00, descricao: "Refrigerante Coca-Cola lata 350ml.", imagem: "bebida.png", ativo: true },
+      { nome: "Guaraná 2L", categoria: "Bebida", preco: 10.00, descricao: "Refrigerante Guaraná Antarctica 2 litros.", imagem: "bebida.png", ativo: true },
+      { nome: "Suco Natural", categoria: "Bebida", preco: 8.00, descricao: "Suco natural de frutas.", imagem: "bebida.png", ativo: true },
+      { nome: "Água Mineral", categoria: "Bebida", preco: 4.00, descricao: "Água mineral 500ml.", imagem: "bebida.png", ativo: true },
+      // AÇAÍ
+      { nome: "Açaí 300ml", categoria: "Açaí", preco: 15.00, descricao: "Açaí cremoso 300ml com granola e banana.", imagem: "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png", ativo: true },
+      { nome: "Açaí 500ml", categoria: "Açaí", preco: 22.00, descricao: "Açaí cremoso 500ml com granola e banana.", imagem: "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png", ativo: true },
+      // PASTEL
+      { nome: "Pastel de Carne", categoria: "Pastel", preco: 10.00, descricao: "Pastel frito recheado com carne moída temperada.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Pastel de Queijo", categoria: "Pastel", preco: 9.00, descricao: "Pastel frito recheado com queijo mussarela.", imagem: "pizza.jpg", ativo: true },
+      { nome: "Pastel de Frango", categoria: "Pastel", preco: 10.00, descricao: "Pastel frito recheado com frango desfiado.", imagem: "pizza.jpg", ativo: true },
+    ];
+
+    async function importarProdutosPadrao() {
+      const btn = document.getElementById('btn-importar');
+      if (!confirm('Isso vai adicionar ' + PRODUTOS_PADRAO.length + ' produtos padrão na planilha. Deseja continuar?')) return;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importando...';
+
+      let total = PRODUTOS_PADRAO.length;
+      let enviados = 0;
+
+      function enviarProximo() {
+        if (enviados >= total) {
+          btn.innerHTML = '<i class="fas fa-check"></i> Importado!';
+          btn.style.background = '#28a745';
+          document.getElementById('aviso-importar').style.display = 'none';
+          setTimeout(() => carregarProdutos(), 3500);
+          return;
+        }
+        const produto = PRODUTOS_PADRAO[enviados];
+        const dadosObj = {
+          acao: 'salvarProduto',
+          id: '',
+          nome: produto.nome,
+          categoria: produto.categoria,
+          preco: produto.preco,
+          descricao: produto.descricao,
+          imagem: produto.imagem,
+          ativo: produto.ativo
+        };
+        enviarParaScriptAdmin(dadosObj, function() {
+          enviados++;
+          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importando ' + enviados + '/' + total + '...';
+          setTimeout(enviarProximo, 500);
+        });
+      }
+
+      enviarProximo();
     }
 
     document.addEventListener('DOMContentLoaded', function() {
