@@ -440,7 +440,7 @@
         const resultado = await response.json();
         if (resultado.success && resultado.produtos) {
           const pasteis = resultado.produtos.filter(p =>
-            p.categoria === 'Pastel' && p.ativo !== false && p.ativo !== 'false'
+            p.categoria === 'Pastel' && p.ativo !== false && p.ativo !== 'false' && p.ativo !== 'NÃO' && p.ativo !== 'NAO'
           );
           if (pasteis.length > 0) {
             renderizarPasteis(pasteis);

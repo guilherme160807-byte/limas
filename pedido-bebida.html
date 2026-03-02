@@ -271,7 +271,7 @@
       const resultado = await response.json();
       if (resultado.success && resultado.produtos) {
         const bebidas = resultado.produtos.filter(p =>
-          p.categoria === 'Bebida' && p.ativo !== false && p.ativo !== 'false'
+          p.categoria === 'Bebida' && p.ativo !== false && p.ativo !== 'false' && p.ativo !== 'NÃO' && p.ativo !== 'NAO'
         );
         if (bebidas.length > 0) {
           renderizarBebidas(bebidas);

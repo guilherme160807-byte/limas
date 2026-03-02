@@ -514,7 +514,7 @@
         const resultado = await response.json();
         if (resultado.success && resultado.produtos) {
           const calzones = resultado.produtos.filter(p =>
-            p.categoria === 'Calzone' && p.ativo !== false && p.ativo !== 'false'
+            p.categoria === 'Calzone' && p.ativo !== false && p.ativo !== 'false' && p.ativo !== 'NÃO' && p.ativo !== 'NAO'
           );
           if (calzones.length > 0) {
             renderizarCalzones(calzones);
