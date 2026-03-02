@@ -512,7 +512,6 @@ const CATEGORIA_PAGINA = {
   'Calzone': 'pedido-calzone.html',
   'Bebida': 'pedido-bebida.html',
   'Açaí': 'pedido-açai.html',
-  'Marmita': 'pedido-marmita.html',
   'Pastel': 'pedido-pastel.html',
   'Acompanhamento': 'carrinho.html',
   'Sobremesa': 'carrinho.html',
@@ -525,7 +524,6 @@ const CATEGORIA_IMAGEM_PADRAO = {
   'Calzone': 'calzone.png',
   'Bebida': 'bebida.png',
   'Açaí': "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png",
-  'Marmita': 'pizza.jpg',
   'Pastel': 'pizza.jpg'
 };
 
@@ -566,7 +564,7 @@ function renderizarMenu(produtos) {
   container.innerHTML = '';
 
   // Preferred category order
-  const ordem = ['Pizza', 'Lanche', 'Calzone', 'Bebida', 'Açaí', 'Marmita', 'Pastel', 'Acompanhamento', 'Sobremesa', 'Outros'];
+  const ordem = ['Pizza', 'Lanche', 'Calzone', 'Bebida', 'Açaí', 'Pastel', 'Acompanhamento', 'Sobremesa', 'Outros'];
   const categorias = [...new Set([...ordem.filter(c => porCategoria[c]), ...Object.keys(porCategoria)])];
 
   categorias.forEach(cat => {
