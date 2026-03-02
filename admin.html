@@ -1070,6 +1070,41 @@
     let produtoEmEdicao = null;
     let fotoSelecionada = null;
 
+    function enviarParaScriptAdmin(dadosObj, callback) {
+      const iframeName = 'iframe-admin-' + Date.now();
+      const iframe = document.createElement('iframe');
+      iframe.name = iframeName;
+      iframe.style.cssText = 'position:absolute;width:1px;height:1px;border:none;opacity:0;pointer-events:none;';
+      document.body.appendChild(iframe);
+
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = SCRIPT_URL;
+      form.target = iframeName;
+      form.style.display = 'none';
+
+      const inputAcao = document.createElement('input');
+      inputAcao.type = 'hidden';
+      inputAcao.name = 'acao';
+      inputAcao.value = dadosObj.acao || '';
+      form.appendChild(inputAcao);
+
+      const inputDados = document.createElement('input');
+      inputDados.type = 'hidden';
+      inputDados.name = 'dados';
+      inputDados.value = JSON.stringify(dadosObj);
+      form.appendChild(inputDados);
+
+      document.body.appendChild(form);
+      form.submit();
+
+      setTimeout(function() {
+        try { document.body.removeChild(iframe); } catch(e) {}
+        try { document.body.removeChild(form); } catch(e) {}
+        if (callback) callback();
+      }, 3000);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       const hoje = new Date();
       const ano = hoje.getFullYear();
@@ -1498,7 +1533,7 @@
 
     async function salvarProduto(event) {
       event.preventDefault();
-      
+
       const idVal = document.getElementById('prod-id').value;
       const nome = document.getElementById('prod-nome').value;
       const categoria = document.getElementById('prod-categoria').value;
@@ -1507,27 +1542,24 @@
       const ativo = document.getElementById('prod-ativo').checked;
       const imagemUrl = document.getElementById('prod-imagem-url').value.trim();
       const imagem = fotoSelecionada || imagemUrl || (produtoEmEdicao?.imagem || produtoEmEdicao?.foto || '');
-      
-      const produto = {
-        acao: 'salvarProduto',
-        nome,
-        categoria,
-        preco,
-        descricao,
-        ativo,
-        imagem
-      };
-      if (idVal) produto.id = idVal;
 
       const btnSubmit = event.target.querySelector('[type="submit"]');
       btnSubmit.disabled = true;
+      btnSubmit.textContent = 'Salvando...';
 
-      enviarParaScript(produto, () => {
+      const dadosObj = {
+        acao: 'salvarProduto',
+        id: idVal || '',
+        nome, categoria, preco, descricao, ativo, imagem
+      };
+
+      enviarParaScriptAdmin(dadosObj, function() {
         alert(idVal ? 'Produto atualizado com sucesso!' : 'Produto adicionado com sucesso!');
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = 'Salvar Produto';
         limparForm();
         if (idVal) cancelarEdicao();
         carregarProdutos();
-        btnSubmit.disabled = false;
       });
     }
 
@@ -1535,9 +1567,20 @@
       const novoAtivo = !ativoAtual;
       const produto = todosProdutos.find(p => String(p.id) === String(id));
       if (!produto) return;
-      const dados = { acao: 'salvarProduto', id, nome: produto.nome, categoria: produto.categoria, preco: produto.preco, descricao: produto.descricao, imagem: produto.imagem || produto.foto || '', ativo: novoAtivo };
-      enviarParaScript(dados, () => {
-        alert(novoAtivo ? 'Produto reativado!' : 'Produto desativado (sem estoque)!');
+
+      const dadosObj = {
+        acao: 'salvarProduto',
+        id: String(id),
+        nome: produto.nome,
+        categoria: produto.categoria,
+        preco: produto.preco,
+        descricao: produto.descricao,
+        imagem: produto.imagem || produto.foto || '',
+        ativo: novoAtivo
+      };
+
+      enviarParaScriptAdmin(dadosObj, function() {
+        alert(novoAtivo ? 'Produto reativado!' : 'Produto desativado!');
         carregarProdutos();
       });
     }
@@ -1592,12 +1635,12 @@
     }
 
     function confirmarDelecao(id, nome) {
-      if (confirm(`Tem certeza que deseja deletar o produto "${nome}"?`)) {
-        enviarParaScript({ acao: 'deletarProduto', id }, () => {
-          alert('Produto deletado!');
-          carregarProdutos();
-        });
-      }
+      if (!confirm('Tem certeza que deseja deletar "' + nome + '"?')) return;
+
+      enviarParaScriptAdmin({ acao: 'deletarProduto', id: String(id) }, function() {
+        alert('Produto deletado com sucesso!');
+        carregarProdutos();
+      });
     }
   </script>
 </body>
