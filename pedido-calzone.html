@@ -719,14 +719,14 @@
         detalhes += `\nObservações: ${observacoesCalzone}`;
       }
       
-      adicionarAoCarrinho('Calzone', total, detalhes);
+      adicionarAoCarrinho('Calzone', total, detalhes, observacoesCalzone.trim());
       
       fecharModal('modal-calzone');
       alert('Calzone adicionado ao carrinho!');
     }
 
     // Sistema do carrinho
-    function adicionarAoCarrinho(nome, preco, detalhes = '') {
+    function adicionarAoCarrinho(nome, preco, detalhes = '', observacao = '') {
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
       
       const itemExistenteIndex = cart.findIndex(item => 
@@ -740,7 +740,8 @@
           name: nome,
           price: preco,
           quantity: 1,
-          detalhes: detalhes
+          detalhes: detalhes,
+          observacao: observacao
         });
       }
       
