@@ -511,7 +511,7 @@ const CATEGORIA_PAGINA = {
   'Lanche': 'pedido-lanche.html',
   'Calzone': 'pedido-calzone.html',
   'Bebida': 'pedido-bebida.html',
-  'Açaí': 'pedido-açai.html',
+  'Açai': 'pedido-açai.html',
   'Pastel': 'pedido-pastel.html',
   'Acompanhamento': 'carrinho.html',
   'Sobremesa': 'carrinho.html',
@@ -523,7 +523,7 @@ const CATEGORIA_IMAGEM_PADRAO = {
   'Lanche': 'lanche.jpg',
   'Calzone': 'calzone.png',
   'Bebida': 'bebida.png',
-  'Açaí': "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png",
+  'Açai': "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png",
   'Pastel': 'pizza.jpg'
 };
 
@@ -552,39 +552,30 @@ async function carregarCardapio() {
 }
 
 function renderizarMenu(produtos) {
-  // Group by category
-  const porCategoria = {};
-  produtos.forEach(p => {
-    const cat = p.categoria || 'Outros';
-    if (!porCategoria[cat]) porCategoria[cat] = [];
-    porCategoria[cat].push(p);
-  });
+  // Get distinct categories from active products
+  const categoriasPresentes = [...new Set(produtos.map(p => p.categoria || 'Outros'))];
 
   const container = document.getElementById('menu-container');
   container.innerHTML = '';
 
   // Preferred category order
-  const ordem = ['Pizza', 'Lanche', 'Calzone', 'Bebida', 'Açaí', 'Pastel', 'Acompanhamento', 'Sobremesa', 'Outros'];
-  const categorias = [...new Set([...ordem.filter(c => porCategoria[c]), ...Object.keys(porCategoria)])];
+  const ordem = ['Pizza', 'Lanche', 'Calzone', 'Bebida', 'Açai', 'Pastel'];
+  const categorias = [...new Set([...ordem.filter(c => categoriasPresentes.includes(c)), ...categoriasPresentes])];
 
   categorias.forEach(cat => {
-    const prods = porCategoria[cat];
-    if (!prods || prods.length === 0) return;
-    const pagina = CATEGORIA_PAGINA[cat] || 'carrinho.html';
-    const imgPadrao = resolverImagem('', cat);
+    const pagina = CATEGORIA_PAGINA[cat];
+    if (!pagina || pagina === 'carrinho.html') return; // only show categories with a dedicated page
+    const img = CATEGORIA_IMAGEM_PADRAO[cat] || 'pizza.jpg';
 
-    prods.forEach(prod => {
-      const img = resolverImagem(prod.imagem, cat);
-      const div = document.createElement('div');
-      div.className = 'menu-item';
-      div.innerHTML = `<a href="${pagina}">
-        <div class="img-container">
-          <img src="${img}" alt="${prod.nome}" onerror="this.src='${imgPadrao}'">
-        </div>
-        <h3>${prod.nome}</h3>
-      </a>`;
-      container.appendChild(div);
-    });
+    const div = document.createElement('div');
+    div.className = 'menu-item';
+    div.innerHTML = `<a href="${pagina}">
+      <div class="img-container">
+        <img src="${img}" alt="${cat}">
+      </div>
+      <h3>${cat}</h3>
+    </a>`;
+    container.appendChild(div);
   });
 
   document.getElementById('menu-loading').style.display = 'none';
