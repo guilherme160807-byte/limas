@@ -458,6 +458,8 @@
         <h2>Calzone</h2>
         <span class="close" onclick="fecharModal('modal-calzone')">&times;</span>
       </div>
+
+      <div id="modal-calzone-opcoes"></div>
       
       <div class="opcao-grupo">
         <div class="opcao-titulo">
@@ -574,11 +576,29 @@
     let saborSelecionadoCalzone = null;
     let bordaSelecionadaCalzone = null;
     let observacoesCalzone = '';
+    let opcoesCalzoneAtual = '';
 
-    function abrirModalCalzone() {
+    function abrirModalCalzone(opcoes) {
       saborSelecionadoCalzone = null;
       bordaSelecionadaCalzone = null;
       observacoesCalzone = '';
+      opcoesCalzoneAtual = opcoes || '';
+
+      // Opções dinâmicas do produto
+      const opcoesCalzContainer = document.getElementById('modal-calzone-opcoes');
+      if (opcoesCalzoneAtual) {
+        const linhas = opcoesCalzoneAtual.split('\n').map(l => l.trim()).filter(l => l);
+        let optsHtml = linhas.map(l => `<option value="${l}">${l}</option>`).join('');
+        opcoesCalzContainer.innerHTML = `
+          <div class="opcao-grupo">
+            <label style="font-weight:600;color:#555;">Opções:</label>
+            <select id="modal-calzone-opcao-select" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-family:'Poppins',sans-serif;margin-top:5px;">
+              <option value="">Selecione uma opção</option>${optsHtml}
+            </select>
+          </div>`;
+      } else {
+        opcoesCalzContainer.innerHTML = '';
+      }
       
       document.getElementById('modal-calzone').style.display = 'block';
       carregarSaboresCalzone();
@@ -719,7 +739,10 @@
         detalhes += `\nObservações: ${observacoesCalzone}`;
       }
       
-      adicionarAoCarrinho('Calzone', total, detalhes, observacoesCalzone.trim());
+      const opcaoSelectCalzone = document.getElementById('modal-calzone-opcao-select');
+      const opcaoSelecionadaCalzone = opcaoSelectCalzone ? opcaoSelectCalzone.value : '';
+      const nomeCalzoneFinal = opcaoSelecionadaCalzone ? `Calzone - ${opcaoSelecionadaCalzone}` : 'Calzone';
+      adicionarAoCarrinho(nomeCalzoneFinal, total, detalhes, observacoesCalzone.trim());
       
       fecharModal('modal-calzone');
       alert('Calzone adicionado ao carrinho!');

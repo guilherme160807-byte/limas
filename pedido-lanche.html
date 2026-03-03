@@ -561,6 +561,8 @@
         <!-- Opções serão inseridas dinamicamente aqui -->
       </div>
       
+      <div id="modal-lanche-opcoes"></div>
+
       <div class="observacoes-container" style="margin-top: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid #000000;">
         <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px; color: #333;">Alguma observação? (opcional)</div>
         <textarea id="observacoes-text" placeholder="Ex: Sem cebola, pão bem tostado, molho à parte..." 
@@ -619,12 +621,13 @@
         const div = document.createElement('div');
         div.className = 'produto';
         const nomeEsc = lanche.nome.replace(/'/g, "\\'");
+        const opcoesEsc = (lanche.opcoes || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
         div.innerHTML = `
           <img src="${img}" alt="${lanche.nome}" onerror="this.src='lanche.jpg'">
           <h3>${lanche.nome}</h3>
           <p class="descricao">${lanche.descricao || ''}</p>
           <div class="preco">R$ ${parseFloat(lanche.preco || 0).toFixed(2)}</div>
-          <button onclick="abrirModalLimas('${nomeEsc}', ${parseFloat(lanche.preco || 0)}, 'queijo', 'molhos')">Personalizar e Adicionar</button>
+          <button onclick="abrirModalLimas('${nomeEsc}', ${parseFloat(lanche.preco || 0)}, 'queijo', 'molhos', false, null, '${opcoesEsc}')">Personalizar e Adicionar</button>
           <div class="info-extra">Escolha seu queijo e até 2 molhos</div>
         `;
         secao.appendChild(div);
@@ -661,13 +664,16 @@
     let saladaSelecionada = null;
     let observacoes = '';
 
-    function abrirModalLimas(nome, preco, temQueijoParam, temMolhosParam, simplesParam = false, temSaladaParam = null) {
+    let opcoesLancheAtual = '';
+
+    function abrirModalLimas(nome, preco, temQueijoParam, temMolhosParam, simplesParam = false, temSaladaParam = null, opcoes = '') {
       produtoAtual = nome;
       precoBase = preco;
       temQueijo = temQueijoParam;
       temMolhos = temMolhosParam;
       temSalada = temSaladaParam;
       simples = simplesParam;
+      opcoesLancheAtual = opcoes || '';
       
       // Resetar seleções
       queijoSelecionado = null;
@@ -678,6 +684,22 @@
       document.getElementById('modal-titulo').textContent = `Personalizar ${nome}`;
       document.getElementById('preco-total-modal').textContent = preco.toFixed(2);
       document.getElementById('observacoes-text').value = '';
+
+      // Opções dinâmicas do produto
+      const opcoesLancheContainer = document.getElementById('modal-lanche-opcoes');
+      if (opcoesLancheAtual) {
+        const linhas = opcoesLancheAtual.split('\n').map(l => l.trim()).filter(l => l);
+        let optsHtml = linhas.map(l => `<option value="${l}">${l}</option>`).join('');
+        opcoesLancheContainer.innerHTML = `
+          <div class="opcao-grupo">
+            <label style="font-weight:600;color:#555;">Opções:</label>
+            <select id="modal-lanche-opcao-select" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-family:'Poppins',sans-serif;margin-top:5px;">
+              <option value="">Selecione uma opção</option>${optsHtml}
+            </select>
+          </div>`;
+      } else {
+        opcoesLancheContainer.innerHTML = '';
+      }
       
       const container = document.getElementById('opcoes-container');
       container.innerHTML = '';
@@ -944,7 +966,10 @@
       }
       
       // Adicionar ao carrinho
-      adicionarAoCarrinho(produtoAtual, precoBase, descricao.trim(), observacoes.trim());
+      const opcaoSelectLanche = document.getElementById('modal-lanche-opcao-select');
+      const opcaoSelecionadaLanche = opcaoSelectLanche ? opcaoSelectLanche.value : '';
+      const nomeLancheFinal = opcaoSelecionadaLanche ? `${produtoAtual} - ${opcaoSelecionadaLanche}` : produtoAtual;
+      adicionarAoCarrinho(nomeLancheFinal, precoBase, descricao.trim(), observacoes.trim());
       
       // Fechar modal
       fecharModal();

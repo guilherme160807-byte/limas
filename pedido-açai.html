@@ -223,6 +223,8 @@
       <h3>Personalize seu Açaí</h3>
       <p id="modal-titulo" style="text-align: center; margin-bottom: 20px; font-weight: bold;"></p>
       
+      <div id="modal-opcoes-acai"></div>
+
       <div class="modal-group">
         <label for="fruta">Escolha 1 fruta:</label>
         <select id="fruta">
@@ -403,11 +405,12 @@
         const div = document.createElement('div');
         div.className = 'produto';
         const nomeEsc = acai.nome.replace(/'/g, "\\'");
+        const opcoesEsc = (acai.opcoes || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
         div.innerHTML = `
           <img src="${img}" alt="${acai.nome}" onerror="this.src='${imgPadrao}'">
           <h3>${acai.nome}</h3>
           <p>R$ ${parseFloat(acai.preco || 0).toFixed(2)}</p>
-          <button onclick="abrirModalPersonalizacao('${nomeEsc}', ${parseFloat(acai.preco || 0)})">Adicionar ao Carrinho</button>
+          <button onclick="abrirModalPersonalizacao('${nomeEsc}', ${parseFloat(acai.preco || 0)}, '${opcoesEsc}')">Adicionar ao Carrinho</button>
         `;
         secao.appendChild(div);
       });
@@ -415,10 +418,12 @@
 
     let produtoAtual = null;
     let precoAtual = 0;
+    let opcoesAcaiAtual = '';
 
-    function abrirModalPersonalizacao(nome, preco) {
+    function abrirModalPersonalizacao(nome, preco, opcoes) {
       produtoAtual = nome;
       precoAtual = preco;
+      opcoesAcaiAtual = opcoes || '';
       document.getElementById('modal-titulo').textContent = `${nome} - R$ ${preco.toFixed(2)}`;
       document.getElementById('fruta').value = '';
       document.getElementById('recheio').value = '';
@@ -427,6 +432,18 @@
       document.querySelectorAll('.aviso-selecao').forEach(aviso => {
         aviso.style.display = 'none';
       });
+      const opcoesContainer = document.getElementById('modal-opcoes-acai');
+      if (opcoesAcaiAtual) {
+        const linhas = opcoesAcaiAtual.split('\n').map(l => l.trim()).filter(l => l);
+        let optsHtml = linhas.map(l => `<option value="${l}">${l}</option>`).join('');
+        opcoesContainer.innerHTML = `
+          <div class="modal-group">
+            <label for="modal-opcao-select">Opções:</label>
+            <select id="modal-opcao-select"><option value="">Selecione uma opção</option>${optsHtml}</select>
+          </div>`;
+      } else {
+        opcoesContainer.innerHTML = '';
+      }
       document.getElementById('modal-personalizacao').style.display = 'block';
     }
 
@@ -458,8 +475,11 @@
         document.getElementById('aviso-cobertura').style.display = 'none';
       }
       if (!validado) return;
+      const opcaoSelect = document.getElementById('modal-opcao-select');
+      const opcaoSelecionada = opcaoSelect ? opcaoSelect.value : '';
       const observacaoAcai = document.getElementById('observacoes-acai').value.trim();
-      adicionarAoCarrinhoPersonalizado(produtoAtual, precoAtual, fruta, recheio, cobertura, observacaoAcai);
+      const nomeFinal = opcaoSelecionada ? `${produtoAtual} - ${opcaoSelecionada}` : produtoAtual;
+      adicionarAoCarrinhoPersonalizado(nomeFinal, precoAtual, fruta, recheio, cobertura, observacaoAcai);
       fecharModal();
     }
 

@@ -862,6 +862,7 @@
           <div class="item-info">
             <div class="item-nome">${item.name}</div>
             ${item.detalhes ? `<div class="item-detalhes"><i class="fas fa-pencil-alt"></i> ${item.detalhes}</div>` : ''}
+            ${item.observacao ? `<small style="color:#888;font-style:italic;">Obs: ${item.observacao}</small>` : ''}
           </div>
           <div class="item-quantidade">
             ${item.quantity}x
