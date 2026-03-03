@@ -501,6 +501,14 @@
         <div id="lista-bordas-modal"></div>
       </div>
       
+      <div class="opcao-grupo" style="margin-top: 15px;">
+        <div class="opcao-titulo">
+          <span>Alguma observação?</span>
+        </div>
+        <textarea id="observacoes-pizza" placeholder="Ex: sem cebola, molho extra..." 
+                  style="width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 5px; resize: vertical; min-height: 80px; font-family: 'Poppins', sans-serif; font-size: 14px;"></textarea>
+      </div>
+      
       <div class="modal-footer">
         <div class="preco-total">Total: R$ <span id="preco-total-modal">0.00</span></div>
         <div>
@@ -784,6 +792,10 @@
       saborSelecionadoIndex = null;
       saboresSelecionadosMultiplos = [];
       bordaSelecionadaIndex = null;
+      
+      // Limpar campo de observações
+      const obsField = document.getElementById('observacoes-pizza');
+      if (obsField) obsField.value = '';
       
       // Configurar título baseado no tipo
       const titulos = {
@@ -1096,7 +1108,13 @@
         detalhes += `\nBorda: ${borda.nome} (+R$ ${borda.preco.toFixed(2)})`;
       }
       
-      adicionarAoCarrinho(nomesPizza[pizzaTipoAtual], total, detalhes);
+      const obsFieldPizza = document.getElementById('observacoes-pizza');
+      const observacaoPizza = obsFieldPizza ? obsFieldPizza.value.trim() : '';
+      if (observacaoPizza) {
+        detalhes += `\nObservações: ${observacaoPizza}`;
+      }
+      
+      adicionarAoCarrinho(nomesPizza[pizzaTipoAtual], total, detalhes, observacaoPizza);
       
       fecharModal('modal-borda');
       alert('Pizza adicionada ao carrinho!');
@@ -1109,7 +1127,7 @@
     }
 
     // Funções do carrinho (mantidas iguais)
-    function adicionarAoCarrinho(nome, preco, detalhes = '') {
+    function adicionarAoCarrinho(nome, preco, detalhes = '', observacao = '') {
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
       
       const itemExistenteIndex = cart.findIndex(item => 
@@ -1123,7 +1141,8 @@
           name: nome,
           price: preco,
           quantity: 1,
-          detalhes: detalhes
+          detalhes: detalhes,
+          observacao: observacao
         });
       }
       

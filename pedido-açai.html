@@ -256,6 +256,12 @@
         <div id="aviso-cobertura" class="aviso-selecao">Por favor, escolha uma cobertura</div>
       </div>
 
+      <div class="modal-group">
+        <label for="observacoes-acai">Observações (opcional):</label>
+        <textarea id="observacoes-acai" placeholder="Ex: sem cebola, molho extra..." 
+                  style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; resize: vertical; min-height: 70px; font-family: 'Poppins', sans-serif; font-size: 14px;"></textarea>
+      </div>
+
       <div class="modal-buttons">
         <button class="btn-confirmar" onclick="confirmarPersonalizacao()">Adicionar ao Carrinho</button>
         <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
@@ -417,6 +423,7 @@
       document.getElementById('fruta').value = '';
       document.getElementById('recheio').value = '';
       document.getElementById('cobertura').value = '';
+      document.getElementById('observacoes-acai').value = '';
       document.querySelectorAll('.aviso-selecao').forEach(aviso => {
         aviso.style.display = 'none';
       });
@@ -451,26 +458,26 @@
         document.getElementById('aviso-cobertura').style.display = 'none';
       }
       if (!validado) return;
-      adicionarAoCarrinhoPersonalizado(produtoAtual, precoAtual, fruta, recheio, cobertura);
+      const observacaoAcai = document.getElementById('observacoes-acai').value.trim();
+      adicionarAoCarrinhoPersonalizado(produtoAtual, precoAtual, fruta, recheio, cobertura, observacaoAcai);
       fecharModal();
     }
 
-    function adicionarAoCarrinhoPersonalizado(nome, preco, fruta, recheio, cobertura) {
+    function adicionarAoCarrinhoPersonalizado(nome, preco, fruta, recheio, cobertura, observacao = '') {
       let cart = JSON.parse(localStorage.getItem("cart")) || [];
       const nomeDetalhado = `${nome} (${fruta}, ${recheio}, ${cobertura})`;
       let itemExistente = cart.find(item => item.name === nomeDetalhado);
       if (itemExistente) {
         itemExistente.quantity += 1;
       } else {
+        let detalhes = `${fruta}, ${recheio}, ${cobertura}`;
+        if (observacao) detalhes += `\nObservações: ${observacao}`;
         cart.push({
           name: nomeDetalhado,
           price: preco,
           quantity: 1,
-          detalhes: {
-            fruta: fruta,
-            recheio: recheio,
-            cobertura: cobertura
-          }
+          detalhes: detalhes,
+          observacao: observacao
         });
       }
       localStorage.setItem("cart", JSON.stringify(cart));
@@ -500,7 +507,7 @@
         const valorTotalItem = item.price * item.quantity;
         let detalhesText = '';
         if (item.detalhes) {
-          detalhesText = `<div class="item-detalhes">${item.detalhes.fruta}, ${item.detalhes.recheio}, ${item.detalhes.cobertura}</div>`;
+          detalhesText = `<div class="item-detalhes">${typeof item.detalhes === 'object' ? `${item.detalhes.fruta}, ${item.detalhes.recheio}, ${item.detalhes.cobertura}` : item.detalhes}</div>`;
         }
         li.innerHTML = `
           <div>
