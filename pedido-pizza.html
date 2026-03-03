@@ -484,7 +484,7 @@
 
         <div class="opcao-grupo" id="grupo-borda">
           <div class="opcao-titulo">
-            <span>Deseja borda recheada?</span>
+            <span id="modal-borda-titulo" aria-live="polite">Deseja borda recheada?</span>
             <div class="contador-opcao" id="contador-borda">0/1</div>
           </div>
           <div>Opcional</div>
@@ -495,14 +495,15 @@
           <div class="opcao-titulo">
             <span>Alguma observação?</span>
           </div>
-          <textarea id="observacoes-pizza" placeholder="Ex: Bem assado, menos sal..."
+          <textarea id="observacoes-pizza" placeholder="Ex: Bem assado, menos sal..." maxlength="100"
                     style="width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 5px; resize: vertical; min-height: 80px; font-family: 'Poppins', sans-serif; font-size: 14px;"></textarea>
+          <div id="obs-contador" style="text-align:right;font-size:12px;color:#999;margin-top:4px;">0/100</div>
         </div>
 
       </div>
       <div class="modal-footer">
         <div class="preco-total">Total: R$ <span id="preco-total-pizza">0.00</span></div>
-        <button class="btn-confirmar" id="btn-confirmar-final" onclick="finalizarPedido()">Confirmar Pedido</button>
+        <button class="btn-confirmar" id="btn-confirmar-final" onclick="finalizarPedido()">Adicionar ao Carrinho</button>
       </div>
     </div>
   </div>
@@ -522,9 +523,9 @@
     const CATEGORIA_ATUAL = 'Pizza';
 
     const PRODUTOS_FALLBACK = [
-      { id: 1, nome: "Pizza Broto Salgada 1 Sabor", preco: 30.00, imagem: "pizza-broto-salgada.jpg", descricao: "Pizza 25cm - Escolha seu sabor salgado favorito" },
-      { id: 2, nome: "Pizza Broto Doce 1 Sabor", preco: 30.00, imagem: "pizza-broto-doce.jpg", descricao: "Pizza 25cm - Escolha seu sabor doce favorito" },
-      { id: 3, nome: "Pizza Grande 1 Sabor", preco: 51.00, imagem: "pizza-grande-1-sabor.jpg", descricao: "Satisfaça seu apetite com nossa Pizza Grande de 1 sabor" },
+      { id: 1, nome: "Pizza Broto Salgada 1 Sabor", preco: 30.00, imagem: "pizza-broto.jpg", descricao: "Pizza 25cm" },
+      { id: 2, nome: "Pizza Broto Doce 1 Sabor", preco: 30.00, imagem: "pizza-broto-doce.jpg", descricao: "Pizza 25cm" },
+      { id: 3, nome: "Pizza Grande 1 Sabor", preco: 50.00, imagem: "pizza-grande-1-sabor.jpg", descricao: "Satisfaça seu apetite com nossa Pizza Grande de 1 sabor" },
       { id: 4, nome: "Pizza Grande 2 Sabores", preco: 52.00, imagem: "pizza-grande-2-sabores.jpg", descricao: "Escolha 2 sabores diferentes para sua pizza grande" }
     ];
 
@@ -578,52 +579,141 @@
       });
     }
 
-    // ===== SABORES HARDCODED (fallback) =====
+    // ===== SABORES HARDCODED =====
     const saboresBroto = [
-      { nome: "4 Queijos - BROTO", preco: 37.00, descricao: "Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano." },
-      { nome: "Calabresa - BROTO", preco: 30.00, descricao: "Molho especial, mussarela, calabresa e cebola." },
-      { nome: "Frango c/ Requeijão - BROTO", preco: 32.00, descricao: "Molho especial, mussarela, frango desfiado e requeijão." },
-      { nome: "Margherita - BROTO", preco: 30.00, descricao: "Molho especial, mussarela, tomate e manjericão." },
-      { nome: "Portuguesa - BROTO", preco: 32.00, descricao: "Molho especial, mussarela, presunto, ovo, cebola, azeitona e orégano." },
-      { nome: "Pepperoni - BROTO", preco: 35.00, descricao: "Molho especial, mussarela e pepperoni." }
+      { nome: "4 Queijos - BROTO", descricao: "Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano.", preco: 37.00 },
+      { nome: "Atum - BROTO", descricao: "Molho especial, queijo mussarela, atum, cebola, azeitona e orégano.", preco: 36.00 },
+      { nome: "Bacon - BROTO", descricao: "Molho especial, queijo mussarela, bacon, azeitona e orégano.", preco: 33.00 },
+      { nome: "Baiacatu - Broto", descricao: "Molho especial, queijo mussarela, calabresa ralada, requeijão cremoso, pimenta calabaresa, azeitona e orégano.", preco: 36.00 },
+      { nome: "Calabacon Broto", descricao: "", preco: 35.00 },
+      { nome: "Calabacon Especial Cheddar Broto", descricao: "", preco: 36.00 },
+      { nome: "Calabacon Especial Requeijão Cremoso Broto", descricao: "", preco: 36.00 },
+      { nome: "Calabresa Acebolada Broto", descricao: "Molho especial, calabresa, queijo mussarela, cebola, azeitona e orégano.", preco: 32.00 },
+      { nome: "Calabresa Cremosa Requeijão BROTO", descricao: "", preco: 36.00 },
+      { nome: "Carijó Broto", descricao: "", preco: 38.00 },
+      { nome: "Frango com Requeijão Cremoso Broto", descricao: "", preco: 36.00 },
+      { nome: "Frango Crocante Broto", descricao: "", preco: 36.00 },
+      { nome: "Lima's Broto", descricao: "", preco: 36.00 },
+      { nome: "Lombo Broto", descricao: "", preco: 35.00 },
+      { nome: "Lombo Especial Cheddar Broto", descricao: "", preco: 36.00 },
+      { nome: "Lombo Especial Requeijão Cremoso Broto", descricao: "", preco: 36.00 },
+      { nome: "Milho Verde Broto", descricao: "Molho especial, queijo mussarela, milho verde, azeitona e orégano.", preco: 32.00 },
+      { nome: "Mussarela Broto", descricao: "", preco: 32.00 },
+      { nome: "Mussarela Cremosa Broto", descricao: "", preco: 32.00 },
+      { nome: "Napolitana Broto", descricao: "", preco: 32.00 },
+      { nome: "Peperone Broto", descricao: "", preco: 35.00 },
+      { nome: "Portuguesa Broto", descricao: "", preco: 36.00 },
+      { nome: "4 Carnes - BROTO", descricao: "Molho especial, presunto, lombo, calabresa, bacon, queijo mussarela, azeitona e orégano.", preco: 39.00 },
+      { nome: "Calabresa Broto sem Cebola", descricao: "Molho especial, calabresa, queijo mussarela, azeitona e orégano.", preco: 32.00 },
+      { nome: "Palmito Broto", descricao: "Molho especial, mussarela, palmito orégano e azeitona.", preco: 30.00 },
+      { nome: "Vegetariana Broto", descricao: "Molho especial, mussarela, milho verde, palmito, tomate orégano e azeitona.", preco: 30.00 }
     ];
 
     const saboresDoce = [
-      { nome: "Brigadeiro - BROTO DOCE", preco: 35.00, descricao: "Chocolate ao leite, confeitos coloridos e granulado de chocolate." },
-      { nome: "Prestígio - BROTO DOCE", preco: 35.00, descricao: "Chocolate ao leite, coco ralado e leite condensado." },
-      { nome: "Romeu e Julieta - BROTO DOCE", preco: 35.00, descricao: "Requeijão cremoso e goiabada." },
-      { nome: "Nutella - BROTO DOCE", preco: 38.00, descricao: "Nutella e morangos frescos." }
+      { nome: "Brigadeiro", descricao: "Chocolate ao leite e granulado.", preco: 30.00 },
+      { nome: "Dois Amores", descricao: "Chocolate branco e creme de avelã.", preco: 35.00 },
+      { nome: "Ouro Branco", descricao: "Chocolate branco, ouro branco e leite condensado.", preco: 30.00 },
+      { nome: "Prestígio", descricao: "Chocolate ao leite, coco e leite condensado.", preco: 35.00 },
+      { nome: "Sonho de Valsa", descricao: "Chocolate ao leite, sonho de valsa e leite condensado.", preco: 35.00 }
     ];
 
     const saboresGrande1 = [
-      { nome: "4 Queijos", preco: 57.00, descricao: "Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano." },
-      { nome: "Calabresa", preco: 51.00, descricao: "Molho especial, mussarela, calabresa e cebola." },
-      { nome: "Frango c/ Requeijão", preco: 53.00, descricao: "Molho especial, mussarela, frango desfiado e requeijão." },
-      { nome: "Margherita", preco: 51.00, descricao: "Molho especial, mussarela, tomate e manjericão." },
-      { nome: "Portuguesa", preco: 53.00, descricao: "Molho especial, mussarela, presunto, ovo, cebola, azeitona e orégano." },
-      { nome: "Pepperoni", preco: 56.00, descricao: "Molho especial, mussarela e pepperoni." },
-      { nome: "Frango c/ Cheddar", preco: 55.00, descricao: "Molho especial, mussarela, frango desfiado e cheddar." },
-      { nome: "Mussarela", preco: 51.00, descricao: "Molho especial, mussarela, tomate e orégano." }
+      { nome: "4 Queijos", descricao: "Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano.", preco: 63.00 },
+      { nome: "Atum", descricao: "Molho especial, queijo mussarela, atum, cebola, azeitona e orégano.", preco: 66.00 },
+      { nome: "Bacon", descricao: "Molho especial, queijo mussarela, bacon, azeitona e orégano.", preco: 59.00 },
+      { nome: "Bacon Especial Cheddar", descricao: "Molho especial, queijo mussarela, bacon, cheddar, azeitona e orégano.", preco: 67.00 },
+      { nome: "Bacon Especial Requeijao", descricao: "Molho especial, queijo mussarela, bacon, requeijão cremoso, azeitona e orégano.", preco: 67.00 },
+      { nome: "Baiacatu", descricao: "Molho especial, queijo mussarela, calabresa ralada, requeijão cremoso, pimenta calabaresa, azeitona e orégano.", preco: 63.00 },
+      { nome: "Brigadeiro", descricao: "Chocolate ao leite e disquete.", preco: 57.00 },
+      { nome: "Calabacon", descricao: "Molho especial, queijo mussarela, calabresa, bacon, azeitona e orégano.", preco: 60.00 },
+      { nome: "Calabacon Especial Cheddar", descricao: "Molho especial, queijo mussarela, calabresa, bacon, cheddar, azeitona e orégano.", preco: 68.00 },
+      { nome: "Calabacon Especial Requeijao", descricao: "Molho especial, queijo mussarela, calabresa, bacon, requeijão cremoso, azeitona e orégano.", preco: 68.00 },
+      { nome: "Calabresa Acebolada", descricao: "Molho especial, calabresa, queijo mussarela, cebola, azeitona e orégano.", preco: 56.00 },
+      { nome: "Calabresa Cremosa Requeijao", descricao: "Molho especial, queijo mussarela, calabresa ralada, requeijão cremoso, azeitona e orégano.", preco: 62.00 },
+      { nome: "Calabresa Cremosa Cheddar", descricao: "Molho especial, queijo mussarela, calabresa ralada, cheddar, azeitona e orégano.", preco: 62.00 },
+      { nome: "Carijó", descricao: "Molho especial, bacon, milho, frango desfiado, ovo, requeijão cremoso, queijo mussarela, azeitona e orégano.", preco: 65.00 },
+      { nome: "Dois Amores", descricao: "Chocolate branco e creme de avelã.", preco: 60.00 },
+      { nome: "Frango com Requeijão", descricao: "Molho especial, frango desfiado, requeijão cremoso, queijo mussarela, tomate, azeitona e orégano.", preco: 64.00 },
+      { nome: "Frango Crocante", descricao: "Molho especial, frango desfiado, bacon, queijo mussarela, tomate, azeitona e orégano.", preco: 64.00 },
+      { nome: "Lima's", descricao: "Molho especial, queijo mussarela, presunto, calabresa, palmito, milho, requeijão cremoso, azeitona e orégano.", preco: 64.00 },
+      { nome: "Lombo", descricao: "Molho especial, queijo mussarela, lombo, azeitona e orégano.", preco: 60.00 },
+      { nome: "Lombo Especial Cheddar", descricao: "Molho especial, queijo mussarela, lombo, cheddar, azeitona e orégano.", preco: 68.00 },
+      { nome: "Lombo Especial Requeijao", descricao: "Molho especial, queijo mussarela, lombo, requeijão cremoso, azeitona e orégano.", preco: 68.00 },
+      { nome: "Milho Verde", descricao: "Molho especial, queijo mussarela, milho verde, azeitona e orégano.", preco: 51.00 },
+      { nome: "Mussarela", descricao: "Molho especial, queijo mussarela, azeitona e orégano.", preco: 50.00 },
+      { nome: "Mussarela Cremosa", descricao: "Molho especial, queijo mussarela, requeijão cremoso, azeitona e orégano.", preco: 58.00 },
+      { nome: "Napolitana", descricao: "Molho especial, presunto, queijo mussarela, tomate, azeitona e orégano.", preco: 51.00 },
+      { nome: "Ouro Branco", descricao: "Chocolate branco, ouro branco, leite condensado.", preco: 60.00 },
+      { nome: "Peperone", descricao: "Molho especial, queijo mussarela, peperone, azeitona e orégano.", preco: 60.00 },
+      { nome: "Portuguesa", descricao: "Molho especial, queijo mussarela, presunto, milho, ovo, cebola, azeitona e orégano.", preco: 62.00 },
+      { nome: "Prestígio", descricao: "Chocolate ao leite, coco e leite condensado.", preco: 57.00 },
+      { nome: "Sensação", descricao: "Creme de avelã e morango.", preco: 57.00 },
+      { nome: "Sonho de Valsa", descricao: "Chocolate ao leite, sonho de valsa, leite condensado.", preco: 60.00 },
+      { nome: "Calabresa sem Cebola", descricao: "Molho especial, calabresa, queijo mussarela, azeitona e orégano.", preco: 56.00 },
+      { nome: "Palmito", descricao: "Molho especial, mussarela, palmito orégano e azeitona.", preco: 52.00 },
+      { nome: "Vegetariana", descricao: "Molho especial, mussarela, milho verde, palmito, tomate orégano e azeitona.", preco: 55.00 }
     ];
 
     const saboresGrande2 = [
-      { nome: "4 Queijos - 1/2", preco: 57.00, descricao: "Mussarela, prato, provolone, parmesão, azeitona e orégano." },
-      { nome: "Calabresa - 1/2", preco: 51.00, descricao: "Mussarela, calabresa e cebola." },
-      { nome: "Frango c/ Requeijão - 1/2", preco: 53.00, descricao: "Mussarela, frango desfiado e requeijão." },
-      { nome: "Margherita - 1/2", preco: 51.00, descricao: "Mussarela, tomate e manjericão." },
-      { nome: "Portuguesa - 1/2", preco: 53.00, descricao: "Mussarela, presunto, ovo, cebola, azeitona e orégano." },
-      { nome: "Pepperoni - 1/2", preco: 56.00, descricao: "Mussarela e pepperoni." },
-      { nome: "Frango c/ Cheddar - 1/2", preco: 55.00, descricao: "Mussarela, frango desfiado e cheddar." },
-      { nome: "Mussarela - 1/2", preco: 51.00, descricao: "Mussarela, tomate e orégano." }
+      { nome: "4 Carnes 1/2", descricao: "Molho especial, presunto, lombo, calabresa, bacon, queijo mussarela, azeitona e orégano.", preco: 35.00 },
+      { nome: "4 Queijos 1/2", descricao: "Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano.", preco: 34.00 },
+      { nome: "Atum 1/2", descricao: "Molho especial, queijo mussarela, atum, cebola, azeitona e orégano.", preco: 36.00 },
+      { nome: "Bacon 1/2", descricao: "Molho especial, queijo mussarela, bacon, azeitona e orégano.", preco: 31.00 },
+      { nome: "Bacon Especial Cheddar 1/2", descricao: "Molho especial, queijo mussarela, bacon, cheddar, azeitona e orégano.", preco: 34.00 },
+      { nome: "Bacon Especial Requeijao 1/2", descricao: "Molho especial, queijo mussarela, bacon, requeijão cremoso, azeitona e orégano.", preco: 34.00 },
+      { nome: "Baiacatu 1/2", descricao: "Molho especial, queijo mussarela, calabresa ralada, requeijão cremoso, pimenta calabaresa, azeitona e orégano.", preco: 35.00 },
+      { nome: "Brigadeiro 1/2", descricao: "Chocolate ao leite e disquete.", preco: 28.00 },
+      { nome: "Calabacon 1/2", descricao: "Molho especial, queijo mussarela, calabresa, bacon, azeitona e orégano.", preco: 32.00 },
+      { nome: "Calabacon Especial Requeijao 1/2", descricao: "Molho especial, queijo mussarela, calabresa, bacon, requeijão cremoso, azeitona e orégano.", preco: 35.00 },
+      { nome: "Calabacon Especial Cheddar 1/2", descricao: "Molho especial, queijo mussarela, calabresa, bacon, cheddar, azeitona e orégano.", preco: 35.00 },
+      { nome: "Calabresa Acebolada 1/2", descricao: "Molho especial, queijo mussarela, cebola, azeitona e orégano.", preco: 30.00 },
+      { nome: "Calabresa Cremosa Cheddar 1/2", descricao: "Molho especial, queijo mussarela, calabresa ralada, cheddar, azeitona e orégano.", preco: 35.00 },
+      { nome: "Calabresa Cremosa Requeijao 1/2", descricao: "Molho especial, queijo mussarela, calabresa ralada, requeijão cremoso, azeitona e orégano.", preco: 35.00 },
+      { nome: "Carijó 1/2", descricao: "Molho especial, bacon, milho, frango desfiado, ovo, requeijão cremoso, queijo mussarela, azeitona e orégano.", preco: 35.00 },
+      { nome: "Dois Amores 1/2", descricao: "Chocolate branco e creme de avelã.", preco: 32.00 },
+      { nome: "Frango com Requeijão 1/2", descricao: "Molho especial, frango desfiado, requeijão cremoso, queijo mussarela, tomate, azeitona e orégano.", preco: 34.00 },
+      { nome: "Frango Crocante 1/2", descricao: "Molho especial, frango desfiado, bacon, queijo mussarela, tomate, azeitona e orégano.", preco: 34.00 },
+      { nome: "Lima's 1/2", descricao: "Molho especial, queijo mussarela, presunto, calabresa, palmito, milho, requeijão cremoso, azeitona e orégano.", preco: 34.00 },
+      { nome: "Lombo 1/2", descricao: "Molho especial, queijo mussarela, lombo, azeitona e orégano.", preco: 32.00 },
+      { nome: "Lombo Especial Cheddar 1/2", descricao: "Molho especial, queijo mussarela, lombo, cheddar, azeitona e orégano.", preco: 35.00 },
+      { nome: "Lombo Especial Requeijao 1/2", descricao: "Molho especial, queijo mussarela, lombo, requeijão cremoso, azeitona e orégano.", preco: 35.00 },
+      { nome: "Milho Verde 1/2", descricao: "Molho especial, queijo mussarela, milho verde, azeitona e orégano.", preco: 26.00 },
+      { nome: "Mussarela 1/2", descricao: "Molho especial, queijo mussarela, azeitona e orégano.", preco: 26.00 },
+      { nome: "Mussarela Cremosa 1/2", descricao: "Molho especial, queijo mussarela, requeijão cremoso, azeitona e orégano.", preco: 30.00 },
+      { nome: "Napolitana 1/2", descricao: "Molho especial, presunto, queijo mussarela, tomate, azeitona e orégano.", preco: 26.00 },
+      { nome: "Ouro Branco 1/2", descricao: "Chocolate branco, ouro branco, leite condensado.", preco: 32.00 },
+      { nome: "Peperone 1/2", descricao: "Molho especial, queijo mussarela, peperone, azeitona e orégano.", preco: 32.00 },
+      { nome: "Portuguesa 1/2", descricao: "Molho especial, queijo mussarela, presunto, milho, ovo, cebola, azeitona e orégano.", preco: 33.00 },
+      { nome: "Prestígio 1/2", descricao: "Chocolate ao leite, coco e leite condensado.", preco: 28.00 },
+      { nome: "Sonho de Valsa 1/2", descricao: "Chocolate ao leite, sonho de valsa, leite condensado.", preco: 32.00 },
+      { nome: "Calabresa 1/2 sem Cebola", descricao: "Molho especial, calabresa, queijo mussarela, azeitona e orégano.", preco: 30.00 },
+      { nome: "Palmito 1/2", descricao: "Molho especial, mussarela, palmito orégano e azeitona.", preco: 27.00 },
+      { nome: "Vegetariana 1/2", descricao: "Molho especial, mussarela, milho verde, palmito, tomate orégano e azeitona.", preco: 28.00 }
     ];
 
-    const bordas = [
-      { nome: "Sem Borda Recheada", preco: 0 },
-      { nome: "Borda de Catupiry", preco: 15.00 },
-      { nome: "Borda de Cheddar", preco: 15.00 },
-      { nome: "Borda de Chocolate", preco: 15.00 },
+    const bordasBroto = [
+      { nome: "Borda de Cheddar", preco: 10.00 },
+      { nome: "Borda de Chocolate ao Leite", preco: 10.00 },
+      { nome: "Borda de Chocolate Branco", preco: 10.00 },
+      { nome: "Borda de Creme de Avelã", preco: 10.00 },
+      { nome: "Borda de Requeijão Cremoso", preco: 10.00 },
+      { nome: "Borda Mussarela", preco: 12.00 }
+    ];
+
+    const bordasGrande = [
+      { nome: "Borda de Cheddar", preco: 12.00 },
+      { nome: "Borda de Chocolate ao Leite", preco: 12.00 },
+      { nome: "Borda de Chocolate Branco", preco: 12.00 },
+      { nome: "Borda de Creme de Avelã", preco: 12.00 },
+      { nome: "Borda de Requeijão Cremoso", preco: 12.00 },
+      { nome: "Borda Mussarela", preco: 14.00 },
+      { nome: "Borda de Calabresa", preco: 18.00 },
       { nome: "Borda Frango com Requeijão", preco: 18.00 }
     ];
+
+    function getBordasParaTipo(tipo) {
+      return (tipo === 'broto' || tipo === 'doce') ? bordasBroto : bordasGrande;
+    }
 
     // Variáveis globais para controlar o estado
     let pizzaTipoAtual = null;
@@ -712,6 +802,13 @@
       atualizarAbinhaCarrinho();
       carregarSaboresDinamicos();
       carregarProdutos();
+      const obsField = document.getElementById('observacoes-pizza');
+      const obsContador = document.getElementById('obs-contador');
+      if (obsField && obsContador) {
+        obsField.addEventListener('input', function() {
+          obsContador.textContent = obsField.value.length + '/100';
+        });
+      }
     });
 
     function fecharModal(modalId) {
@@ -783,16 +880,19 @@
             <div class="sabor-nome">${sabor.nome}</div>
             ${sabor.descricao ? `<div class="sabor-desc">${sabor.descricao}</div>` : ''}
           </div>
-          <div class="sabor-preco">${sabor.preco > 0 ? 'R$ ' + sabor.preco.toFixed(2).replace('.', ',') : ''}</div>
+          <div class="sabor-preco">${sabor.preco > 0 ? '+ R$ ' + sabor.preco.toFixed(2).replace('.', ',') : ''}</div>
         `;
         item.addEventListener('click', function() { selecionarSabor(index, maxSabores); });
         listaSabores.appendChild(item);
       });
 
       // Renderiza bordas
+      const bordasTipo = getBordasParaTipo(tipo);
+      const bordaTitulo = (tipo === 'broto' || tipo === 'doce') ? 'Escolha borda da pizza broto' : 'Deseja borda recheada?';
+      document.getElementById('modal-borda-titulo').textContent = bordaTitulo;
       const listaBordas = document.getElementById('lista-bordas');
       listaBordas.innerHTML = '';
-      bordas.forEach((borda, index) => {
+      bordasTipo.forEach((borda, index) => {
         const item = document.createElement('div');
         item.className = 'borda-item';
         item.innerHTML = `
@@ -836,11 +936,17 @@
     }
 
     function selecionarBorda(index) {
-      bordaSelecionadaIndex = index;
-      document.querySelectorAll('#lista-bordas .borda-item').forEach((el, i) => {
-        el.classList.toggle('selecionado', i === index);
-      });
-      document.getElementById('contador-borda').textContent = `1/1`;
+      if (bordaSelecionadaIndex === index) {
+        bordaSelecionadaIndex = null;
+        document.querySelectorAll('#lista-bordas .borda-item').forEach(el => el.classList.remove('selecionado'));
+        document.getElementById('contador-borda').textContent = '0/1';
+      } else {
+        bordaSelecionadaIndex = index;
+        document.querySelectorAll('#lista-bordas .borda-item').forEach((el, i) => {
+          el.classList.toggle('selecionado', i === index);
+        });
+        document.getElementById('contador-borda').textContent = '1/1';
+      }
       atualizarPrecoTotal();
     }
 
@@ -856,8 +962,9 @@
         total = Math.max(...precos);
       }
 
-      if (bordaSelecionadaIndex !== null && bordas[bordaSelecionadaIndex]) {
-        total += bordas[bordaSelecionadaIndex].preco;
+      const bordasTipo = getBordasParaTipo(pizzaTipoAtual);
+      if (bordaSelecionadaIndex !== null && bordasTipo[bordaSelecionadaIndex]) {
+        total += bordasTipo[bordaSelecionadaIndex].preco;
       }
 
       document.getElementById('preco-total-pizza').textContent = total.toFixed(2).replace('.', ',');
@@ -882,20 +989,25 @@
         nomesFinal = saboresSelecionadosMultiplos.map(i => sabores[i].nome);
       }
 
+      const bordasTipo = getBordasParaTipo(pizzaTipoAtual);
       let bordaTexto = '';
-      if (bordaSelecionadaIndex !== null && bordas[bordaSelecionadaIndex]) {
-        const borda = bordas[bordaSelecionadaIndex];
-        if (borda.preco > 0) {
-          precoFinal += borda.preco;
-          bordaTexto = ` + ${borda.nome}`;
-        }
+      if (bordaSelecionadaIndex !== null && bordasTipo[bordaSelecionadaIndex]) {
+        const borda = bordasTipo[bordaSelecionadaIndex];
+        precoFinal += borda.preco;
+        bordaTexto = ` + ${borda.nome}`;
       }
 
       const opcoesSelect = document.getElementById('modal-pizza-opcao-select');
       const opcaoSelecionada = opcoesSelect ? opcoesSelect.value : '';
       const obs = document.getElementById('observacoes-pizza').value.trim();
 
-      let nomePedido = nomesFinal.join(' + ') + bordaTexto;
+      const tipoNomes = {
+        'broto': 'Pizza Broto',
+        'doce': 'Pizza Broto Doce',
+        'grande-1': 'Pizza Grande',
+        'grande-2': 'Pizza Grande 2 Sabores'
+      };
+      let nomePedido = tipoNomes[pizzaTipoAtual] + ' - ' + nomesFinal.join(' + ') + bordaTexto;
       if (opcaoSelecionada) nomePedido = `${nomePedido} (${opcaoSelecionada})`;
 
       adicionarAoCarrinho(nomePedido, precoFinal, obs);
