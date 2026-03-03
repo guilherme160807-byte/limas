@@ -372,7 +372,7 @@
         const resultado = await response.json();
         if (resultado.success && resultado.produtos) {
           const acais = resultado.produtos.filter(p =>
-            p.categoria === 'Açaí' && p.ativo !== false && p.ativo !== 'false'
+            p.categoria === 'Açai' && p.ativo !== false && p.ativo !== 'false' && p.ativo !== 'NÃO' && p.ativo !== 'NAO'
           );
           if (acais.length > 0) {
             renderizarAcai(acais);

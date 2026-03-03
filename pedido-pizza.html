@@ -453,36 +453,8 @@
   </header>
 
   <section class="produtos" id="secao-pizzas">
-    <div class="produto">
-      <img src="pizza.jpg" alt="Pizza Broto Salgada 1 Sabor">
-      <h3>Pizza Broto Salgada 1 Sabor</h3>
-      <p>Pizza 25cm - Escolha seu sabor favorito</p>
-      <div class="preco">A partir de R$ 30,00</div>
-      <button onclick="abrirModalSabor('broto')">Personalizar e Adicionar</button>
-    </div>
-
-    <div class="produto">
-      <img src="Pizza Broto Doce 1 Sabor.png" alt="Pizza Broto Doce 1 Sabor">
-      <h3>Pizza Broto Doce 1 Sabor</h3>
-      <p>Pizza 25cm - Escolha seu sabor doce favorito</p>
-      <div class="preco">A partir de R$ 30,00</div>
-      <button onclick="abrirModalSabor('doce')">Personalizar e Adicionar</button>
-    </div>
-
-    <div class="produto">
-      <img src="PIZZA GRANDE 1 SABOR.png" alt="Pizza Grande 1 Sabor">
-      <h3>Pizza Grande 1 Sabor</h3>
-      <p>Satisfaça seu apetite com nossa Pizza Grande de 1 sabor</p>
-      <div class="preco">A partir de R$ 51,00</div>
-      <button onclick="abrirModalSabor('grande-1')">Personalizar e Adicionar</button>
-    </div>
-
-    <div class="produto">
-      <img src="PIZZA GRANDE 2 SABORES.png" alt="Pizza Grande 2 Sabores">
-      <h3>Pizza Grande 2 Sabores</h3>
-      <p>Escolha 2 sabores diferentes para sua pizza grande</p>
-      <div class="preco">A partir de R$ 52,00</div>
-      <button onclick="abrirModalSabor('grande-2')">Personalizar e Adicionar</button>
+    <div id="produtos-container" style="display:contents;">
+      <p style="text-align:center;padding:40px;color:#666;font-family:Poppins,sans-serif;grid-column:1/-1;">Carregando cardápio...</p>
     </div>
   </section>
 
@@ -551,6 +523,64 @@
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDI4G-ODEtByxxf_9BzfEzW5QJPQjYP4sk8tO8mOT5skWRXk_BoFNq7smRVFZ6kmMK/exec';
+    const CATEGORIA_ATUAL = 'Pizza';
+
+    const PRODUTOS_FALLBACK = [
+      { id: 1, nome: "Pizza Broto Salgada 1 Sabor", preco: 30.00, imagem: "pizza-broto-salgada.jpg", descricao: "Pizza 25cm - Escolha seu sabor salgado favorito" },
+      { id: 2, nome: "Pizza Broto Doce 1 Sabor", preco: 30.00, imagem: "pizza-broto-doce.jpg", descricao: "Pizza 25cm - Escolha seu sabor doce favorito" },
+      { id: 3, nome: "Pizza Grande 1 Sabor", preco: 51.00, imagem: "pizza-grande-1-sabor.jpg", descricao: "Satisfaça seu apetite com nossa Pizza Grande de 1 sabor" },
+      { id: 4, nome: "Pizza Grande 2 Sabores", preco: 52.00, imagem: "pizza-grande-2-sabores.jpg", descricao: "Escolha 2 sabores diferentes para sua pizza grande" }
+    ];
+
+    async function carregarProdutos() {
+      const container = document.getElementById('produtos-container');
+      container.innerHTML = '<p style="text-align:center;padding:40px;color:#666;font-family:Poppins,sans-serif;grid-column:1/-1;">Carregando cardápio...</p>';
+      try {
+        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
+        const resultado = await response.json();
+        if (resultado.success && resultado.produtos && resultado.produtos.length > 0) {
+          const filtrados = resultado.produtos.filter(p =>
+            p.categoria === CATEGORIA_ATUAL &&
+            p.ativo !== false && p.ativo !== 'false' && p.ativo !== 'NÃO' && p.ativo !== 'NAO'
+          );
+          if (filtrados.length > 0) {
+            renderizarProdutos(filtrados);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Erro ao carregar da planilha, usando fallback.', e);
+      }
+      renderizarProdutos(PRODUTOS_FALLBACK);
+    }
+
+    function getTipoPizza(nome) {
+      if (/broto.*doce|doce.*broto/i.test(nome)) return 'doce';
+      if (/broto/i.test(nome)) return 'broto';
+      if (/grande.*2|2.*sabor/i.test(nome)) return 'grande-2';
+      return 'grande-1';
+    }
+
+    function renderizarProdutos(produtos) {
+      const container = document.getElementById('produtos-container');
+      container.innerHTML = '';
+      produtos.forEach(prod => {
+        const imagem = prod.imagem && prod.imagem.trim() ? prod.imagem : 'pizza.jpg';
+        const preco = parseFloat(prod.preco || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        const tipo = getTipoPizza(prod.nome);
+        const div = document.createElement('div');
+        div.className = 'produto';
+        div.innerHTML = `
+          <img src="${imagem}" alt="${prod.nome}" onerror="this.src='pizza.jpg'">
+          <h3>${prod.nome}</h3>
+          <p>${prod.descricao || ''}</p>
+          <div class="preco">A partir de ${preco}</div>
+          <button>Personalizar e Adicionar</button>
+        `;
+        div.querySelector('button').addEventListener('click', function() { abrirModalSabor(tipo); });
+        container.appendChild(div);
+      });
+    }
 
     // DADOS COMPLETOS DAS PIZZAS (fallback hardcoded)
     const saboresBroto = [
@@ -740,11 +770,12 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-      carregarSaboresDinamicos();
       atualizarAbinhaCarrinho();
+      carregarSaboresDinamicos();
+      carregarProdutos();
     });
 
-
+    function fecharModal(modalId) {
       document.getElementById(modalId).style.display = 'none';
     }
 
