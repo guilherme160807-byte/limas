@@ -38,7 +38,8 @@ function doGet(e) {
         preco: parseFloat(parametros.preco) || 0,
         imagem: parametros.imagem || '',
         descricao: parametros.descricao || '',
-        ativo: parametros.ativo !== 'false' && parametros.ativo !== 'NÃO'
+        ativo: parametros.ativo !== 'false' && parametros.ativo !== 'NÃO',
+        opcoes: parametros.opcoes || ''
       };
     }
     return criarRespostaJSON(salvarProduto(produto));
@@ -86,7 +87,8 @@ function doPost(e) {
         preco: parseFloat(prod.preco) || 0,
         imagem: prod.imagem || prod.foto || '',
         descricao: prod.descricao || '',
-        ativo: prod.ativo !== 'false' && prod.ativo !== false && prod.ativo !== 'NÃO'
+        ativo: prod.ativo !== 'false' && prod.ativo !== false && prod.ativo !== 'NÃO',
+        opcoes: prod.opcoes || ''
       }));
     }
     if (acao === 'deletarProduto') return criarRespostaJSON(deletarProduto(parseInt(dados.id || dados.produtoId)));
@@ -103,7 +105,7 @@ function obterOuCriarAbaProdutos() {
   var aba = planilha.getSheetByName(PRODUTOS_ABA);
   if (!aba) {
     aba = planilha.insertSheet(PRODUTOS_ABA);
-    var cab = ['ID', 'Nome', 'Categoria', 'Preço', 'Imagem', 'Descrição', 'Ativo'];
+    var cab = ['ID', 'Nome', 'Categoria', 'Preço', 'Imagem', 'Descrição', 'Ativo', 'Opcoes'];
     aba.getRange(1, 1, 1, cab.length).setValues([cab]);
     aba.getRange(1, 1, 1, cab.length).setBackground('#000').setFontColor('#fff').setFontWeight('bold');
     aba.setFrozenRows(1);
@@ -116,7 +118,7 @@ function listarProdutos() {
     var aba = obterOuCriarAbaProdutos();
     var ultimaLinha = aba.getLastRow();
     if (ultimaLinha < 2) return { success: true, produtos: [], total: 0 };
-    var dados = aba.getRange(2, 1, ultimaLinha - 1, 7).getValues();
+    var dados = aba.getRange(2, 1, ultimaLinha - 1, 8).getValues();
     var produtos = [];
     for (var i = 0; i < dados.length; i++) {
       var linha = dados[i];
@@ -133,6 +135,7 @@ function listarProdutos() {
         foto: linha[4] || '',
         descricao: linha[5] || '',
         ativo: ativo,
+        opcoes: linha[7] || '',
         linha: i + 2
       });
     }
@@ -148,7 +151,7 @@ function salvarProduto(produto) {
     var ultimaLinha = aba.getLastRow();
     if (produto.id && produto.id > 0) {
       if (ultimaLinha >= 2) {
-        var dados = aba.getRange(2, 1, ultimaLinha - 1, 7).getValues();
+        var dados = aba.getRange(2, 1, ultimaLinha - 1, 8).getValues();
         for (var i = 0; i < dados.length; i++) {
           if (String(dados[i][0]) === String(produto.id)) {
             var linha = i + 2;
@@ -158,6 +161,7 @@ function salvarProduto(produto) {
             aba.getRange(linha, 5).setValue(produto.imagem);
             aba.getRange(linha, 6).setValue(produto.descricao);
             aba.getRange(linha, 7).setValue(produto.ativo ? 'SIM' : 'NÃO');
+            aba.getRange(linha, 8).setValue(produto.opcoes || '');
             return { success: true, message: 'Produto atualizado!', produtoId: produto.id };
           }
         }
@@ -172,7 +176,7 @@ function salvarProduto(produto) {
         if (idAtual >= proximoId) proximoId = idAtual + 1;
       }
     }
-    aba.appendRow([proximoId, produto.nome, produto.categoria, parseFloat(produto.preco), produto.imagem, produto.descricao, produto.ativo ? 'SIM' : 'NÃO']);
+    aba.appendRow([proximoId, produto.nome, produto.categoria, parseFloat(produto.preco), produto.imagem, produto.descricao, produto.ativo ? 'SIM' : 'NÃO', produto.opcoes || '']);
     return { success: true, message: 'Produto adicionado!', produtoId: proximoId };
   } catch (error) {
     return { success: false, error: error.message };

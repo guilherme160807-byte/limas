@@ -173,6 +173,7 @@
   <div style="background:white;margin:10% auto;padding:25px;border-radius:12px;width:90%;max-width:400px;box-shadow:0 0 20px rgba(0,0,0,0.3);">
     <h3 id="modal-bebida-titulo" style="text-align:center;margin-bottom:10px;color:#333;"></h3>
     <p id="modal-bebida-preco" style="text-align:center;margin-bottom:20px;font-weight:bold;color:#333;"></p>
+    <div id="modal-bebida-opcoes"></div>
     <div style="margin-bottom:15px;">
       <label style="display:block;margin-bottom:5px;font-weight:600;color:#555;">Observações (opcional):</label>
       <textarea id="observacoes-bebida" placeholder="Ex: sem gelo, bem gelada..." 
@@ -311,11 +312,12 @@
       const div = document.createElement('div');
       div.className = 'produto';
       const nomeEsc = bebida.nome.replace(/'/g, "\\'");
+      const opcoesEsc = (bebida.opcoes || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
       div.innerHTML = `
         <img src="${img}" alt="${bebida.nome}" onerror="this.src='bebida.png'">
         <h3>${bebida.nome}</h3>
         <p>R$ ${parseFloat(bebida.preco || 0).toFixed(2)}</p>
-        <button onclick="abrirModalBebida('${nomeEsc}', ${parseFloat(bebida.preco || 0)})">Adicionar ao Carrinho</button>
+        <button onclick="abrirModalBebida('${nomeEsc}', ${parseFloat(bebida.preco || 0)}, '${opcoesEsc}')">Adicionar ao Carrinho</button>
       `;
       secao.appendChild(div);
     });
@@ -323,13 +325,29 @@
 
   let bebidaAtual = null;
   let precoBebidaAtual = 0;
+  let opcoesBebidaAtual = '';
 
-  function abrirModalBebida(nome, preco) {
+  function abrirModalBebida(nome, preco, opcoes) {
     bebidaAtual = nome;
     precoBebidaAtual = preco;
+    opcoesBebidaAtual = opcoes || '';
     document.getElementById('modal-bebida-titulo').textContent = nome;
     document.getElementById('modal-bebida-preco').textContent = `R$ ${parseFloat(preco).toFixed(2)}`;
     document.getElementById('observacoes-bebida').value = '';
+    const opcoesContainer = document.getElementById('modal-bebida-opcoes');
+    if (opcoesBebidaAtual) {
+      const linhas = opcoesBebidaAtual.split('\n').map(l => l.trim()).filter(l => l);
+      let optsHtml = linhas.map(l => `<option value="${l}">${l}</option>`).join('');
+      opcoesContainer.innerHTML = `
+        <div style="margin-bottom:15px;">
+          <label style="display:block;margin-bottom:5px;font-weight:600;color:#555;">Opções:</label>
+          <select id="modal-bebida-opcao-select" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-family:'Poppins',sans-serif;">
+            <option value="">Selecione uma opção</option>${optsHtml}
+          </select>
+        </div>`;
+    } else {
+      opcoesContainer.innerHTML = '';
+    }
     document.getElementById('modal-bebida').style.display = 'block';
   }
 
@@ -338,20 +356,22 @@
   }
 
   function confirmarBebida() {
+    const opcaoSelect = document.getElementById('modal-bebida-opcao-select');
+    const opcaoSelecionada = opcaoSelect ? opcaoSelect.value : '';
     const observacao = document.getElementById('observacoes-bebida').value.trim();
-    adicionarAoCarrinho(bebidaAtual, precoBebidaAtual, observacao);
+    const nomeFinal = opcaoSelecionada ? `${bebidaAtual} - ${opcaoSelecionada}` : bebidaAtual;
+    adicionarAoCarrinho(nomeFinal, precoBebidaAtual, observacao);
     fecharModalBebida();
   }
 
   function adicionarAoCarrinho(nome, preco, observacao = '') {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    
+    const detalhes = observacao ? `Observações: ${observacao}` : '';
     let itemExistente = cart.find(item => item.name === nome && (item.detalhes || '') === detalhes);
     
     if (itemExistente) {
       itemExistente.quantity += 1;
     } else {
-      const detalhes = observacao ? `Observações: ${observacao}` : '';
       cart.push({
         name: nome,
         price: preco,

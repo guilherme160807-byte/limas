@@ -465,6 +465,8 @@
         <h2 id="modal-sabor-titulo">Escolha o Sabor</h2>
         <span class="close" onclick="fecharModal('modal-sabor')">&times;</span>
       </div>
+
+      <div id="modal-pizza-opcoes"></div>
       
       <div class="opcao-grupo">
         <div class="opcao-titulo">
@@ -585,7 +587,7 @@
           <div class="preco">A partir de ${preco}</div>
           <button>Personalizar e Adicionar</button>
         `;
-        div.querySelector('button').addEventListener('click', function() { abrirModalSabor(tipo); });
+        div.querySelector('button').addEventListener('click', function() { abrirModalSabor(tipo, prod.opcoes || ''); });
         container.appendChild(div);
       });
     }
@@ -787,8 +789,11 @@
       document.getElementById(modalId).style.display = 'none';
     }
 
-    function abrirModalSabor(tipo) {
+    let opcoesPizzaAtual = '';
+
+    function abrirModalSabor(tipo, opcoes) {
       pizzaTipoAtual = tipo;
+      opcoesPizzaAtual = opcoes || '';
       saborSelecionadoIndex = null;
       saboresSelecionadosMultiplos = [];
       bordaSelecionadaIndex = null;
@@ -816,6 +821,22 @@
       };
       
       document.getElementById('modal-sabor-subtitulo').textContent = subtitulos[tipo];
+
+      // Opções dinâmicas do produto
+      const opcoesContainer = document.getElementById('modal-pizza-opcoes');
+      if (opcoesPizzaAtual) {
+        const linhas = opcoesPizzaAtual.split('\n').map(l => l.trim()).filter(l => l);
+        let optsHtml = linhas.map(l => `<option value="${l}">${l}</option>`).join('');
+        opcoesContainer.innerHTML = `
+          <div class="opcao-grupo">
+            <label style="font-weight:600;color:#555;">Opções:</label>
+            <select id="modal-pizza-opcao-select" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-family:'Poppins',sans-serif;margin-top:5px;">
+              <option value="">Selecione uma opção</option>${optsHtml}
+            </select>
+          </div>`;
+      } else {
+        opcoesContainer.innerHTML = '';
+      }
       
       // Carregar sabores corretos (dinâmicos ou hardcoded)
       const saboresArray = getSaboresParaTipo(tipo);
@@ -1075,6 +1096,12 @@
         'grande-1': 'Pizza Grande 1 Sabor',
         'grande-2': 'Pizza Grande 2 Sabores'
       };
+
+      const opcaoSelectPizza = document.getElementById('modal-pizza-opcao-select');
+      const opcaoSelecionadaPizza = opcaoSelectPizza ? opcaoSelectPizza.value : '';
+      const nomePizzaFinal = opcaoSelecionadaPizza
+        ? `${nomesPizza[pizzaTipoAtual]} - ${opcaoSelecionadaPizza}`
+        : nomesPizza[pizzaTipoAtual];
       
       let detalhes = "";
       
@@ -1114,13 +1141,14 @@
         detalhes += `\nObservações: ${observacaoPizza}`;
       }
       
-      adicionarAoCarrinho(nomesPizza[pizzaTipoAtual], total, detalhes, observacaoPizza);
+      adicionarAoCarrinho(nomePizzaFinal, total, detalhes, observacaoPizza);
       
       fecharModal('modal-borda');
       alert('Pizza adicionada ao carrinho!');
       
       // Resetar seleções
       pizzaTipoAtual = null;
+      opcoesPizzaAtual = '';
       saborSelecionadoIndex = null;
       saboresSelecionadosMultiplos = [];
       bordaSelecionadaIndex = null;

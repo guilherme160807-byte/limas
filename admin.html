@@ -1034,6 +1034,12 @@
             <textarea id="prod-descricao" placeholder="Descrição detalhada do produto..."></textarea>
           </div>
 
+          <div class="form-group">
+            <label for="prod-opcoes">Opções do Modal (uma por linha, ex: "300ml - R$15,00"):</label>
+            <textarea id="prod-opcoes" rows="4" placeholder="300ml - R$15,00&#10;500ml - R$20,00&#10;700ml - R$25,00"></textarea>
+            <small style="color:#888;">Deixe vazio para não mostrar seletor de opções no modal</small>
+          </div>
+
           <div class="preview-foto" id="preview-foto"></div>
 
           <div class="form-actions">
@@ -1647,7 +1653,8 @@
       const dadosObj = {
         acao: 'salvarProduto',
         id: idVal || '',
-        nome, categoria, preco, descricao, ativo, imagem
+        nome, categoria, preco, descricao, ativo, imagem,
+        opcoes: document.getElementById('prod-opcoes').value.trim()
       };
 
       enviarParaScriptAdmin(dadosObj, function() {
@@ -1673,7 +1680,8 @@
         preco: produto.preco,
         descricao: produto.descricao,
         imagem: produto.imagem || produto.foto || '',
-        ativo: novoAtivo
+        ativo: novoAtivo,
+        opcoes: produto.opcoes || ''
       };
 
       enviarParaScriptAdmin(dadosObj, function() {
@@ -1695,6 +1703,7 @@
       document.getElementById('prod-preco').value = produto.preco;
       document.getElementById('prod-descricao').value = produto.descricao || '';
       document.getElementById('prod-ativo').checked = produto.ativo !== false && produto.ativo !== 'false';
+      document.getElementById('prod-opcoes').value = produto.opcoes || '';
 
       const imgSrc = produto.imagem || produto.foto || '';
       if (imgSrc && !imgSrc.startsWith('data:')) {
