@@ -454,6 +454,15 @@ header img {
         <h3>Bebida</h3>
       </a>
     </div>
+    <!-- NOVO ITEM: PORÇÃO -->
+    <div class="menu-item">
+      <a href="pedido-porção.html">
+        <div class="img-container">
+          <img src="porcao.jpg" alt="Porção" onerror="this.src='batata.jpg'">
+        </div>
+        <h3>Porção</h3>
+      </a>
+    </div>
     <!-- NOVO ITEM: CALZONE -->
     <div class="menu-item">
       <a href="pedido-calzone.html">
@@ -512,6 +521,7 @@ const CATEGORIA_PAGINA = {
   'Calzone': 'pedido-calzone.html',
   'Bebida': 'pedido-bebida.html',
   'Açai': 'pedido-açai.html',
+  'Porção': 'pedido-porção.html',
   'Acompanhamento': 'carrinho.html',
   'Sobremesa': 'carrinho.html',
   'Outros': 'carrinho.html'
@@ -522,7 +532,8 @@ const CATEGORIA_IMAGEM_PADRAO = {
   'Lanche': 'lanche.jpg',
   'Calzone': 'calzone.png',
   'Bebida': 'bebida.png',
-  'Açai': "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png"
+  'Açai': "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png",
+  'Porção': 'porcao.jpg'
 };
 
 function resolverImagem(imagem, categoria) {
@@ -557,7 +568,7 @@ function renderizarMenu(produtos) {
   container.innerHTML = '';
 
   // Preferred category order
-  const ordem = ['Pizza', 'Lanche', 'Açai', 'Bebida', 'Calzone'];
+  const ordem = ['Pizza', 'Lanche', 'Açai', 'Bebida', 'Porção', 'Calzone'];
   const categorias = [...new Set([...ordem.filter(c => categoriasPresentes.includes(c)), ...categoriasPresentes])];
 
   categorias.forEach(cat => {

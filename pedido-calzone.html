@@ -429,7 +429,6 @@
     .btn-remover:hover {
       background-color: #c82333;
     }
-    .calzone-hardcoded { display: none; }
   </style>
 </head>
 <body>
@@ -440,13 +439,12 @@
   </header>
 
   <section class="produtos" id="secao-calzones">
-    <div id="calzone-loading" style="text-align:center;padding:40px 0;width:100%;"><p>Carregando calzones...</p></div>
-    <!-- Calzone Principal - CARD MENOR -->
-    <div class="produto calzone-hardcoded">
+    <!-- Calzone Principal -->
+    <div class="produto">
       <img src="calzone.png" alt="Calzone">
       <h3>Calzone</h3>
       <p>Sabores Frango com Requeijão e Pizza (mussarela, presunto, tomate e orégano)</p>
-      <div class="preco">A partir de R$ 35,00</div>
+      <div class="preco">R$ 35,00</div>
       <button onclick="abrirModalCalzone()">Personalizar e Adicionar</button>
     </div>
   </section>
@@ -455,12 +453,14 @@
   <div id="modal-calzone" class="modal-personalizar">
     <div class="modal-content">
       <div class="modal-header">
-        <h2>Calzone</h2>
+        <div>
+          <h2>Calzone</h2>
+          <p style="font-size:13px;color:#666;margin-top:5px;">Sabores Frango com Requeijão e Pizza (mussarela, presunto, tomate e orégano)</p>
+          <p style="font-weight:bold;font-size:14px;margin-top:4px;">R$ 35,00</p>
+        </div>
         <span class="close" onclick="fecharModal('modal-calzone')">&times;</span>
       </div>
 
-      <div id="modal-calzone-opcoes"></div>
-      
       <div class="opcao-grupo">
         <div class="opcao-titulo">
           <span>Escolha o seu calzone:</span>
@@ -482,16 +482,16 @@
       <div class="opcao-grupo">
         <div class="opcao-titulo">
           <span>Alguma observação?</span>
-          <div class="contador-opcao" id="contador-obs-calzone">0/100</div>
+          <div class="contador-opcao" id="contador-obs-calzone">0 / 100</div>
         </div>
-        <textarea id="observacoes-calzone" placeholder="Ex: Bem assado, menos sal..." 
+        <textarea id="observacoes-calzone" placeholder="" maxlength="100"
                   oninput="atualizarContadorObs()" 
                   style="width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 5px; resize: vertical; min-height: 80px; font-family: 'Poppins', sans-serif; font-size: 14px;"></textarea>
       </div>
       
       <div class="modal-footer">
         <div class="preco-total">Total: R$ <span id="preco-total-calzone">35.00</span></div>
-        <button class="btn-confirmar" id="btn-confirmar-calzone" onclick="confirmarCalzone()" disabled>Confirmar Pedido</button>
+        <button class="btn-confirmar" id="btn-confirmar-calzone" onclick="confirmarCalzone()" disabled>Adicionar ao Carrinho</button>
       </div>
     </div>
   </div>
@@ -510,60 +510,15 @@
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDI4G-ODEtByxxf_9BzfEzW5QJPQjYP4sk8tO8mOT5skWRXk_BoFNq7smRVFZ6kmMK/exec';
 
-    async function carregarCalzones() {
-      try {
-        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
-        const resultado = await response.json();
-        if (resultado.success && resultado.produtos) {
-          const calzones = resultado.produtos.filter(p =>
-            p.categoria === 'Calzone' && p.ativo !== false && p.ativo !== 'false' && p.ativo !== 'NÃO' && p.ativo !== 'NAO'
-          );
-          if (calzones.length > 0) {
-            renderizarCalzones(calzones);
-            return;
-          }
-        }
-      } catch (error) {
-        console.warn('Usando calzones locais como fallback.', error);
-      }
-      document.getElementById('calzone-loading').style.display = 'none';
-      document.querySelectorAll('.calzone-hardcoded').forEach(el => el.style.display = 'block');
-    }
-
-    function renderizarCalzones(calzones) {
-      const secao = document.getElementById('secao-calzones');
-      document.getElementById('calzone-loading').style.display = 'none';
-      document.querySelectorAll('.calzone-hardcoded').forEach(el => el.remove());
-
-      // Update saboresCalzone with dynamic data
-      saboresCalzone.length = 0;
-      calzones.forEach(c => {
-        saboresCalzone.push({ nome: c.nome, preco: parseFloat(c.preco || 0), descricao: c.descricao || '' });
-      });
-
-      const div = document.createElement('div');
-      div.className = 'produto';
-      div.innerHTML = `
-        <img src="calzone.png" alt="Calzone">
-        <h3>Calzone</h3>
-        <p>Escolha seu sabor: ${calzones.map(c => c.nome).join(', ')}</p>
-        <div class="preco">A partir de R$ ${Math.min(...calzones.map(c => parseFloat(c.preco || 0))).toFixed(2)}</div>
-        <button onclick="abrirModalCalzone()">Personalizar e Adicionar</button>
-      `;
-      secao.appendChild(div);
-    }
-
-    // Dados do Calzone
+    // Dados do Calzone (hardcoded)
     const saboresCalzone = [
       { 
-        nome: "Calzone Frango com Requeijão", 
-        preco: 35.00, 
-        descricao: "Frango desfiado com requeijão cremoso" 
+        nome: "Calsone Frango com Requeijão", 
+        descricao: "" 
       },
       { 
-        nome: "Calzone Pizza", 
-        preco: 35.00, 
-        descricao: "Mussarela, presunto, tomate e orégano" 
+        nome: "Calsone Pizza", 
+        descricao: "Mussarela, presunto, tomate e orégano." 
       }
     ];
 
@@ -576,30 +531,12 @@
     let saborSelecionadoCalzone = null;
     let bordaSelecionadaCalzone = null;
     let observacoesCalzone = '';
-    let opcoesCalzoneAtual = '';
 
-    function abrirModalCalzone(opcoes) {
+    function abrirModalCalzone() {
       saborSelecionadoCalzone = null;
       bordaSelecionadaCalzone = null;
       observacoesCalzone = '';
-      opcoesCalzoneAtual = opcoes || '';
 
-      // Opções dinâmicas do produto
-      const opcoesCalzContainer = document.getElementById('modal-calzone-opcoes');
-      if (opcoesCalzoneAtual) {
-        const linhas = opcoesCalzoneAtual.split('\n').map(l => l.trim()).filter(l => l);
-        let optsHtml = linhas.map(l => `<option value="${l}">${l}</option>`).join('');
-        opcoesCalzContainer.innerHTML = `
-          <div class="opcao-grupo">
-            <label style="font-weight:600;color:#555;">Opções:</label>
-            <select id="modal-calzone-opcao-select" style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-family:'Poppins',sans-serif;margin-top:5px;">
-              <option value="">Selecione uma opção</option>${optsHtml}
-            </select>
-          </div>`;
-      } else {
-        opcoesCalzContainer.innerHTML = '';
-      }
-      
       document.getElementById('modal-calzone').style.display = 'block';
       carregarSaboresCalzone();
       carregarBordasCalzone();
@@ -689,15 +626,11 @@
       const texto = document.getElementById('observacoes-calzone').value;
       observacoesCalzone = texto;
       const contador = document.getElementById('contador-obs-calzone');
-      contador.textContent = `${texto.length}/100`;
+      contador.textContent = `${texto.length} / 100`;
     }
 
     function atualizarPrecoTotalCalzone() {
-      let total = 0;
-      
-      if (saborSelecionadoCalzone !== null) {
-        total += saboresCalzone[saborSelecionadoCalzone].preco;
-      }
+      let total = 35.00; // preço base sempre R$ 35,00
       
       if (bordaSelecionadaCalzone !== null) {
         total += bordasCalzone[bordaSelecionadaCalzone].preco;
@@ -728,20 +661,20 @@
       const sabor = saboresCalzone[saborSelecionadoCalzone];
       const total = parseFloat(document.getElementById('preco-total-calzone').textContent);
       
-      let detalhes = `Sabor: ${sabor.nome} (R$ ${sabor.preco.toFixed(2)})`;
+      let nomeCalzoneFinal = `Calzone - ${sabor.nome}`;
+      if (bordaSelecionadaCalzone !== null) {
+        nomeCalzoneFinal += ` + ${bordasCalzone[bordaSelecionadaCalzone].nome}`;
+      }
       
+      let detalhes = `Sabor: ${sabor.nome}`;
       if (bordaSelecionadaCalzone !== null) {
         const borda = bordasCalzone[bordaSelecionadaCalzone];
         detalhes += `\nBorda: ${borda.nome} (+R$ ${borda.preco.toFixed(2)})`;
       }
-      
       if (observacoesCalzone.trim()) {
         detalhes += `\nObservações: ${observacoesCalzone}`;
       }
       
-      const opcaoSelectCalzone = document.getElementById('modal-calzone-opcao-select');
-      const opcaoSelecionadaCalzone = opcaoSelectCalzone ? opcaoSelectCalzone.value : '';
-      const nomeCalzoneFinal = opcaoSelecionadaCalzone ? `Calzone - ${opcaoSelecionadaCalzone}` : 'Calzone';
       adicionarAoCarrinho(nomeCalzoneFinal, total, detalhes, observacoesCalzone.trim());
       
       fecharModal('modal-calzone');
@@ -835,7 +768,6 @@
     // Inicializar carrinho
     document.addEventListener("DOMContentLoaded", function() {
       atualizarAbinhaCarrinho();
-      carregarCalzones();
     });
   </script>
 </body>

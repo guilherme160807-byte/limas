@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Porções</title>
+  <link rel="shortcut icon" href="ca.jpg" type="image/x-icon">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffffff, #f9f9f9);
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #000000;
+      color: white;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .btn-voltar {
+      font-size: 16px;
+      background-color: #ffffff;
+      color: rgb(0, 0, 0);
+      padding: 10px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn-voltar:hover {
+      background-color: #f0f0f0;
+    }
+
+    .titulo-header {
+      margin: 0 auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .produto {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .produto:hover {
+      transform: translateY(-5px);
+    }
+
+    .produto img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .produto h3 {
+      margin: 10px 0;
+      font-size: 18px;
+      color: #333;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .produto p {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 20px;
+      min-height: 80px;
+      line-height: 1.4;
+    }
+
+    .produto .preco {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #000000;
+      min-height: 30px;
+    }
+
+    .produto button {
+      background-color: #000000;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+      margin-top: auto;
+    }
+
+    .produto button:hover {
+      background-color: #333;
+    }
+
+    /* ===== MODAL ESTILOS ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 20px auto;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 550px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.3);
+      overflow: hidden;
+      animation: modalopen 0.4s;
+    }
+
+    @keyframes modalopen {
+      from { opacity: 0; transform: translateY(-50px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .modal-header {
+      background: #000;
+      color: white;
+      padding: 20px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 18px;
+      margin: 0;
+    }
+
+    .modal-header p {
+      font-size: 13px;
+      margin: 5px 0 0;
+      opacity: 0.8;
+    }
+
+    .close {
+      font-size: 28px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .close:hover {
+      opacity: 0.7;
+    }
+
+    .modal-body {
+      padding: 20px 25px;
+      max-height: 65vh;
+      overflow-y: auto;
+    }
+
+    .opcao-grupo {
+      margin-bottom: 20px;
+    }
+
+    .opcao-titulo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .contador-opcao {
+      background: #f0f0f0;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: normal;
+    }
+
+    .obrigatorio {
+      background: #000;
+      color: white;
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      margin-bottom: 10px;
+    }
+
+    .sabor-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 15px;
+      border: 2px solid #eee;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .sabor-item:hover {
+      border-color: #000;
+    }
+
+    .sabor-item.selecionado {
+      border-color: #000;
+      background: #f8f8f8;
+    }
+
+    .sabor-item .sabor-info {
+      flex: 1;
+    }
+
+    .sabor-item .sabor-nome {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .sabor-item .sabor-preco {
+      font-weight: bold;
+      font-size: 14px;
+      color: #000;
+      margin-left: 10px;
+    }
+
+    .sabor-check {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      margin-right: 10px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sabor-item.selecionado .sabor-check {
+      background: #000;
+      border-color: #000;
+    }
+
+    .sabor-item.selecionado .sabor-check::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
+    }
+
+    .modal-footer {
+      padding: 15px 25px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+    }
+
+    .preco-total {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .btn-confirmar {
+      background: #000;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .btn-confirmar:hover {
+      background: #333;
+    }
+
+    .btn-confirmar:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    #carrinho-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+    }
+
+    #carrinho-icon {
+      background-color: #ffffff;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 50%;
+      font-size: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+    }
+
+    #carrinho-abinha {
+      display: none;
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 15px;
+      width: 260px;
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+    }
+
+    #carrinho-container:hover #carrinho-abinha {
+      display: block;
+    }
+
+    #carrinho-itens {
+      max-height: 200px;
+      overflow-y: auto;
+      margin: 10px 0;
+      font-size: 14px;
+      list-style: none;
+      padding: 0;
+    }
+
+    #carrinho-itens li {
+      border-bottom: 1px solid #eee;
+      padding: 5px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #btn-finalizar {
+      width: 100%;
+      padding: 10px;
+      background-color: #000000;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-remover {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    #produtos-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 25px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a class="btn-voltar" href="index.html">🔙 Voltar</a>
+    <div class="titulo-header">Porções</div>
+  </header>
+
+  <div id="produtos-container">
+    <!-- Cards rendered by JS -->
+  </div>
+
+  <!-- Modal de Escolha de Tamanho -->
+  <div id="modal-porcao" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2 id="modal-porcao-titulo">Batata Especial</h2>
+          <p id="modal-porcao-subtitulo">Batata, bacon e mussarela</p>
+        </div>
+        <span class="close" onclick="fecharModal('modal-porcao')">&times;</span>
+      </div>
+      <div class="modal-body">
+
+        <div class="opcao-grupo">
+          <div class="opcao-titulo">
+            <span>Escolha o tamanho</span>
+            <div class="contador-opcao" id="contador-tamanho">0/1</div>
+          </div>
+          <div class="obrigatorio">Obrigatório</div>
+          <div id="lista-tamanhos"></div>
+        </div>
+
+        <div class="opcao-grupo">
+          <div class="opcao-titulo">
+            <span>Alguma observação?</span>
+          </div>
+          <textarea id="observacoes-porcao" maxlength="100"
+                    style="width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 5px; resize: vertical; min-height: 80px; font-family: 'Poppins', sans-serif; font-size: 14px;"></textarea>
+          <div id="obs-porcao-contador" style="text-align:right;font-size:12px;color:#999;margin-top:4px;">0 / 100</div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <div class="preco-total">Total: R$ <span id="preco-total-porcao">0,00</span></div>
+        <button class="btn-confirmar" id="btn-confirmar-porcao" onclick="confirmarPorcao()" disabled>Adicionar ao Carrinho</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="carrinho-container">
+    <div id="carrinho-icon">🛒</div>
+    <div id="carrinho-abinha">
+      <strong>🛍️ Seu Carrinho</strong>
+      <ul id="carrinho-itens"></ul>
+      <p><strong>Total:</strong> R$ <span id="carrinho-total">0.00</span></p>
+      <button id="btn-finalizar" onclick="window.location.href='carrinho.html'">Finalizar Pedido</button>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDI4G-ODEtByxxf_9BzfEzW5QJPQjYP4sk8tO8mOT5skWRXk_BoFNq7smRVFZ6kmMK/exec';
+
+    // Produtos hardcoded
+    const produtosPorc = [
+      {
+        nome: 'Batata Especial',
+        descricao: 'Batata, bacon e mussarela',
+        precoExibido: 'A partir de R$ 30,00',
+        imagem: 'batata-especial.jpg',
+        imgFallback: 'batata.jpg',
+        tamanhos: [
+          { nome: 'Meia porção (350g)', preco: 30.00 },
+          { nome: 'Porção inteira (650g)', preco: 40.00 }
+        ]
+      },
+      {
+        nome: 'Batata Frita',
+        descricao: 'BATATA',
+        precoExibido: 'A partir de R$ 22,00',
+        imagem: 'batata-frita.jpg',
+        imgFallback: 'batata.jpg',
+        tamanhos: [
+          { nome: 'Meia porção (250g)', preco: 22.00 },
+          { nome: 'Porção inteira (500g)', preco: 32.00 }
+        ]
+      },
+      {
+        nome: 'Batata Premium',
+        descricao: 'Batata, cheddar, bacon',
+        precoExibido: 'A partir de R$ 30,00',
+        imagem: 'batata-premium.jpg',
+        imgFallback: 'batata.jpg',
+        tamanhos: [
+          { nome: 'Meia porção (400g)', preco: 30.00 },
+          { nome: 'Porção inteira (800g)', preco: 45.00 }
+        ]
+      }
+    ];
+
+    // Render product cards
+    function renderizarProdutos() {
+      const container = document.getElementById('produtos-container');
+      container.innerHTML = '';
+      produtosPorc.forEach((prod, index) => {
+        const div = document.createElement('div');
+        div.className = 'produto';
+        div.innerHTML = `
+          <img src="${prod.imagem}" alt="${prod.nome}" onerror="this.src='${prod.imgFallback}'">
+          <h3>${prod.nome}</h3>
+          <p>${prod.descricao}</p>
+          <div class="preco">${prod.precoExibido}</div>
+          <button>Personalizar e Adicionar</button>
+        `;
+        div.querySelector('button').addEventListener('click', function() { abrirModalPorcao(index); });
+        container.appendChild(div);
+      });
+    }
+
+    // Modal state
+    let produtoPorcAtual = null;
+    let tamanhoPorcSelecionado = null;
+
+    function abrirModalPorcao(index) {
+      produtoPorcAtual = produtosPorc[index];
+      tamanhoPorcSelecionado = null;
+
+      document.getElementById('modal-porcao-titulo').textContent = produtoPorcAtual.nome;
+      document.getElementById('modal-porcao-subtitulo').textContent = produtoPorcAtual.descricao;
+      document.getElementById('contador-tamanho').textContent = '0/1';
+      document.getElementById('preco-total-porcao').textContent = '0,00';
+      document.getElementById('btn-confirmar-porcao').disabled = true;
+
+      const obsField = document.getElementById('observacoes-porcao');
+      obsField.value = '';
+      document.getElementById('obs-porcao-contador').textContent = '0 / 100';
+
+      const listaTamanhos = document.getElementById('lista-tamanhos');
+      listaTamanhos.innerHTML = '';
+
+      produtoPorcAtual.tamanhos.forEach(function(tamanho, i) {
+        const item = document.createElement('div');
+        item.className = 'sabor-item';
+        item.innerHTML = `
+          <div class="sabor-check"></div>
+          <div class="sabor-info">
+            <div class="sabor-nome">${tamanho.nome}</div>
+          </div>
+          <div class="sabor-preco">+ R$ ${tamanho.preco.toFixed(2).replace('.', ',')}</div>
+        `;
+        item.addEventListener('click', function() { selecionarTamanhoPorcao(i); });
+        listaTamanhos.appendChild(item);
+      });
+
+      document.getElementById('modal-porcao').style.display = 'block';
+    }
+
+    function selecionarTamanhoPorcao(index) {
+      tamanhoPorcSelecionado = index;
+      const items = document.querySelectorAll('#lista-tamanhos .sabor-item');
+      items.forEach(function(el, i) { el.classList.toggle('selecionado', i === index); });
+      document.getElementById('contador-tamanho').textContent = '1/1';
+      const tamanho = produtoPorcAtual.tamanhos[index];
+      document.getElementById('preco-total-porcao').textContent = tamanho.preco.toFixed(2).replace('.', ',');
+      document.getElementById('btn-confirmar-porcao').disabled = false;
+    }
+
+    function confirmarPorcao() {
+      if (tamanhoPorcSelecionado === null) {
+        alert('Por favor, selecione o tamanho!');
+        return;
+      }
+      const tamanho = produtoPorcAtual.tamanhos[tamanhoPorcSelecionado];
+      const nome = produtoPorcAtual.nome + ' - ' + tamanho.nome;
+      const obs = document.getElementById('observacoes-porcao').value.trim();
+      adicionarAoCarrinho(nome, tamanho.preco, obs);
+      fecharModal('modal-porcao');
+      alert('Porção adicionada ao carrinho!');
+    }
+
+    function fecharModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    // Fechar modal ao clicar fora
+    window.addEventListener('click', function(event) {
+      if (event.target === document.getElementById('modal-porcao')) {
+        fecharModal('modal-porcao');
+      }
+    });
+
+    function adicionarAoCarrinho(nome, preco, observacao) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const detalhes = observacao ? 'Observações: ' + observacao : '';
+      const itemExistente = cart.find(function(item) { return item.name === nome && item.details === detalhes; });
+      if (itemExistente) {
+        itemExistente.quantity += 1;
+      } else {
+        cart.push({ name: nome, price: preco, quantity: 1, details: detalhes });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      atualizarAbinhaCarrinho();
+    }
+
+    function atualizarAbinhaCarrinho() {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const lista = document.getElementById('carrinho-itens');
+      const totalSpan = document.getElementById('carrinho-total');
+      lista.innerHTML = '';
+      let total = 0;
+      cart.forEach(function(item) {
+        const li = document.createElement('li');
+        const valorTotalItem = item.price * item.quantity;
+        li.innerHTML =
+          item.name + ' - ' + item.quantity + ' un - R$ ' + valorTotalItem.toFixed(2) +
+          ' <button class="btn-remover" onclick="removerUmaUnidade(\'' + item.name.replace(/'/g, "\\'") + '\')">Remover</button>';
+        lista.appendChild(li);
+        total += valorTotalItem;
+      });
+      totalSpan.textContent = total.toFixed(2);
+    }
+
+    function removerUmaUnidade(nome) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const itemExistente = cart.find(function(item) { return item.name === nome; });
+      if (itemExistente && itemExistente.quantity > 1) {
+        itemExistente.quantity -= 1;
+      } else {
+        cart = cart.filter(function(item) { return item.name !== nome; });
+      }
+      localStorage.setItem('cart', JSON.stringify(cart));
+      atualizarAbinhaCarrinho();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      renderizarProdutos();
+      atualizarAbinhaCarrinho();
+
+      const obsField = document.getElementById('observacoes-porcao');
+      const obsContador = document.getElementById('obs-porcao-contador');
+      if (obsField && obsContador) {
+        obsField.addEventListener('input', function() {
+          obsContador.textContent = obsField.value.length + ' / 100';
+        });
+      }
+    });
+
+    setInterval(atualizarAbinhaCarrinho, 1000);
+  </script>
+
+</body>
+</html>
