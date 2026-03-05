@@ -278,6 +278,8 @@
     .btn-remover:hover { background-color: #c82333; }
 
     .item-detalhes { font-size: 11px; color: #666; margin-top: 2px; }
+
+    .acai-api { display: none; }
   </style>
 </head>
 <body>
@@ -287,8 +289,28 @@
     <div class="titulo-header">Cardápio de Açai</div>
   </header>
 
+  <!-- Produtos sempre visíveis (hardcoded) -->
   <section id="produtos">
-    <div id="acai-loading" style="text-align:center;padding:40px 0;width:100%;display:none;"><p>Carregando açaís...</p></div>
+    <div class="produto" id="card-300ml">
+      <img src="shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png" alt="Açai 300ml" onerror="this.src='acai.png'">
+      <h3>Açai 300ml</h3>
+      <p>R$ 20,00</p>
+      <button onclick="abrirModalPersonalizacao('Açai 300ml', 20, '')">Adicionar ao Carrinho</button>
+    </div>
+
+    <div class="produto" id="card-500ml">
+      <img src="açai 500 ml.png" alt="Açai 500ml" onerror="this.src='acai.png'">
+      <h3>Açai 500ml</h3>
+      <p>R$ 25,00</p>
+      <button onclick="abrirModalPersonalizacao('Açai 500ml', 25, '')">Adicionar ao Carrinho</button>
+    </div>
+
+    <div class="produto" id="card-garrafa">
+      <img src="acai-garrafa.jpg" alt="Açaí na Garrafa" onerror="this.src='acai.png'">
+      <h3>Açaí na Garrafa</h3>
+      <p>R$ 20,00</p>
+      <button onclick="abrirModalGarrafa()">Adicionar ao Carrinho</button>
+    </div>
   </section>
 
   <!-- ===== MODAL PERSONALIZAÇÃO AÇAÍ ===== -->
@@ -401,13 +423,6 @@
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDI4G-ODEtByxxf_9BzfEzW5QJPQjYP4sk8tO8mOT5skWRXk_BoFNq7smRVFZ6kmMK/exec';
 
-    // ===== PRODUTOS HARDCODED (fallback garantido) =====
-    const ACAIS_FALLBACK = [
-      { nome: 'Açai 300ml',  preco: 20, imagem: "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png" },
-      { nome: 'Açai 500ml',  preco: 25, imagem: 'açai 500 ml.png' }
-    ];
-    const GARRAFA_FIXO = { nome: 'Açaí na Garrafa', preco: 20, imagem: 'acai-garrafa.jpg' };
-
     // ===== OPÇÕES FIXAS =====
     const frutas     = ['Banana', 'Morango', 'Uva'];
     const recheios   = ['Leite em Pó', 'Nutella', 'Creme De Ninho', 'Leite Condensado'];
@@ -424,57 +439,13 @@
     let frutaSelecionada = null, recheioSelecionado = null, coberturaSelecionada = null;
     let saborGarrafaSelecionado = null;
 
-    // ===== RENDERIZAR PRODUTOS =====
-    function renderizarProdutos(lista) {
-      const secao = document.getElementById('produtos');
-      // Remove itens dinâmicos anteriores (mas não modais/carrinho)
-      secao.querySelectorAll('.produto').forEach(el => el.remove());
-      document.getElementById('acai-loading').style.display = 'none';
-
-      lista.forEach(acai => {
-        const div = criarCardAcai(acai.nome, acai.preco, acai.imagem, acai.opcoes || '');
-        secao.appendChild(div);
-      });
-
-      // Garrafa sempre fixa no final
-      const divGarrafa = criarCardGarrafa();
-      secao.appendChild(divGarrafa);
-    }
-
-    function criarCardAcai(nome, preco, imagem, opcoes) {
-      const imgPadrao = "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png";
-      const img = imagem || imgPadrao;
-      const div = document.createElement('div');
-      div.className = 'produto';
-      div.innerHTML = `
-        <img src="${img}" alt="${nome}" onerror="this.src='${imgPadrao}'">
-        <h3>${nome}</h3>
-        <p>R$ ${parseFloat(preco).toFixed(2)}</p>
-        <button>Adicionar ao Carrinho</button>
-      `;
-      div.querySelector('button').addEventListener('click', () => {
-        abrirModalPersonalizacao(nome, parseFloat(preco), opcoes);
-      });
-      return div;
-    }
-
-    function criarCardGarrafa() {
-      const div = document.createElement('div');
-      div.className = 'produto';
-      div.innerHTML = `
-        <img src="acai-garrafa.jpg" alt="Açaí na Garrafa" onerror="this.src='acai.png'">
-        <h3>Açaí na Garrafa</h3>
-        <p>R$ 20,00</p>
-        <button>Adicionar ao Carrinho</button>
-      `;
-      div.querySelector('button').addEventListener('click', abrirModalGarrafa);
-      return div;
-    }
-
-    // ===== CARREGAR DA API =====
-    async function carregarAcai() {
+    // ===== TENTAR CARREGAR DA API (substitui os cards hardcoded se tiver dados) =====
+    async function carregarAcaiDaAPI() {
       try {
-        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now(), { signal: controller.signal });
+        clearTimeout(timeout);
         const resultado = await response.json();
         if (resultado.success && resultado.produtos) {
           const acais = resultado.produtos.filter(p =>
@@ -483,15 +454,43 @@
             p.ativo !== 'NÃO' && p.ativo !== 'NAO'
           );
           if (acais.length > 0) {
-            renderizarProdutos(acais);
-            return;
+            substituirCardsAPI(acais);
           }
         }
       } catch (e) {
-        console.warn('Falha na API, usando fallback.', e);
+        // Silently fall back to hardcoded cards already in HTML
+        console.warn('API indisponível, usando produtos hardcoded.', e);
       }
-      // Fallback: mostra hardcoded
-      renderizarProdutos(ACAIS_FALLBACK);
+    }
+
+    const imgPadrao = "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png";
+
+    function substituirCardsAPI(acais) {
+      const secao = document.getElementById('produtos');
+      // Remove apenas os cards hardcoded de açai (não a garrafa)
+      ['card-300ml', 'card-500ml'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.remove();
+      });
+      // Insere antes do card da garrafa
+      const cardGarrafa = document.getElementById('card-garrafa');
+      acais.forEach(acai => {
+        const img = acai.imagem || imgPadrao;
+        const div = document.createElement('div');
+        div.className = 'produto acai-api';
+        div.style.display = 'block';
+        const preco = parseFloat(acai.preco || 0);
+        div.innerHTML = `
+          <img src="${img}" alt="${acai.nome}" onerror="this.src='${imgPadrao}'">
+          <h3>${acai.nome}</h3>
+          <p>R$ ${preco.toFixed(2)}</p>
+          <button>Adicionar ao Carrinho</button>
+        `;
+        div.querySelector('button').addEventListener('click', () => {
+          abrirModalPersonalizacao(acai.nome, preco, acai.opcoes || '');
+        });
+        secao.insertBefore(div, cardGarrafa);
+      });
     }
 
     // ===== HELPERS =====
@@ -502,7 +501,7 @@
     function renderizarLista(containerId, opcoes, onSelect) {
       const container = document.getElementById(containerId);
       container.innerHTML = '';
-      opcoes.forEach((op, index) => {
+      opcoes.forEach(op => {
         const item = document.createElement('div');
         item.className = 'sabor-item';
         item.innerHTML = `<div class="sabor-check"></div><div class="sabor-info"><div class="sabor-nome">${op}</div></div>`;
@@ -515,19 +514,19 @@
       });
     }
 
-    // ===== MODAL PERSONALIZAÇÃO =====
+    // ===== MODAL PERSONALIZAÇÃO AÇAÍ =====
     function abrirModalPersonalizacao(nome, preco, opcoes) {
-      produtoAtual = nome;
-      precoAtual   = preco;
+      produtoAtual    = nome;
+      precoAtual      = preco;
       opcoesAcaiAtual = opcoes || '';
       frutaSelecionada = null;
       recheioSelecionado = null;
       coberturaSelecionada = null;
 
-      document.getElementById('modal-titulo').textContent    = nome;
-      document.getElementById('modal-subtitulo').textContent = 'R$ ' + preco.toFixed(2);
+      document.getElementById('modal-titulo').textContent     = nome;
+      document.getElementById('modal-subtitulo').textContent  = 'R$ ' + preco.toFixed(2);
       document.getElementById('preco-total-acai').textContent = preco.toFixed(2).replace('.', ',');
-      document.getElementById('observacoes-acai').value = '';
+      document.getElementById('observacoes-acai').value       = '';
       document.getElementById('obs-contador-acai').textContent = '0/100';
       document.getElementById('contador-fruta').textContent    = '0/1';
       document.getElementById('contador-recheio').textContent  = '0/1';
@@ -535,7 +534,6 @@
       document.querySelectorAll('.aviso-selecao').forEach(a => a.style.display = 'none');
       document.getElementById('btn-confirmar-acai').disabled = true;
 
-      // Opções dinâmicas do produto
       const opcoesContainer = document.getElementById('modal-opcoes-acai');
       if (opcoesAcaiAtual) {
         const linhas = opcoesAcaiAtual.split('\n').map(l => l.trim()).filter(l => l);
@@ -582,43 +580,39 @@
 
     function confirmarPersonalizacao() {
       let ok = true;
-      if (!frutaSelecionada)    { document.getElementById('aviso-fruta').style.display    = 'block'; ok = false; }
-      if (!recheioSelecionado)  { document.getElementById('aviso-recheio').style.display  = 'block'; ok = false; }
-      if (!coberturaSelecionada){ document.getElementById('aviso-cobertura').style.display = 'block'; ok = false; }
+      if (!frutaSelecionada)     { document.getElementById('aviso-fruta').style.display    = 'block'; ok = false; }
+      if (!recheioSelecionado)   { document.getElementById('aviso-recheio').style.display  = 'block'; ok = false; }
+      if (!coberturaSelecionada) { document.getElementById('aviso-cobertura').style.display = 'block'; ok = false; }
       if (!ok) return;
 
       const sel = document.getElementById('modal-opcao-select');
       const opcaoSel = sel ? sel.value : '';
       const obs      = document.getElementById('observacoes-acai').value.trim();
-      const nomeFinal = opcaoSel ? `${produtoAtual} - ${opcaoSel}` : produtoAtual;
+      const nomeFinal = opcaoSel ? produtoAtual + ' - ' + opcaoSel : produtoAtual;
+      const nomeDetalhado = nomeFinal + ' (' + frutaSelecionada + ', ' + recheioSelecionado + ', ' + coberturaSelecionada + ')';
 
-      adicionarPersonalizado(nomeFinal, precoAtual, frutaSelecionada, recheioSelecionado, coberturaSelecionada, obs);
-      fecharModal('modal-personalizacao');
-    }
-
-    function adicionarPersonalizado(nome, preco, fruta, recheio, cobertura, obs) {
       let cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const nomeDetalhado = `${nome} (${fruta}, ${recheio}, ${cobertura})`;
       const existe = cart.find(i => i.name === nomeDetalhado);
       if (existe) {
         existe.quantity += 1;
       } else {
-        let detalhes = `${fruta}, ${recheio}, ${cobertura}`;
-        if (obs) detalhes += `\nObservações: ${obs}`;
-        cart.push({ name: nomeDetalhado, price: preco, quantity: 1, detalhes, observacao: obs });
+        let detalhes = frutaSelecionada + ', ' + recheioSelecionado + ', ' + coberturaSelecionada;
+        if (obs) detalhes += ' | Obs: ' + obs;
+        cart.push({ name: nomeDetalhado, price: precoAtual, quantity: 1, detalhes: detalhes });
       }
       localStorage.setItem('cart', JSON.stringify(cart));
       atualizarAbinhaCarrinho();
+      fecharModal('modal-personalizacao');
     }
 
     // ===== MODAL GARRAFA =====
     function abrirModalGarrafa() {
       saborGarrafaSelecionado = null;
-      document.getElementById('obs-garrafa').value = '';
-      document.getElementById('contador-obs-garrafa').textContent    = '0/100';
-      document.getElementById('contador-sabor-garrafa').textContent  = '0/1';
-      document.getElementById('aviso-sabor-garrafa').style.display   = 'none';
-      document.getElementById('btn-confirmar-garrafa').disabled      = true;
+      document.getElementById('obs-garrafa').value                  = '';
+      document.getElementById('contador-obs-garrafa').textContent   = '0/100';
+      document.getElementById('contador-sabor-garrafa').textContent = '0/1';
+      document.getElementById('aviso-sabor-garrafa').style.display  = 'none';
+      document.getElementById('btn-confirmar-garrafa').disabled     = true;
 
       const lista = document.getElementById('lista-sabores-garrafa');
       lista.innerHTML = '';
@@ -650,13 +644,15 @@
         return;
       }
       const obs  = document.getElementById('obs-garrafa').value.trim();
-      const nome = `Açaí na Garrafa - ${saborGarrafaSelecionado}`;
+      const nome = 'Açaí na Garrafa - ' + saborGarrafaSelecionado;
       let cart = JSON.parse(localStorage.getItem('cart')) || [];
       const existe = cart.find(i => i.name === nome);
       if (existe) {
         existe.quantity += 1;
       } else {
-        cart.push({ name: nome, price: 20, quantity: 1, detalhes: saborGarrafaSelecionado, observacao: obs });
+        let detalhes = saborGarrafaSelecionado;
+        if (obs) detalhes += ' | Obs: ' + obs;
+        cart.push({ name: nome, price: 20, quantity: 1, detalhes: detalhes });
       }
       localStorage.setItem('cart', JSON.stringify(cart));
       atualizarAbinhaCarrinho();
@@ -684,42 +680,35 @@
         const val = item.price * item.quantity;
         soma += val;
         const li = document.createElement('li');
-        const det = item.detalhes
-          ? `<div class="item-detalhes">${typeof item.detalhes === 'object'
-              ? \
-                `${item.detalhes.fruta}, ${item.detalhes.recheio}, ${item.detalhes.cobertura}`
-              : item.detalhes}</div>`
-          : '';
-        const nomeSafe = item.name.replace(/'/g, "\\'");
-        li.innerHTML = `
-          <div><strong>${item.name.split('(')[0]}</strong>${det}</div>
-          <div>${item.quantity} un - R$ ${val.toFixed(2)}
-            <button class="btn-remover" onclick="removerUmaUnidade('${nomeSafe}')">Remover 1</button>
-          </div>`;
+        const det = item.detalhes ? '<div class="item-detalhes">' + item.detalhes + '</div>' : '';
+        const nomeSafe = item.name.replace(/\\/g, '\\').replace(/'/g, "\\'");
+        li.innerHTML =
+          '<div><strong>' + item.name.split('(')[0].trim() + '</strong>' + det + '</div>' +
+          '<div>' + item.quantity + ' un - R$ ' + val.toFixed(2) +
+          ' <button class="btn-remover" onclick="removerUmaUnidade(\'' + nomeSafe + '\')">✕</button></div>';
         lista.appendChild(li);
       });
       total.textContent = soma.toFixed(2);
     }
 
-    document.getElementById('btn-finalizar').addEventListener('click', () => {
+    document.getElementById('btn-finalizar').addEventListener('click', function() {
       const cart = JSON.parse(localStorage.getItem('cart')) || [];
       if (!cart.length) { alert('Seu carrinho está vazio!'); return; }
       window.location.href = 'carrinho.html';
     });
 
-    window.addEventListener('click', e => {
-      ['modal-personalizacao', 'modal-garrafa'].forEach(id => {
-        if (e.target === document.getElementById(id)) fecharModal(id);
-      });
+    window.addEventListener('click', function(e) {
+      if (e.target === document.getElementById('modal-personalizacao')) fecharModal('modal-personalizacao');
+      if (e.target === document.getElementById('modal-garrafa')) fecharModal('modal-garrafa');
     });
 
-    document.addEventListener('DOMContentLoaded', () => {
-      atualizarAbinhaCarrinho();
-      carregarAcai();
-      document.getElementById('observacoes-acai').addEventListener('input', function() {
-        document.getElementById('obs-contador-acai').textContent = this.value.length + '/100';
-      });
+    document.getElementById('observacoes-acai').addEventListener('input', function() {
+      document.getElementById('obs-contador-acai').textContent = this.value.length + '/100';
     });
+
+    // Carregar carrinho e tentar API
+    atualizarAbinhaCarrinho();
+    carregarAcaiDaAPI();
   </script>
 
 </body>
