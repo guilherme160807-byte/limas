@@ -6,15 +6,11 @@
   <link rel="shortcut icon" href="fundo retirado logo cabeção.png" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #ffffff, #ffffff);
+      background: #ffffff;
       min-height: 100vh;
     }
 
@@ -34,17 +30,14 @@
     .btn-voltar {
       font-size: 16px;
       background-color: #ffffff;
-      color: rgb(0, 0, 0);
+      color: #000;
       padding: 10px 20px;
       border-radius: 8px;
       text-decoration: none;
       font-weight: bold;
       transition: background-color 0.3s ease;
     }
-
-    .btn-voltar:hover {
-      background-color: #f0f0f0;
-    }
+    .btn-voltar:hover { background-color: #f0f0f0; }
 
     .titulo-header {
       margin: 0 auto;
@@ -53,10 +46,13 @@
       transform: translateX(-50%);
     }
 
-    h2 {
-      text-align: center;
-      margin: 30px 0 20px;
-      color: #000000;
+    #produtos {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 40px;
+      flex-wrap: wrap;
+      padding: 40px 20px;
     }
 
     .produto {
@@ -67,11 +63,9 @@
       text-align: center;
       transition: transform 0.2s ease;
       margin-top: 20px;
+      width: 180px;
     }
-
-    .produto:hover {
-      transform: translateY(-5px);
-    }
+    .produto:hover { transform: translateY(-5px); }
 
     .produto img {
       width: 120px;
@@ -81,42 +75,28 @@
       margin-bottom: 10px;
     }
 
-    .produto h3 {
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #333;
-    }
-
-    .produto p {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 10px;
-    }
+    .produto h3 { font-weight: 600; margin-bottom: 6px; color: #333; }
+    .produto p  { font-size: 14px; color: #666; margin-bottom: 10px; }
 
     .produto button {
-      background-color: #000000;
+      background-color: #000;
       color: white;
       border: none;
       padding: 8px 14px;
       border-radius: 6px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
       font-weight: 600;
+      transition: background-color 0.3s;
     }
+    .produto button:hover { background-color: #333; }
 
-    .produto button:hover {
-      background-color: #333;
-    }
-
-    /* ===== MODAL ESTILOS (igual pedido-pizza.html) ===== */
+    /* ===== MODAL ===== */
     .modal-overlay {
       display: none;
       position: fixed;
       z-index: 1001;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
       background-color: rgba(0,0,0,0.5);
       overflow-y: auto;
     }
@@ -139,30 +119,11 @@
       justify-content: space-between;
       align-items: center;
     }
+    .modal-header h2 { font-size: 18px; margin: 0; color: white; }
+    .modal-header p  { font-size: 13px; margin: 5px 0 0; opacity: 0.8; }
 
-    .modal-header h2 {
-      font-size: 18px;
-      margin: 0;
-      color: white;
-      text-align: left;
-    }
-
-    .modal-header p {
-      font-size: 13px;
-      margin: 5px 0 0;
-      opacity: 0.8;
-    }
-
-    .close {
-      font-size: 28px;
-      cursor: pointer;
-      line-height: 1;
-      color: white;
-    }
-
-    .close:hover {
-      opacity: 0.7;
-    }
+    .close { font-size: 28px; cursor: pointer; color: white; line-height: 1; }
+    .close:hover { opacity: 0.7; }
 
     .modal-body {
       padding: 20px 25px;
@@ -170,9 +131,7 @@
       overflow-y: auto;
     }
 
-    .opcao-grupo {
-      margin-bottom: 20px;
-    }
+    .opcao-grupo { margin-bottom: 20px; }
 
     .opcao-titulo {
       display: flex;
@@ -201,15 +160,6 @@
       margin-bottom: 10px;
     }
 
-    .opcional-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 11px;
-      margin-bottom: 10px;
-      color: #666;
-    }
-
     .sabor-item {
       display: flex;
       justify-content: space-between;
@@ -221,41 +171,15 @@
       cursor: pointer;
       transition: all 0.2s;
     }
+    .sabor-item:hover { border-color: #000; }
+    .sabor-item.selecionado { border-color: #000; background: #f8f8f8; }
 
-    .sabor-item:hover {
-      border-color: #000;
-    }
-
-    .sabor-item.selecionado {
-      border-color: #000;
-      background: #f8f8f8;
-    }
-
-    .sabor-info {
-      flex: 1;
-    }
-
-    .sabor-nome {
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    .sabor-desc {
-      font-size: 12px;
-      color: #666;
-      margin-top: 3px;
-    }
-
-    .sabor-preco {
-      font-weight: bold;
-      font-size: 14px;
-      color: #000;
-      margin-left: 10px;
-    }
+    .sabor-info { flex: 1; }
+    .sabor-nome { font-weight: 600; font-size: 14px; }
+    .sabor-preco { font-weight: bold; font-size: 14px; color: #000; margin-left: 10px; }
 
     .sabor-check {
-      width: 20px;
-      height: 20px;
+      width: 20px; height: 20px;
       border: 2px solid #ccc;
       border-radius: 50%;
       margin-right: 10px;
@@ -264,17 +188,8 @@
       align-items: center;
       justify-content: center;
     }
-
-    .sabor-item.selecionado .sabor-check {
-      background: #000;
-      border-color: #000;
-    }
-
-    .sabor-item.selecionado .sabor-check::after {
-      content: '✓';
-      color: white;
-      font-size: 12px;
-    }
+    .sabor-item.selecionado .sabor-check { background: #000; border-color: #000; }
+    .sabor-item.selecionado .sabor-check::after { content: '✓'; color: white; font-size: 12px; }
 
     .modal-footer {
       padding: 15px 25px;
@@ -285,10 +200,7 @@
       background: white;
     }
 
-    .preco-total {
-      font-size: 18px;
-      font-weight: bold;
-    }
+    .preco-total { font-size: 18px; font-weight: bold; }
 
     .btn-confirmar {
       background: #000;
@@ -301,65 +213,27 @@
       font-weight: bold;
       transition: background 0.3s;
     }
+    .btn-confirmar:hover { background: #333; }
+    .btn-confirmar:disabled { background: #ccc; cursor: not-allowed; }
 
-    .btn-confirmar:hover {
-      background: #333;
-    }
-
-    .btn-confirmar:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-
-    /* ===== SELETOR DE FRUTA/RECHEIO/COBERTURA (select estilizado) ===== */
-    .modal-body select {
-      width: 100%;
-      padding: 10px;
-      border: 2px solid #eee;
-      border-radius: 8px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 14px;
-      margin-top: 4px;
-      cursor: pointer;
-      transition: border-color 0.2s;
-    }
-
-    .modal-body select:focus {
-      border-color: #000;
-      outline: none;
-    }
-
-    .aviso-selecao {
-      color: #dc3545;
-      font-size: 12px;
-      margin-top: 4px;
-      display: none;
-    }
+    .aviso-selecao { color: #dc3545; font-size: 12px; margin-top: 4px; display: none; }
 
     /* ===== CARRINHO ===== */
-    #carrinho-container {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 1000;
-    }
+    #carrinho-container { position: fixed; top: 20px; right: 20px; z-index: 1000; }
 
     #carrinho-icon {
-      background-color: #fffefe;
-      color: white;
+      background-color: #fff;
       padding: 12px 16px;
       border-radius: 50%;
       font-size: 20px;
       cursor: pointer;
-      transition: background 0.3s;
       box-shadow: 0 0 8px rgba(0,0,0,0.2);
     }
 
     #carrinho-abinha {
       display: none;
       position: absolute;
-      top: 50px;
-      right: 0;
+      top: 50px; right: 0;
       background: white;
       border: 1px solid #ccc;
       border-radius: 10px;
@@ -367,10 +241,7 @@
       width: 260px;
       box-shadow: 0 0 12px rgba(0,0,0,0.3);
     }
-
-    #carrinho-container:hover #carrinho-abinha {
-      display: block;
-    }
+    #carrinho-container:hover #carrinho-abinha { display: block; }
 
     #carrinho-itens {
       max-height: 200px;
@@ -380,7 +251,6 @@
       list-style: none;
       padding: 0;
     }
-
     #carrinho-itens li {
       border-bottom: 1px solid #eee;
       padding: 5px 0;
@@ -390,41 +260,24 @@
     }
 
     #btn-finalizar {
-      width: 100%;
-      padding: 10px;
-      background-color: #000000;
-      color: white;
-      border: none;
+      width: 100%; padding: 10px;
+      background-color: #000;
+      color: white; border: none;
       border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
+      font-weight: bold; cursor: pointer;
     }
-
-    #btn-finalizar:hover {
-      background-color: #333;
-    }
+    #btn-finalizar:hover { background-color: #333; }
 
     .btn-remover {
       background-color: #dc3545;
-      color: white;
-      border: none;
+      color: white; border: none;
       border-radius: 4px;
       padding: 2px 6px;
-      font-size: 12px;
-      cursor: pointer;
+      font-size: 12px; cursor: pointer;
     }
+    .btn-remover:hover { background-color: #c82333; }
 
-    .btn-remover:hover {
-      background-color: #c82333;
-    }
-
-    .item-detalhes {
-      font-size: 11px;
-      color: #666;
-      margin-top: 2px;
-    }
-
-    .acai-hardcoded { display: none; }
+    .item-detalhes { font-size: 11px; color: #666; margin-top: 2px; }
   </style>
 </head>
 <body>
@@ -434,28 +287,8 @@
     <div class="titulo-header">Cardápio de Açai</div>
   </header>
 
-  <section id="produtos" style="display: flex; justify-content: center; align-items: flex-start; gap: 40px; flex-wrap: wrap; padding: 40px 20px;">
-    <div id="acai-loading" style="text-align:center;padding:40px 0;width:100%;"><p>Carregando açaís...</p></div>
-    <div class="produto acai-hardcoded">
-      <img src="shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png" alt="Produto 1">
-      <h3>Açai 300ml</h3>
-      <p>R$20,00</p>
-      <button onclick="abrirModalPersonalizacao('Açai 300ml', 20)">Adicionar ao Carrinho</button>
-    </div>
-
-    <div class="produto acai-hardcoded">
-      <img src="açai 500 ml.png" alt="Produto 1">
-      <h3>Açai 500ml</h3>
-      <p>R$ 25,00</p>
-      <button onclick="abrirModalPersonalizacao('Açai 500ml', 25)">Adicionar ao Carrinho</button>
-    </div>
-
-    <div class="produto acai-garrafa-fixo">
-      <img src="acai-garrafa.jpg" alt="Açaí na Garrafa" onerror="this.src='acai.png'">
-      <h3>Açaí na Garrafa</h3>
-      <p>R$ 20,00</p>
-      <button onclick="abrirModalGarrafa()">Adicionar ao Carrinho</button>
-    </div>
+  <section id="produtos">
+    <div id="acai-loading" style="text-align:center;padding:40px 0;width:100%;display:none;"><p>Carregando açaís...</p></div>
   </section>
 
   <!-- ===== MODAL PERSONALIZAÇÃO AÇAÍ ===== -->
@@ -503,11 +336,9 @@
         </div>
 
         <div class="opcao-grupo">
-          <div class="opcao-titulo">
-            <span>Alguma observação?</span>
-          </div>
+          <div class="opcao-titulo"><span>Alguma observação?</span></div>
           <textarea id="observacoes-acai" placeholder="Ex: sem açúcar, mais granola..." maxlength="100"
-                    style="width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 5px; resize: vertical; min-height: 80px; font-family: 'Poppins', sans-serif; font-size: 14px;"></textarea>
+                    style="width:100%;padding:10px;border:1px solid #eee;border-radius:5px;resize:vertical;min-height:80px;font-family:'Poppins',sans-serif;font-size:14px;"></textarea>
           <div id="obs-contador-acai" style="text-align:right;font-size:12px;color:#999;margin-top:4px;">0/100</div>
         </div>
 
@@ -542,12 +373,10 @@
         </div>
 
         <div class="opcao-grupo">
-          <div class="opcao-titulo">
-            <span>Alguma observação?</span>
-          </div>
+          <div class="opcao-titulo"><span>Alguma observação?</span></div>
           <textarea id="obs-garrafa" maxlength="100" placeholder="Ex: sem açúcar..."
                     style="width:100%;padding:10px;border:1px solid #eee;border-radius:5px;resize:vertical;min-height:80px;font-family:'Poppins',sans-serif;font-size:14px;"
-                    oninput="document.getElementById('contador-obs-garrafa').textContent = this.value.length + '/100'"></textarea>
+                    oninput="document.getElementById('contador-obs-garrafa').textContent=this.value.length+'/100'"></textarea>
           <div id="contador-obs-garrafa" style="text-align:right;font-size:12px;color:#999;margin-top:4px;">0/100</div>
         </div>
 
@@ -572,9 +401,16 @@
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDI4G-ODEtByxxf_9BzfEzW5QJPQjYP4sk8tO8mOT5skWRXk_BoFNq7smRVFZ6kmMK/exec';
 
+    // ===== PRODUTOS HARDCODED (fallback garantido) =====
+    const ACAIS_FALLBACK = [
+      { nome: 'Açai 300ml',  preco: 20, imagem: "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png" },
+      { nome: 'Açai 500ml',  preco: 25, imagem: 'açai 500 ml.png' }
+    ];
+    const GARRAFA_FIXO = { nome: 'Açaí na Garrafa', preco: 20, imagem: 'acai-garrafa.jpg' };
+
     // ===== OPÇÕES FIXAS =====
-    const frutas = ['Banana', 'Morango', 'Uva'];
-    const recheios = ['Leite em Pó', 'Nutella', 'Creme De Ninho', 'Leite Condensado'];
+    const frutas     = ['Banana', 'Morango', 'Uva'];
+    const recheios   = ['Leite em Pó', 'Nutella', 'Creme De Ninho', 'Leite Condensado'];
     const coberturas = ['Leite Condensado', 'Leite em Pó'];
     const saboresGarrafa = [
       'Açaí com Nutella',
@@ -584,55 +420,78 @@
     ];
 
     // ===== ESTADO =====
-    let produtoAtual = null;
-    let precoAtual = 0;
-    let opcoesAcaiAtual = '';
-    let frutaSelecionada = null;
-    let recheioSelecionado = null;
-    let coberturaSelecionada = null;
+    let produtoAtual = null, precoAtual = 0, opcoesAcaiAtual = '';
+    let frutaSelecionada = null, recheioSelecionado = null, coberturaSelecionada = null;
     let saborGarrafaSelecionado = null;
 
-    // ===== CARREGAR AÇAÍS DA API =====
+    // ===== RENDERIZAR PRODUTOS =====
+    function renderizarProdutos(lista) {
+      const secao = document.getElementById('produtos');
+      // Remove itens dinâmicos anteriores (mas não modais/carrinho)
+      secao.querySelectorAll('.produto').forEach(el => el.remove());
+      document.getElementById('acai-loading').style.display = 'none';
+
+      lista.forEach(acai => {
+        const div = criarCardAcai(acai.nome, acai.preco, acai.imagem, acai.opcoes || '');
+        secao.appendChild(div);
+      });
+
+      // Garrafa sempre fixa no final
+      const divGarrafa = criarCardGarrafa();
+      secao.appendChild(divGarrafa);
+    }
+
+    function criarCardAcai(nome, preco, imagem, opcoes) {
+      const imgPadrao = "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png";
+      const img = imagem || imgPadrao;
+      const div = document.createElement('div');
+      div.className = 'produto';
+      div.innerHTML = `
+        <img src="${img}" alt="${nome}" onerror="this.src='${imgPadrao}'">
+        <h3>${nome}</h3>
+        <p>R$ ${parseFloat(preco).toFixed(2)}</p>
+        <button>Adicionar ao Carrinho</button>
+      `;
+      div.querySelector('button').addEventListener('click', () => {
+        abrirModalPersonalizacao(nome, parseFloat(preco), opcoes);
+      });
+      return div;
+    }
+
+    function criarCardGarrafa() {
+      const div = document.createElement('div');
+      div.className = 'produto';
+      div.innerHTML = `
+        <img src="acai-garrafa.jpg" alt="Açaí na Garrafa" onerror="this.src='acai.png'">
+        <h3>Açaí na Garrafa</h3>
+        <p>R$ 20,00</p>
+        <button>Adicionar ao Carrinho</button>
+      `;
+      div.querySelector('button').addEventListener('click', abrirModalGarrafa);
+      return div;
+    }
+
+    // ===== CARREGAR DA API =====
     async function carregarAcai() {
       try {
         const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
         const resultado = await response.json();
         if (resultado.success && resultado.produtos) {
           const acais = resultado.produtos.filter(p =>
-            p.categoria === 'Açai' && p.ativo !== false && p.ativo !== 'false' && p.ativo !== 'NÃO' && p.ativo !== 'NAO'
+            p.categoria === 'Açai' &&
+            p.ativo !== false && p.ativo !== 'false' &&
+            p.ativo !== 'NÃO' && p.ativo !== 'NAO'
           );
           if (acais.length > 0) {
-            renderizarAcai(acais);
+            renderizarProdutos(acais);
             return;
           }
         }
-      } catch (error) {
-        console.warn('Usando açaís locais como fallback.', error);
+      } catch (e) {
+        console.warn('Falha na API, usando fallback.', e);
       }
-      document.getElementById('acai-loading').style.display = 'none';
-      document.querySelectorAll('.acai-hardcoded').forEach(el => el.style.display = 'block');
-    }
-
-    function renderizarAcai(acais) {
-      const secao = document.getElementById('produtos');
-      document.getElementById('acai-loading').style.display = 'none';
-      document.querySelectorAll('.acai-hardcoded').forEach(el => el.remove());
-
-      const imgPadrao = "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png";
-      acais.forEach(acai => {
-        const img = acai.imagem || imgPadrao;
-        const div = document.createElement('div');
-        div.className = 'produto';
-        const nomeEsc = acai.nome.replace(/'/g, "\\'");
-        const opcoesEsc = (acai.opcoes || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/\n/g, '\\n');
-        div.innerHTML = `
-          <img src="${img}" alt="${acai.nome}" onerror="this.src='${imgPadrao}'">
-          <h3>${acai.nome}</h3>
-          <p>R$ ${parseFloat(acai.preco || 0).toFixed(2)}</p>
-          <button onclick="abrirModalPersonalizacao('${nomeEsc}', ${parseFloat(acai.preco || 0)}, '${opcoesEsc}')">Adicionar ao Carrinho</button>
-        `;
-        secao.insertBefore(div, secao.querySelector('.acai-garrafa-fixo'));
-      });
+      // Fallback: mostra hardcoded
+      renderizarProdutos(ACAIS_FALLBACK);
     }
 
     // ===== HELPERS =====
@@ -640,60 +499,51 @@
       document.getElementById(id).style.display = 'none';
     }
 
-    function renderizarOpcaoLista(containerId, opcoes, tipoSel, onSelect) {
+    function renderizarLista(containerId, opcoes, onSelect) {
       const container = document.getElementById(containerId);
       container.innerHTML = '';
       opcoes.forEach((op, index) => {
         const item = document.createElement('div');
         item.className = 'sabor-item';
-        item.innerHTML = `
-          <div class="sabor-check"></div>
-          <div class="sabor-info">
-            <div class="sabor-nome">${op}</div>
-          </div>
-        `;
-        item.addEventListener('click', () => onSelect(index, item, containerId));
+        item.innerHTML = `<div class="sabor-check"></div><div class="sabor-info"><div class="sabor-nome">${op}</div></div>`;
+        item.addEventListener('click', () => {
+          container.querySelectorAll('.sabor-item').forEach(el => el.classList.remove('selecionado'));
+          item.classList.add('selecionado');
+          onSelect(op);
+        });
         container.appendChild(item);
       });
-    }
-
-    function selecionarOpcao(index, clickedItem, containerId) {
-      document.querySelectorAll(`#${containerId} .sabor-item`).forEach(el => el.classList.remove('selecionado'));
-      clickedItem.classList.add('selecionado');
-      return index;
     }
 
     // ===== MODAL PERSONALIZAÇÃO =====
     function abrirModalPersonalizacao(nome, preco, opcoes) {
       produtoAtual = nome;
-      precoAtual = preco;
+      precoAtual   = preco;
       opcoesAcaiAtual = opcoes || '';
       frutaSelecionada = null;
       recheioSelecionado = null;
       coberturaSelecionada = null;
 
-      document.getElementById('modal-titulo').textContent = nome;
-      document.getElementById('modal-subtitulo').textContent = `R$ ${parseFloat(preco).toFixed(2)}`;
+      document.getElementById('modal-titulo').textContent    = nome;
+      document.getElementById('modal-subtitulo').textContent = 'R$ ' + preco.toFixed(2);
+      document.getElementById('preco-total-acai').textContent = preco.toFixed(2).replace('.', ',');
       document.getElementById('observacoes-acai').value = '';
       document.getElementById('obs-contador-acai').textContent = '0/100';
-      document.getElementById('preco-total-acai').textContent = parseFloat(preco).toFixed(2).replace('.', ',');
-      document.getElementById('contador-fruta').textContent = '0/1';
-      document.getElementById('contador-recheio').textContent = '0/1';
+      document.getElementById('contador-fruta').textContent    = '0/1';
+      document.getElementById('contador-recheio').textContent  = '0/1';
       document.getElementById('contador-cobertura').textContent = '0/1';
       document.querySelectorAll('.aviso-selecao').forEach(a => a.style.display = 'none');
-
-      const btn = document.getElementById('btn-confirmar-acai');
-      btn.disabled = true;
+      document.getElementById('btn-confirmar-acai').disabled = true;
 
       // Opções dinâmicas do produto
       const opcoesContainer = document.getElementById('modal-opcoes-acai');
       if (opcoesAcaiAtual) {
         const linhas = opcoesAcaiAtual.split('\n').map(l => l.trim()).filter(l => l);
-        let optsHtml = linhas.map(l => `<option value="${l}">${l}</option>`).join('');
+        const optsHtml = linhas.map(l => `<option value="${l}">${l}</option>`).join('');
         opcoesContainer.innerHTML = `
           <div class="opcao-grupo">
             <label style="font-weight:600;color:#555;display:block;margin-bottom:5px;">Opções do Produto:</label>
-            <select id="modal-opcao-select">
+            <select id="modal-opcao-select" style="width:100%;padding:10px;border:2px solid #eee;border-radius:8px;font-family:'Poppins',sans-serif;font-size:14px;">
               <option value="">Selecione uma opção</option>${optsHtml}
             </select>
           </div>`;
@@ -701,28 +551,24 @@
         opcoesContainer.innerHTML = '';
       }
 
-      // Renderiza listas clicáveis
-      renderizarOpcaoLista('lista-frutas', frutas, 'fruta', (index, item) => {
-        frutaSelecionada = frutas[index];
-        selecionarOpcao(index, item, 'lista-frutas');
+      renderizarLista('lista-frutas', frutas, val => {
+        frutaSelecionada = val;
         document.getElementById('contador-fruta').textContent = '1/1';
-        document.getElementById('aviso-fruta').style.display = 'none';
+        document.getElementById('aviso-fruta').style.display  = 'none';
         verificarBotaoAcai();
       });
 
-      renderizarOpcaoLista('lista-recheios', recheios, 'recheio', (index, item) => {
-        recheioSelecionado = recheios[index];
-        selecionarOpcao(index, item, 'lista-recheios');
+      renderizarLista('lista-recheios', recheios, val => {
+        recheioSelecionado = val;
         document.getElementById('contador-recheio').textContent = '1/1';
-        document.getElementById('aviso-recheio').style.display = 'none';
+        document.getElementById('aviso-recheio').style.display  = 'none';
         verificarBotaoAcai();
       });
 
-      renderizarOpcaoLista('lista-coberturas', coberturas, 'cobertura', (index, item) => {
-        coberturaSelecionada = coberturas[index];
-        selecionarOpcao(index, item, 'lista-coberturas');
+      renderizarLista('lista-coberturas', coberturas, val => {
+        coberturaSelecionada = val;
         document.getElementById('contador-cobertura').textContent = '1/1';
-        document.getElementById('aviso-cobertura').style.display = 'none';
+        document.getElementById('aviso-cobertura').style.display  = 'none';
         verificarBotaoAcai();
       });
 
@@ -730,38 +576,38 @@
     }
 
     function verificarBotaoAcai() {
-      const ok = frutaSelecionada && recheioSelecionado && coberturaSelecionada;
-      document.getElementById('btn-confirmar-acai').disabled = !ok;
+      document.getElementById('btn-confirmar-acai').disabled =
+        !(frutaSelecionada && recheioSelecionado && coberturaSelecionada);
     }
 
     function confirmarPersonalizacao() {
-      let valido = true;
-      if (!frutaSelecionada) { document.getElementById('aviso-fruta').style.display = 'block'; valido = false; }
-      if (!recheioSelecionado) { document.getElementById('aviso-recheio').style.display = 'block'; valido = false; }
-      if (!coberturaSelecionada) { document.getElementById('aviso-cobertura').style.display = 'block'; valido = false; }
-      if (!valido) return;
+      let ok = true;
+      if (!frutaSelecionada)    { document.getElementById('aviso-fruta').style.display    = 'block'; ok = false; }
+      if (!recheioSelecionado)  { document.getElementById('aviso-recheio').style.display  = 'block'; ok = false; }
+      if (!coberturaSelecionada){ document.getElementById('aviso-cobertura').style.display = 'block'; ok = false; }
+      if (!ok) return;
 
-      const opcaoSelect = document.getElementById('modal-opcao-select');
-      const opcaoSelecionada = opcaoSelect ? opcaoSelect.value : '';
-      const observacao = document.getElementById('observacoes-acai').value.trim();
-      const nomeFinal = opcaoSelecionada ? `${produtoAtual} - ${opcaoSelecionada}` : produtoAtual;
+      const sel = document.getElementById('modal-opcao-select');
+      const opcaoSel = sel ? sel.value : '';
+      const obs      = document.getElementById('observacoes-acai').value.trim();
+      const nomeFinal = opcaoSel ? `${produtoAtual} - ${opcaoSel}` : produtoAtual;
 
-      adicionarAoCarrinhoPersonalizado(nomeFinal, precoAtual, frutaSelecionada, recheioSelecionado, coberturaSelecionada, observacao);
+      adicionarPersonalizado(nomeFinal, precoAtual, frutaSelecionada, recheioSelecionado, coberturaSelecionada, obs);
       fecharModal('modal-personalizacao');
     }
 
-    function adicionarAoCarrinhoPersonalizado(nome, preco, fruta, recheio, cobertura, observacao) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    function adicionarPersonalizado(nome, preco, fruta, recheio, cobertura, obs) {
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
       const nomeDetalhado = `${nome} (${fruta}, ${recheio}, ${cobertura})`;
-      let itemExistente = cart.find(item => item.name === nomeDetalhado);
-      if (itemExistente) {
-        itemExistente.quantity += 1;
+      const existe = cart.find(i => i.name === nomeDetalhado);
+      if (existe) {
+        existe.quantity += 1;
       } else {
         let detalhes = `${fruta}, ${recheio}, ${cobertura}`;
-        if (observacao) detalhes += `\nObservações: ${observacao}`;
-        cart.push({ name: nomeDetalhado, price: preco, quantity: 1, detalhes: detalhes, observacao: observacao });
+        if (obs) detalhes += `\nObservações: ${obs}`;
+        cart.push({ name: nomeDetalhado, price: preco, quantity: 1, detalhes, observacao: obs });
       }
-      localStorage.setItem("cart", JSON.stringify(cart));
+      localStorage.setItem('cart', JSON.stringify(cart));
       atualizarAbinhaCarrinho();
     }
 
@@ -769,31 +615,28 @@
     function abrirModalGarrafa() {
       saborGarrafaSelecionado = null;
       document.getElementById('obs-garrafa').value = '';
-      document.getElementById('contador-obs-garrafa').textContent = '0/100';
-      document.getElementById('contador-sabor-garrafa').textContent = '0/1';
-      document.getElementById('aviso-sabor-garrafa').style.display = 'none';
-      document.getElementById('btn-confirmar-garrafa').disabled = true;
-      document.getElementById('preco-total-garrafa').textContent = '20,00';
+      document.getElementById('contador-obs-garrafa').textContent    = '0/100';
+      document.getElementById('contador-sabor-garrafa').textContent  = '0/1';
+      document.getElementById('aviso-sabor-garrafa').style.display   = 'none';
+      document.getElementById('btn-confirmar-garrafa').disabled      = true;
 
       const lista = document.getElementById('lista-sabores-garrafa');
       lista.innerHTML = '';
-      saboresGarrafa.forEach((sabor, index) => {
+      saboresGarrafa.forEach(sabor => {
         const item = document.createElement('div');
         item.className = 'sabor-item';
         item.innerHTML = `
           <div class="sabor-check"></div>
-          <div class="sabor-info">
-            <div class="sabor-nome">${sabor}</div>
-          </div>
+          <div class="sabor-info"><div class="sabor-nome">${sabor}</div></div>
           <div class="sabor-preco">R$ 20,00</div>
         `;
         item.addEventListener('click', () => {
-          document.querySelectorAll('#lista-sabores-garrafa .sabor-item').forEach(el => el.classList.remove('selecionado'));
+          lista.querySelectorAll('.sabor-item').forEach(el => el.classList.remove('selecionado'));
           item.classList.add('selecionado');
           saborGarrafaSelecionado = sabor;
           document.getElementById('contador-sabor-garrafa').textContent = '1/1';
-          document.getElementById('aviso-sabor-garrafa').style.display = 'none';
-          document.getElementById('btn-confirmar-garrafa').disabled = false;
+          document.getElementById('aviso-sabor-garrafa').style.display  = 'none';
+          document.getElementById('btn-confirmar-garrafa').disabled     = false;
         });
         lista.appendChild(item);
       });
@@ -806,91 +649,76 @@
         document.getElementById('aviso-sabor-garrafa').style.display = 'block';
         return;
       }
-      const observacao = document.getElementById('obs-garrafa').value.trim();
+      const obs  = document.getElementById('obs-garrafa').value.trim();
       const nome = `Açaí na Garrafa - ${saborGarrafaSelecionado}`;
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      let itemExistente = cart.find(item => item.name === nome);
-      if (itemExistente) {
-        itemExistente.quantity += 1;
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const existe = cart.find(i => i.name === nome);
+      if (existe) {
+        existe.quantity += 1;
       } else {
-        cart.push({ name: nome, price: 20.00, quantity: 1, detalhes: saborGarrafaSelecionado, observacao: observacao });
+        cart.push({ name: nome, price: 20, quantity: 1, detalhes: saborGarrafaSelecionado, observacao: obs });
       }
-      localStorage.setItem("cart", JSON.stringify(cart));
+      localStorage.setItem('cart', JSON.stringify(cart));
       atualizarAbinhaCarrinho();
       fecharModal('modal-garrafa');
     }
 
     // ===== CARRINHO =====
     function removerUmaUnidade(nome) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      let itemExistente = cart.find(item => item.name === nome);
-      if (itemExistente && itemExistente.quantity > 1) {
-        itemExistente.quantity -= 1;
-      } else {
-        cart = cart.filter(item => item.name !== nome);
-      }
-      localStorage.setItem("cart", JSON.stringify(cart));
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const idx = cart.findIndex(i => i.name === nome);
+      if (idx === -1) return;
+      if (cart[idx].quantity > 1) cart[idx].quantity -= 1;
+      else cart.splice(idx, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
       atualizarAbinhaCarrinho();
     }
 
     function atualizarAbinhaCarrinho() {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const lista = document.getElementById("carrinho-itens");
-      const totalSpan = document.getElementById("carrinho-total");
-      lista.innerHTML = "";
-      let total = 0;
+      const cart  = JSON.parse(localStorage.getItem('cart')) || [];
+      const lista = document.getElementById('carrinho-itens');
+      const total = document.getElementById('carrinho-total');
+      lista.innerHTML = '';
+      let soma = 0;
       cart.forEach(item => {
-        const li = document.createElement("li");
-        const valorTotalItem = item.price * item.quantity;
-        let detalhesText = '';
-        if (item.detalhes) {
-          detalhesText = `<div class="item-detalhes">${typeof item.detalhes === 'object' ? \
-            `${item.detalhes.fruta}, ${item.detalhes.recheio}, ${item.detalhes.cobertura}` : item.detalhes}</div>`;
-        }
+        const val = item.price * item.quantity;
+        soma += val;
+        const li = document.createElement('li');
+        const det = item.detalhes
+          ? `<div class="item-detalhes">${typeof item.detalhes === 'object'
+              ? \
+                `${item.detalhes.fruta}, ${item.detalhes.recheio}, ${item.detalhes.cobertura}`
+              : item.detalhes}</div>`
+          : '';
+        const nomeSafe = item.name.replace(/'/g, "\\'");
         li.innerHTML = `
-          <div>
-            <strong>${item.name.split('(')[0]}</strong>
-            ${detalhesText}
-          </div>
-          <div>
-            ${item.quantity} un - R$ ${valorTotalItem.toFixed(2)}
-            <button class="btn-remover" onclick="removerUmaUnidade('${item.name.replace(/'/g, "\\'")}')">Remover 1</button>
-          </div>
-        `;
+          <div><strong>${item.name.split('(')[0]}</strong>${det}</div>
+          <div>${item.quantity} un - R$ ${val.toFixed(2)}
+            <button class="btn-remover" onclick="removerUmaUnidade('${nomeSafe}')">Remover 1</button>
+          </div>`;
         lista.appendChild(li);
-        total += valorTotalItem;
       });
-      totalSpan.textContent = total.toFixed(2);
+      total.textContent = soma.toFixed(2);
     }
 
-    document.getElementById("btn-finalizar").addEventListener("click", function () {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      if (cart.length === 0) {
-        alert("Seu carrinho está vazio!");
-        return;
-      }
+    document.getElementById('btn-finalizar').addEventListener('click', () => {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      if (!cart.length) { alert('Seu carrinho está vazio!'); return; }
       window.location.href = 'carrinho.html';
     });
 
-    // Fechar modal clicando fora
-    window.addEventListener('click', function(event) {
+    window.addEventListener('click', e => {
       ['modal-personalizacao', 'modal-garrafa'].forEach(id => {
-        const modal = document.getElementById(id);
-        if (event.target === modal) fecharModal(id);
+        if (e.target === document.getElementById(id)) fecharModal(id);
       });
     });
 
-    // Contador observações açaí
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener('DOMContentLoaded', () => {
       atualizarAbinhaCarrinho();
       carregarAcai();
-      const obsAcai = document.getElementById('observacoes-acai');
-      const obsContador = document.getElementById('obs-contador-acai');
-      if (obsAcai && obsContador) {
-        obsAcai.addEventListener('input', () => {
-          obsContador.textContent = obsAcai.value.length + '/100';
-        });
-      }
+      document.getElementById('observacoes-acai').addEventListener('input', function() {
+        document.getElementById('obs-contador-acai').textContent = this.value.length + '/100';
+      });
     });
   </script>
 
