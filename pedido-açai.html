@@ -216,6 +216,12 @@
       <p>R$ 25,00</p>
       <button onclick="abrirModalPersonalizacao('Açai 500ml', 25)">Adicionar ao Carrinho</button>
     </div>
+
+    <div class="produto acai-hardcoded">
+      <img src="acai-garrafa.jpg" alt="Açaí na Garrafa" onerror="this.src='acai.png'">
+      <div>Açaí na Garrafa — R$ 20,00</div>
+      <button onclick="abrirModalGarrafa()">Adicionar</button>
+    </div>
   </section>
 
   <div id="modal-personalizacao" class="modal">
@@ -267,6 +273,38 @@
       <div class="modal-buttons">
         <button class="btn-confirmar" onclick="confirmarPersonalizacao()">Adicionar ao Carrinho</button>
         <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-garrafa" class="modal">
+    <div class="modal-content">
+      <h3>Açaí na Garrafa</h3>
+      <p style="text-align:center;margin-bottom:15px;font-weight:bold;">R$ 20,00</p>
+
+      <div class="modal-group">
+        <label>Sabores — OBRIGATÓRIO, escolha 1: <span id="contador-sabor-garrafa">0/1</span></label>
+        <div id="sabores-garrafa" style="margin-top:8px;">
+          <div style="margin-bottom:6px;"><label><input type="radio" name="sabor-garrafa" value="Açaí com Nutella" onchange="selecionarSaborGarrafa(0)"> Açaí com Nutella</label></div>
+          <div style="margin-bottom:6px;"><label><input type="radio" name="sabor-garrafa" value="Açaí com Creme Ninho" onchange="selecionarSaborGarrafa(1)"> Açaí com Creme Ninho</label></div>
+          <div style="margin-bottom:6px;"><label><input type="radio" name="sabor-garrafa" value="Açaí com Leite Condensado" onchange="selecionarSaborGarrafa(2)"> Açaí com Leite Condensado</label></div>
+          <div style="margin-bottom:6px;"><label><input type="radio" name="sabor-garrafa" value="Açaí com Leite em Pó + Leite Condensado" onchange="selecionarSaborGarrafa(3)"> Açaí com Leite em Pó + Leite Condensado</label></div>
+        </div>
+        <div id="aviso-sabor-garrafa" class="aviso-selecao">Por favor, escolha um sabor</div>
+      </div>
+
+      <div class="modal-group">
+        <label for="obs-garrafa">Alguma observação? <span id="contador-obs-garrafa">0 / 100</span></label>
+        <textarea id="obs-garrafa" maxlength="100" placeholder="Ex: sem açúcar..."
+                  style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;resize:vertical;min-height:70px;font-family:'Poppins',sans-serif;font-size:14px;"
+                  oninput="document.getElementById('contador-obs-garrafa').textContent = this.value.length + ' / 100'"></textarea>
+      </div>
+
+      <p style="text-align:right;font-weight:bold;margin-top:10px;">Total: R$ 20,00</p>
+
+      <div class="modal-buttons">
+        <button id="btn-confirmar-garrafa" class="btn-confirmar" onclick="confirmarGarrafa()" disabled style="opacity:0.5;cursor:not-allowed;">Adicionar ao Carrinho</button>
+        <button class="btn-cancelar" onclick="fecharModalGarrafa()">Cancelar</button>
       </div>
     </div>
   </div>
@@ -559,12 +597,71 @@
       if (event.target === modal) {
         fecharModal();
       }
+      const modalGarrafa = document.getElementById('modal-garrafa');
+      if (event.target === modalGarrafa) {
+        fecharModalGarrafa();
+      }
     };
 
     document.addEventListener("DOMContentLoaded", function() {
       atualizarAbinhaCarrinho();
       carregarAcai();
     });
+
+    let saborGarrafaSelecionado = null;
+
+    function abrirModalGarrafa() {
+      saborGarrafaSelecionado = null;
+      document.querySelectorAll('input[name="sabor-garrafa"]').forEach(r => r.checked = false);
+      document.getElementById('obs-garrafa').value = '';
+      document.getElementById('contador-obs-garrafa').textContent = '0 / 100';
+      document.getElementById('contador-sabor-garrafa').textContent = '0/1';
+      document.getElementById('aviso-sabor-garrafa').style.display = 'none';
+      const btnConfirmar = document.getElementById('btn-confirmar-garrafa');
+      btnConfirmar.disabled = true;
+      btnConfirmar.style.opacity = '0.5';
+      btnConfirmar.style.cursor = 'not-allowed';
+      document.getElementById('modal-garrafa').style.display = 'block';
+    }
+
+    function selecionarSaborGarrafa(index) {
+      const radios = document.querySelectorAll('input[name="sabor-garrafa"]');
+      saborGarrafaSelecionado = radios[index] ? radios[index].value : null;
+      document.getElementById('contador-sabor-garrafa').textContent = saborGarrafaSelecionado ? '1/1' : '0/1';
+      const btnConfirmar = document.getElementById('btn-confirmar-garrafa');
+      btnConfirmar.disabled = !saborGarrafaSelecionado;
+      btnConfirmar.style.opacity = saborGarrafaSelecionado ? '1' : '0.5';
+      btnConfirmar.style.cursor = saborGarrafaSelecionado ? 'pointer' : 'not-allowed';
+    }
+
+    function fecharModalGarrafa() {
+      document.getElementById('modal-garrafa').style.display = 'none';
+    }
+
+    function confirmarGarrafa() {
+      if (!saborGarrafaSelecionado) {
+        document.getElementById('aviso-sabor-garrafa').style.display = 'block';
+        return;
+      }
+      const observacao = document.getElementById('obs-garrafa').value.trim();
+      const nome = `Açaí na Garrafa - ${saborGarrafaSelecionado}`;
+      let cart = JSON.parse(localStorage.getItem("cart")) || [];
+      let itemExistente = cart.find(item => item.name === nome);
+      if (itemExistente) {
+        itemExistente.quantity += 1;
+      } else {
+        cart.push({
+          name: nome,
+          price: 20.00,
+          quantity: 1,
+          detalhes: saborGarrafaSelecionado,
+          observacao: observacao
+        });
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      atualizarAbinhaCarrinho();
+      fecharModalGarrafa();
+    }
   </script>
 
 </body>
