@@ -217,10 +217,11 @@
       <button onclick="abrirModalPersonalizacao('Açai 500ml', 25)">Adicionar ao Carrinho</button>
     </div>
 
-    <div class="produto acai-hardcoded">
+    <div class="produto acai-garrafa-fixo">
       <img src="acai-garrafa.jpg" alt="Açaí na Garrafa" onerror="this.src='acai.png'">
-      <div>Açaí na Garrafa — R$ 20,00</div>
-      <button onclick="abrirModalGarrafa()">Adicionar</button>
+      <h3>Açaí na Garrafa</h3>
+      <p>R$ 20,00</p>
+      <button onclick="abrirModalGarrafa()">Adicionar ao Carrinho</button>
     </div>
   </section>
 
@@ -450,7 +451,7 @@
           <p>R$ ${parseFloat(acai.preco || 0).toFixed(2)}</p>
           <button onclick="abrirModalPersonalizacao('${nomeEsc}', ${parseFloat(acai.preco || 0)}, '${opcoesEsc}')">Adicionar ao Carrinho</button>
         `;
-        secao.appendChild(div);
+        secao.insertBefore(div, secao.querySelector('.acai-garrafa-fixo'));
       });
     }
 
