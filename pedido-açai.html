@@ -46,7 +46,7 @@
       transform: translateX(-50%);
     }
 
-    #produtos {
+    #produtos-container {
       display: flex;
       justify-content: center;
       align-items: flex-start;
@@ -64,6 +64,8 @@
       transition: transform 0.2s ease;
       margin-top: 20px;
       width: 180px;
+      display: flex;
+      flex-direction: column;
     }
     .produto:hover { transform: translateY(-5px); }
 
@@ -73,9 +75,10 @@
       object-fit: cover;
       border-radius: 10px;
       margin-bottom: 10px;
+      align-self: center;
     }
 
-    .produto h3 { font-weight: 600; margin-bottom: 6px; color: #333; }
+    .produto h3 { font-weight: 600; margin-bottom: 6px; color: #333; font-size: 15px; }
     .produto p  { font-size: 14px; color: #666; margin-bottom: 10px; }
 
     .produto button {
@@ -87,6 +90,7 @@
       cursor: pointer;
       font-weight: 600;
       transition: background-color 0.3s;
+      margin-top: auto;
     }
     .produto button:hover { background-color: #333; }
 
@@ -278,24 +282,6 @@
     .btn-remover:hover { background-color: #c82333; }
 
     .item-detalhes { font-size: 11px; color: #666; margin-top: 2px; }
-
-    /* Loading spinner */
-    .loading-produtos {
-      width: 100%;
-      text-align: center;
-      padding: 40px 20px;
-      color: #999;
-      font-size: 14px;
-    }
-    .loading-produtos .spinner {
-      width: 32px; height: 32px;
-      border: 3px solid #eee;
-      border-top-color: #000;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 10px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -305,13 +291,9 @@
     <div class="titulo-header">Cardápio de Açai</div>
   </header>
 
-  <!-- Produtos renderizados por JS (API com fallback hardcoded) -->
-  <section id="produtos">
-    <div class="loading-produtos">
-      <div class="spinner"></div>
-      <p>Carregando cardápio...</p>
-    </div>
-  </section>
+  <div id="produtos-container">
+    <p style="text-align:center;padding:40px;color:#666;font-family:Poppins,sans-serif;">Carregando cardápio...</p>
+  </div>
 
   <!-- ===== MODAL PERSONALIZAÇÃO AÇAÍ ===== -->
   <div id="modal-personalizacao" class="modal-overlay">
@@ -422,129 +404,111 @@
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDI4G-ODEtByxxf_9BzfEzW5QJPQjYP4sk8tO8mOT5skWRXk_BoFNq7smRVFZ6kmMK/exec';
+    const CATEGORIA_ATUAL = 'Açai';
 
-    // ===== OPÇÕES FIXAS =====
+    // ===== OPÇÕES FIXAS (frutas/recheios/coberturas nunca mudam via admin) =====
     const frutas     = ['Banana', 'Morango', 'Uva'];
     const recheios   = ['Leite em Pó', 'Nutella', 'Creme De Ninho', 'Leite Condensado'];
     const coberturas = ['Leite Condensado', 'Leite em Pó'];
 
-    // Fallback hardcoded para açaí (usado se API falhar)
-    const acaiFallback = [
-      { nome: 'Açai 300ml', preco: 20, imagem: 'acai.png', opcoes: '' },
-      { nome: 'Açai 500ml', preco: 25, imagem: 'açai 500 ml.png', opcoes: '' }
+    // ===== FALLBACK hardcoded (usado só se API falhar) =====
+    const PRODUTOS_FALLBACK = [
+      { nome: 'Açai 300ml',  preco: 20, imagem: 'acai.png',        descricao: '', opcoes: '' },
+      { nome: 'Açai 500ml',  preco: 25, imagem: 'açai 500 ml.png', descricao: '', opcoes: '' },
+      { nome: 'Açaí na Garrafa', preco: 20, imagem: 'acai-garrafa.jpg', descricao: '', opcoes: '', garrafa: true }
     ];
 
-    // Fallback hardcoded para garrafa (usado se API falhar)
-    const saboresGarrafaFallback = [
-      { sabor: 'Açaí com Nutella',                        preco: 20 },
-      { sabor: 'Açaí com Creme Ninho',                    preco: 20 },
-      { sabor: 'Açaí com Leite Condensado',               preco: 20 },
-      { sabor: 'Açaí com Leite em Pó + Leite Condensado', preco: 20 }
+    const SABORES_GARRAFA_FALLBACK = [
+      { sabor: 'Açaí com Nutella',                         preco: 20 },
+      { sabor: 'Açaí com Creme Ninho',                     preco: 20 },
+      { sabor: 'Açaí com Leite Condensado',                preco: 20 },
+      { sabor: 'Açaí com Leite em Pó + Leite Condensado',  preco: 20 }
     ];
 
     // ===== ESTADO =====
     let produtoAtual = null, precoAtual = 0, opcoesAcaiAtual = '';
     let frutaSelecionada = null, recheioSelecionado = null, coberturaSelecionada = null;
     let saborGarrafaSelecionado = null;
-    // Garrafa dinâmica: array de { sabor, preco }
-    let saboresGarrafaDinamicos = null;
+    let saboresGarrafaAtual = SABORES_GARRAFA_FALLBACK;
 
-    const imgPadrao = 'acai.png';
+    // ===== CARREGAR PRODUTOS DA API (mesmo padrão do pedido-pizza.html) =====
+    async function carregarProdutos() {
+      const container = document.getElementById('produtos-container');
+      container.innerHTML = '<p style="text-align:center;padding:40px;color:#666;font-family:Poppins,sans-serif;">Carregando cardápio...</p>';
+      try {
+        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
+        const resultado = await response.json();
+        if (resultado.success && resultado.produtos && resultado.produtos.length > 0) {
+          const filtrados = resultado.produtos.filter(p =>
+            p.categoria === CATEGORIA_ATUAL &&
+            p.ativo !== false && p.ativo !== 'false' &&
+            p.ativo !== 'NÃO' && p.ativo !== 'NAO'
+          );
+          if (filtrados.length > 0) {
+            renderizarProdutos(filtrados);
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('Erro ao carregar da planilha, usando fallback.', e);
+      }
+      renderizarProdutos(PRODUTOS_FALLBACK);
+    }
 
-    // ===== RENDERIZAR CARDS DE AÇAÍ =====
-    function renderizarCards(acais, garrafas) {
-      const secao = document.getElementById('produtos');
-      secao.innerHTML = '';
+    function isGarrafa(nome) {
+      return /garrafa/i.test(nome);
+    }
 
-      // Cards de açaí
-      acais.forEach(acai => {
-        const img   = acai.imagem || imgPadrao;
-        const preco = parseFloat(acai.preco || 0);
-        const div   = document.createElement('div');
+    function renderizarProdutos(produtos) {
+      const container = document.getElementById('produtos-container');
+      container.innerHTML = '';
+
+      // Separa garrafas dos demais açaís
+      const acais    = produtos.filter(p => !isGarrafa(p.nome));
+      const garrafas = produtos.filter(p =>  isGarrafa(p.nome));
+
+      // Monta lista de sabores da garrafa para o modal
+      if (garrafas.length > 0) {
+        saboresGarrafaAtual = garrafas.map(p => ({
+          sabor: p.nome,
+          preco: parseFloat(p.preco || 20)
+        }));
+      } else {
+        saboresGarrafaAtual = SABORES_GARRAFA_FALLBACK;
+      }
+
+      // Renderiza cards de açaí
+      acais.forEach(prod => {
+        const imagem = prod.imagem && prod.imagem.trim() ? prod.imagem : 'acai.png';
+        const preco  = parseFloat(prod.preco || 0);
+        const div = document.createElement('div');
         div.className = 'produto';
         div.innerHTML = `
-          <img src="${img}" alt="${acai.nome}" onerror="this.src='${imgPadrao}'">
-          <h3>${acai.nome}</h3>
+          <img src="${imagem}" alt="${prod.nome}" onerror="this.src='acai.png'">
+          <h3>${prod.nome}</h3>
           <p>R$ ${preco.toFixed(2).replace('.', ',')}</p>
           <button>Adicionar ao Carrinho</button>
         `;
         div.querySelector('button').addEventListener('click', () => {
-          abrirModalPersonalizacao(acai.nome, preco, acai.opcoes || '');
+          abrirModalPersonalizacao(prod.nome, preco, prod.opcoes || '');
         });
-        secao.appendChild(div);
+        container.appendChild(div);
       });
 
-      // Card da garrafa
-      // Calcula preço base (menor preço entre os sabores, ou 20)
-      const precoGarrafa = garrafas.length > 0
-        ? Math.min(...garrafas.map(g => g.preco))
+      // Renderiza card da garrafa (um único card para todos os sabores)
+      const precoGarrafa = saboresGarrafaAtual.length > 0
+        ? Math.min(...saboresGarrafaAtual.map(s => s.preco))
         : 20;
-
       const divGarrafa = document.createElement('div');
       divGarrafa.className = 'produto';
       divGarrafa.innerHTML = `
-        <img src="acai-garrafa.jpg" alt="Açaí na Garrafa" onerror="this.src='${imgPadrao}'">
+        <img src="acai-garrafa.jpg" alt="Açaí na Garrafa" onerror="this.src='acai.png'">
         <h3>Açaí na Garrafa</h3>
         <p>A partir de R$ ${precoGarrafa.toFixed(2).replace('.', ',')}</p>
         <button>Adicionar ao Carrinho</button>
       `;
       divGarrafa.querySelector('button').addEventListener('click', () => abrirModalGarrafa());
-      secao.appendChild(divGarrafa);
-    }
-
-    // ===== CARREGAR DA API =====
-    async function carregarCardapio() {
-      try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5000);
-        const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now(), { signal: controller.signal });
-        clearTimeout(timeout);
-        const resultado = await response.json();
-
-        if (resultado.success && resultado.produtos) {
-          const todos = resultado.produtos;
-
-          // Filtra açaís ativos (exclui garrafa)
-          const acais = todos.filter(p =>
-            p.categoria === 'Açai' &&
-            !/garrafa/i.test(p.nome) &&
-            p.ativo !== false && p.ativo !== 'false' &&
-            p.ativo !== 'NÃO' && p.ativo !== 'NAO'
-          );
-
-          // Filtra garrafas ativas
-          const garrafasAPI = todos.filter(p =>
-            p.categoria === 'Açai' &&
-            /garrafa/i.test(p.nome) &&
-            p.ativo !== false && p.ativo !== 'false' &&
-            p.ativo !== 'NÃO' && p.ativo !== 'NAO'
-          );
-
-          // Monta lista de sabores da garrafa para o modal
-          if (garrafasAPI.length > 0) {
-            saboresGarrafaDinamicos = garrafasAPI.map(p => ({
-              sabor: p.nome.replace(/açaí na garrafa\s*[-–]\s*/i, '').replace(/garrafa\s*[-–]\s*/i, '') || p.nome,
-              preco: parseFloat(p.preco || 20)
-            }));
-          } else {
-            saboresGarrafaDinamicos = null;
-          }
-
-          // Se API retornou açaís, usa; senão fallback
-          const acaisFinais = acais.length > 0 ? acais : acaiFallback;
-          // Para a garrafa, se API retornou sabores usa, senão fallback
-          const garrafasFinais = saboresGarrafaDinamicos || saboresGarrafaFallback;
-
-          renderizarCards(acaisFinais, garrafasFinais);
-          return;
-        }
-      } catch (e) {
-        console.warn('API indisponível, usando produtos hardcoded.', e);
-      }
-
-      // Fallback completo
-      saboresGarrafaDinamicos = null;
-      renderizarCards(acaiFallback, saboresGarrafaFallback);
+      container.appendChild(divGarrafa);
     }
 
     // ===== HELPERS =====
@@ -577,10 +541,10 @@
       recheioSelecionado = null;
       coberturaSelecionada = null;
 
-      document.getElementById('modal-titulo').textContent     = nome;
-      document.getElementById('modal-subtitulo').textContent  = 'R$ ' + preco.toFixed(2).replace('.', ',');
-      document.getElementById('preco-total-acai').textContent = preco.toFixed(2).replace('.', ',');
-      document.getElementById('observacoes-acai').value       = '';
+      document.getElementById('modal-titulo').textContent      = nome;
+      document.getElementById('modal-subtitulo').textContent   = 'R$ ' + preco.toFixed(2).replace('.', ',');
+      document.getElementById('preco-total-acai').textContent  = preco.toFixed(2).replace('.', ',');
+      document.getElementById('observacoes-acai').value        = '';
       document.getElementById('obs-contador-acai').textContent = '0/100';
       document.getElementById('contador-fruta').textContent    = '0/1';
       document.getElementById('contador-recheio').textContent  = '0/1';
@@ -668,12 +632,9 @@
       document.getElementById('aviso-sabor-garrafa').style.display  = 'none';
       document.getElementById('btn-confirmar-garrafa').disabled     = true;
 
-      // Usa sabores dinâmicos (da API) ou fallback
-      const sabores = saboresGarrafaDinamicos || saboresGarrafaFallback;
-
       const lista = document.getElementById('lista-sabores-garrafa');
       lista.innerHTML = '';
-      sabores.forEach(s => {
+      saboresGarrafaAtual.forEach(s => {
         const item = document.createElement('div');
         item.className = 'sabor-item';
         item.innerHTML = `
@@ -684,7 +645,7 @@
         item.addEventListener('click', () => {
           lista.querySelectorAll('.sabor-item').forEach(el => el.classList.remove('selecionado'));
           item.classList.add('selecionado');
-          saborGarrafaSelecionado = { sabor: s.sabor, preco: s.preco };
+          saborGarrafaSelecionado = s;
           document.getElementById('contador-sabor-garrafa').textContent = '1/1';
           document.getElementById('aviso-sabor-garrafa').style.display  = 'none';
           document.getElementById('btn-confirmar-garrafa').disabled     = false;
@@ -693,10 +654,10 @@
         lista.appendChild(item);
       });
 
-      // Reset preço exibido para o menor
-      const precoInicial = sabores.length > 0 ? Math.min(...sabores.map(s => s.preco)) : 20;
+      const precoInicial = saboresGarrafaAtual.length > 0
+        ? Math.min(...saboresGarrafaAtual.map(s => s.preco))
+        : 20;
       document.getElementById('preco-total-garrafa').textContent = precoInicial.toFixed(2).replace('.', ',');
-
       document.getElementById('modal-garrafa').style.display = 'block';
     }
 
@@ -769,9 +730,11 @@
       document.getElementById('obs-contador-acai').textContent = this.value.length + '/100';
     });
 
-    // Inicializar
-    atualizarAbinhaCarrinho();
-    carregarCardapio();
+    // ===== INICIALIZAR (mesmo padrão do pedido-pizza.html) =====
+    document.addEventListener('DOMContentLoaded', function() {
+      atualizarAbinhaCarrinho();
+      carregarProdutos();
+    });
   </script>
 
 </body>
