@@ -2,7 +2,8 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Cardápio de Calzone</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Cardápio de Calzone - Mobile</title>
   <link rel="shortcut icon" href="ca.jpg" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -10,107 +11,116 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent; /* Remove highlight no toque em iOS/Android */
     }
 
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #ffffff, #f9f9f9);
       min-height: 100vh;
+      padding-bottom: 20px;
     }
 
     header {
       background-color: #000000;
       color: white;
-      padding: 20px;
-      font-size: 24px;
+      padding: 15px;
+      font-size: 20px;
       font-weight: 600;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
       display: flex;
       align-items: center;
       justify-content: space-between;
       position: relative;
+      min-height: 70px;
     }
 
     .btn-voltar {
-      font-size: 16px;
+      font-size: 14px;
       background-color: #ffffff;
       color: rgb(0, 0, 0);
-      padding: 10px 20px;
+      padding: 10px 15px;
       border-radius: 8px;
       text-decoration: none;
       font-weight: bold;
       transition: background-color 0.3s ease;
+      z-index: 10;
+      display: inline-block;
+      border: none;
+      cursor: pointer;
     }
 
-    .btn-voltar:hover {
+    .btn-voltar:hover, .btn-voltar:active {
       background-color: #f0f0f0;
     }
 
     .titulo-header {
-      margin: 0 auto;
+      font-size: 18px;
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
+      white-space: nowrap;
+      max-width: 60%;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
+    /* LAYOUT MOBILE - UMA COLUNA */
     .produtos {
       display: flex;
-      justify-content: center;
-      gap: 25px;
-      max-width: 1200px;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      max-width: 100%;
       margin: 0 auto;
-      padding: 25px;
+      padding: 20px 15px;
     }
 
-    /* CARD MENOR - IGUAL AOS OUTROS */
     .produto {
       background: white;
-      border-radius: 12px;
-      padding: 15px; /* MENOR padding */
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       text-align: center;
       transition: transform 0.2s ease;
       display: flex;
       flex-direction: column;
-      height: auto;
-      width: 280px; /* LARGURA FIXA MENOR */
+      width: 100%;
+      max-width: 400px;
     }
 
-    .produto:hover {
-      transform: translateY(-5px);
+    .produto:active {
+      transform: scale(0.98);
     }
 
-    /* IMAGEM MELHOR ENQUADRADA */
     .produto img {
       width: 100%;
-      height: 140px; /* ALTURA MENOR */
-      object-fit: cover; /* MANTÉM PROPORÇÃO */
-      border-radius: 10px;
-      margin-bottom: 12px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 15px;
     }
 
     .produto h3 {
-      margin: 8px 0; /* MENOR margem */
-      font-size: 16px; /* FONTE MENOR */
+      margin: 8px 0;
+      font-size: 20px;
       color: #333;
-      min-height: 40px; 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      min-height: auto;
+      font-weight: 600;
     }
 
     .produto p {
       color: #666;
-      font-size: 13px; 
-      margin-bottom: 15px; 
-      line-height: 1.4;
-      min-height: 60px; 
+      font-size: 14px;
+      margin-bottom: 15px;
+      line-height: 1.5;
+      min-height: auto;
     }
 
     .produto .preco {
       font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 15px; 
+      font-size: 22px;
+      margin-bottom: 15px;
       color: #000000;
     }
 
@@ -118,23 +128,26 @@
       background-color: #000000;
       color: white;
       border: none;
-      padding: 10px 16px; 
-      border-radius: 6px;
+      padding: 16px 20px;
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 13px; 
+      font-size: 16px;
+      font-weight: 600;
       width: 100%;
       transition: background-color 0.3s;
       margin-top: auto;
+      touch-action: manipulation;
     }
 
-    .produto button:hover {
+    .produto button:hover, .produto button:active {
       background-color: #333333;
     }
 
+    /* MODAL MOBILE */
     .modal-personalizar {
       display: none;
       position: fixed;
-      z-index: 1000;
+      z-index: 2000;
       left: 0;
       top: 0;
       width: 100%;
@@ -145,26 +158,29 @@
 
     .modal-content {
       background-color: white;
-      margin: 2% auto;
-      padding: 25px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 600px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      animation: modalopen 0.4s;
+      margin: 0;
+      padding: 20px;
+      border-radius: 20px 20px 0 0;
+      width: 100%;
+      max-width: 100%;
+      box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s ease;
       max-height: 90vh;
       overflow-y: auto;
+      position: absolute;
+      bottom: 0;
+      left: 0;
     }
 
-    @keyframes modalopen {
-      from { opacity: 0; transform: translateY(-50px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       margin-bottom: 20px;
       padding-bottom: 10px;
       border-bottom: 1px solid #eee;
@@ -173,16 +189,19 @@
     .modal-header h2 {
       color: #333;
       font-size: 22px;
+      margin-bottom: 5px;
     }
 
     .close {
       color: #aaa;
-      font-size: 28px;
+      font-size: 32px;
       font-weight: bold;
       cursor: pointer;
+      line-height: 1;
+      padding: 0 10px;
     }
 
-    .close:hover {
+    .close:active {
       color: #333;
     }
 
@@ -190,7 +209,7 @@
       margin-bottom: 25px;
       padding: 15px;
       background: #f9f9f9;
-      border-radius: 8px;
+      border-radius: 12px;
       border-left: 4px solid #000000;
     }
 
@@ -207,27 +226,34 @@
     .obrigatorio {
       color: #ff0000;
       font-size: 12px;
+      margin-bottom: 10px;
     }
 
     .contador-opcao {
       font-size: 12px;
       color: #666;
+      background: #fff;
+      padding: 3px 8px;
+      border-radius: 20px;
     }
 
+    /* ITENS DE SELEÇÃO - MAIORES PARA TOQUE */
     .opcao-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 12px;
+      padding: 16px 12px;
       margin: 8px 0;
       background: white;
-      border-radius: 6px;
-      border: 1px solid #eee;
-      transition: all 0.3s;
+      border-radius: 10px;
+      border: 2px solid #eee;
+      transition: all 0.2s;
       cursor: pointer;
+      min-height: 70px;
+      touch-action: manipulation;
     }
 
-    .opcao-item:hover {
+    .opcao-item:active {
       border-color: #ff5722;
       background: #fff8f6;
     }
@@ -244,12 +270,13 @@
     .opcao-nome {
       font-weight: 600;
       color: #333;
+      font-size: 16px;
+      margin-bottom: 4px;
     }
 
     .opcao-descricao {
-      font-size: 12px;
+      font-size: 13px;
       color: #666;
-      margin-top: 4px;
     }
 
     .opcao-preco {
@@ -258,14 +285,15 @@
       margin-left: 15px;
       min-width: 80px;
       text-align: right;
+      font-size: 15px;
     }
 
     .radio-custom {
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
       border: 2px solid #ccc;
       border-radius: 50%;
-      margin-right: 10px;
+      margin-right: 15px;
       position: relative;
       flex-shrink: 0;
     }
@@ -276,16 +304,26 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 10px;
-      height: 10px;
+      width: 14px;
+      height: 14px;
       background: #ff5722;
       border-radius: 50%;
     }
 
+    textarea {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #eee;
+      border-radius: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      min-height: 100px;
+    }
+
     .modal-footer {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 15px;
       margin-top: 25px;
       padding-top: 15px;
       border-top: 1px solid #eee;
@@ -296,24 +334,27 @@
     }
 
     .preco-total {
-      font-size: 20px;
+      font-size: 24px;
       font-weight: bold;
       color: #ff5722;
+      text-align: center;
     }
 
     .btn-confirmar {
       background-color: #4CAF50;
       color: white;
       border: none;
-      padding: 12px 25px;
-      border-radius: 5px;
+      padding: 18px 25px;
+      border-radius: 12px;
       cursor: pointer;
       font-weight: bold;
-      font-size: 16px;
+      font-size: 18px;
       transition: background-color 0.3s;
+      width: 100%;
+      touch-action: manipulation;
     }
 
-    .btn-confirmar:hover {
+    .btn-confirmar:active {
       background-color: #45a049;
     }
 
@@ -322,10 +363,10 @@
       cursor: not-allowed;
     }
 
-    /* CARRINHO NORMAL */
+    /* CARRINHO MOBILE */
     #carrinho-container {
       position: fixed;
-      top: 20px;
+      bottom: 20px;
       right: 20px;
       z-index: 1000;
     }
@@ -333,37 +374,44 @@
     #carrinho-icon {
       background-color: #ffffff;
       color: #000000;
-      padding: 12px 16px;
-      border-radius: 50%;
-      font-size: 20px;
+      padding: 16px 20px;
+      border-radius: 50px;
+      font-size: 24px;
       cursor: pointer;
-      transition: background 0.3s;
-      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
       border: 2px solid #000000;
+      width: 70px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     #carrinho-abinha {
       display: none;
       position: absolute;
-      top: 50px;
+      bottom: 80px;
       right: 0;
       background: white;
       border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 15px;
-      width: 350px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+      border-radius: 16px;
+      padding: 20px;
+      width: 300px;
+      max-width: 90vw;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
       z-index: 1001;
     }
 
-    #carrinho-container:hover #carrinho-abinha {
+    /* Mostrar carrinho ao clicar no mobile */
+    #carrinho-container.active #carrinho-abinha {
       display: block;
     }
 
     #carrinho-itens {
       max-height: 300px;
       overflow-y: auto;
-      margin: 10px 0;
+      margin: 15px 0;
       font-size: 14px;
       list-style: none;
       padding: 0;
@@ -371,47 +419,52 @@
 
     #carrinho-itens li {
       border-bottom: 1px solid #eee;
-      padding: 10px 0;
+      padding: 15px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
     }
 
     .carrinho-item-nome {
       font-weight: 600;
+      font-size: 15px;
     }
 
     .carrinho-item-detalhes {
       font-size: 12px;
       color: #666;
-      margin-top: 3px;
+      margin-top: 5px;
       white-space: pre-line;
     }
 
     .carrinho-item-preco {
       font-weight: bold;
       color: #000000;
+      font-size: 16px;
     }
 
     #carrinho-total {
       font-weight: bold;
-      font-size: 18px;
+      font-size: 20px;
       color: #000000;
     }
 
     #btn-finalizar {
       width: 100%;
-      padding: 12px;
+      padding: 16px;
       background-color: #000000;
       color: white;
       border: none;
-      border-radius: 6px;
+      border-radius: 12px;
       font-weight: bold;
+      font-size: 16px;
       cursor: pointer;
-      margin-top: 10px;
+      margin-top: 15px;
+      touch-action: manipulation;
     }
 
-    #btn-finalizar:hover {
+    #btn-finalizar:active {
       background-color: #333333;
     }
 
@@ -419,29 +472,55 @@
       background-color: #dc3545;
       color: white;
       border: none;
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-size: 12px;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
       cursor: pointer;
       margin-left: 10px;
+      touch-action: manipulation;
     }
 
-    .btn-remover:hover {
+    .btn-remover:active {
       background-color: #c82333;
+    }
+
+    /* Media query para telas muito pequenas */
+    @media (max-width: 380px) {
+      .titulo-header {
+        font-size: 16px;
+      }
+      
+      .produto h3 {
+        font-size: 18px;
+      }
+      
+      .produto .preco {
+        font-size: 20px;
+      }
+      
+      .modal-content {
+        padding: 15px;
+      }
+    }
+
+    /* Ajuste para iPhone com notch */
+    @media (min-width: 390px) and (min-height: 844px) {
+      .modal-content {
+        padding-bottom: 30px;
+      }
     }
   </style>
 </head>
 <body>
 
   <header>
-    <a class="btn-voltar" href="index.html">🔙 Voltar</a>
+    <a class="btn-voltar" href="index.html" onclick="return confirmarVoltar()">← Voltar</a>
     <div class="titulo-header">Cardápio de Calzone</div>
   </header>
 
   <section class="produtos" id="secao-calzones">
-    <!-- Calzone Principal -->
     <div class="produto">
-      <img src="calzone.png" alt="Calzone">
+      <img src="calzone.png" alt="Calzone" onerror="this.src='https://via.placeholder.com/400x200?text=Calzone'">
       <h3>Calzone</h3>
       <p>Sabores Frango com Requeijão e Pizza (mussarela, presunto, tomate e orégano)</p>
       <div class="preco">R$ 35,00</div>
@@ -455,8 +534,8 @@
       <div class="modal-header">
         <div>
           <h2>Calzone</h2>
-          <p style="font-size:13px;color:#666;margin-top:5px;">Sabores Frango com Requeijão e Pizza (mussarela, presunto, tomate e orégano)</p>
-          <p style="font-weight:bold;font-size:14px;margin-top:4px;">R$ 35,00</p>
+          <p style="font-size:14px;color:#666;margin-top:5px;">Frango c/ Requeijão ou Pizza</p>
+          <p style="font-weight:bold;font-size:18px;margin-top:8px;">R$ 35,00</p>
         </div>
         <span class="close" onclick="fecharModal('modal-calzone')">&times;</span>
       </div>
@@ -475,7 +554,7 @@
           <span>Deseja borda recheada?</span>
           <div class="contador-opcao" id="contador-borda-calzone">0/1</div>
         </div>
-        <div>Opcional</div>
+        <div style="font-size:13px;color:#666;margin-bottom:10px;">Opcional</div>
         <div id="lista-bordas-calzone"></div>
       </div>
       
@@ -484,9 +563,8 @@
           <span>Alguma observação?</span>
           <div class="contador-opcao" id="contador-obs-calzone">0 / 100</div>
         </div>
-        <textarea id="observacoes-calzone" placeholder="" maxlength="100"
-                  oninput="atualizarContadorObs()" 
-                  style="width: 100%; padding: 10px; border: 1px solid #eee; border-radius: 5px; resize: vertical; min-height: 80px; font-family: 'Poppins', sans-serif; font-size: 14px;"></textarea>
+        <textarea id="observacoes-calzone" placeholder="Ex: Bem assado, sem cebola..." maxlength="100"
+                  oninput="atualizarContadorObs()"></textarea>
       </div>
       
       <div class="modal-footer">
@@ -497,28 +575,27 @@
   </div>
 
   <!-- Carrinho -->
-  <div id="carrinho-container">
+  <div id="carrinho-container" onclick="toggleCarrinho()">
     <div id="carrinho-icon">🛒</div>
     <div id="carrinho-abinha">
-      <strong>🛍️ Seu Carrinho</strong>
+      <strong style="font-size:18px;">🛍️ Seu Carrinho</strong>
       <ul id="carrinho-itens"></ul>
-      <p><strong>Total:</strong> R$ <span id="carrinho-total">0.00</span></p>
-      <button id="btn-finalizar" onclick="window.location.href='carrinho.html'">Finalizar Pedido</button>
+      <p style="font-size:18px;margin-top:10px;"><strong>Total:</strong> R$ <span id="carrinho-total">0.00</span></p>
+      <button id="btn-finalizar" onclick="event.stopPropagation(); window.location.href='carrinho.html'">Finalizar Pedido</button>
     </div>
   </div>
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDI4G-ODEtByxxf_9BzfEzW5QJPQjYP4sk8tO8mOT5skWRXk_BoFNq7smRVFZ6kmMK/exec';
 
-    // Dados do Calzone (hardcoded)
     const saboresCalzone = [
       { 
-        nome: "Calsone Frango com Requeijão", 
-        descricao: "" 
+        nome: "Calzone Frango com Requeijão", 
+        descricao: "Frango desfiado com requeijão cremoso" 
       },
       { 
-        nome: "Calsone Pizza", 
-        descricao: "Mussarela, presunto, tomate e orégano." 
+        nome: "Calzone Pizza", 
+        descricao: "Mussarela, presunto, tomate e orégano" 
       }
     ];
 
@@ -527,10 +604,29 @@
       { nome: "Borda de Requeijão Cremoso", preco: 8.00 }
     ];
 
-    // Variáveis de estado
     let saborSelecionadoCalzone = null;
     let bordaSelecionadaCalzone = null;
     let observacoesCalzone = '';
+
+    function confirmarVoltar() {
+      if (localStorage.getItem('cart') && JSON.parse(localStorage.getItem('cart')).length > 0) {
+        return confirm('Tem certeza que deseja voltar? Seus itens no carrinho serão mantidos.');
+      }
+      return true;
+    }
+
+    function toggleCarrinho() {
+      const container = document.getElementById('carrinho-container');
+      container.classList.toggle('active');
+    }
+
+    // Fechar carrinho ao clicar fora
+    document.addEventListener('click', function(event) {
+      const container = document.getElementById('carrinho-container');
+      if (!container.contains(event.target)) {
+        container.classList.remove('active');
+      }
+    });
 
     function abrirModalCalzone() {
       saborSelecionadoCalzone = null;
@@ -538,6 +634,7 @@
       observacoesCalzone = '';
 
       document.getElementById('modal-calzone').style.display = 'block';
+      document.body.style.overflow = 'hidden'; // Impede rolagem do fundo
       carregarSaboresCalzone();
       carregarBordasCalzone();
       atualizarContadorSaborCalzone();
@@ -549,6 +646,7 @@
 
     function fecharModal(modalId) {
       document.getElementById(modalId).style.display = 'none';
+      document.body.style.overflow = 'auto'; // Restaura rolagem
     }
 
     function carregarSaboresCalzone() {
@@ -630,7 +728,7 @@
     }
 
     function atualizarPrecoTotalCalzone() {
-      let total = 35.00; // preço base sempre R$ 35,00
+      let total = 35.00;
       
       if (bordaSelecionadaCalzone !== null) {
         total += bordasCalzone[bordaSelecionadaCalzone].preco;
@@ -641,15 +739,7 @@
 
     function atualizarBotaoConfirmarCalzone() {
       const botao = document.getElementById('btn-confirmar-calzone');
-      const habilitado = saborSelecionadoCalzone !== null;
-      
-      if (habilitado) {
-        botao.disabled = false;
-        botao.style.opacity = '1';
-      } else {
-        botao.disabled = true;
-        botao.style.opacity = '0.6';
-      }
+      botao.disabled = saborSelecionadoCalzone === null;
     }
 
     function confirmarCalzone() {
@@ -669,106 +759,7 @@
       let detalhes = `Sabor: ${sabor.nome}`;
       if (bordaSelecionadaCalzone !== null) {
         const borda = bordasCalzone[bordaSelecionadaCalzone];
-        detalhes += `\nBorda: ${borda.nome} (+R$ ${borda.preco.toFixed(2)})`;
+        detalhes += `\nBorda: ${borda.nome}`;
       }
       if (observacoesCalzone.trim()) {
-        detalhes += `\nObservações: ${observacoesCalzone}`;
-      }
-      
-      adicionarAoCarrinho(nomeCalzoneFinal, total, detalhes, observacoesCalzone.trim());
-      
-      fecharModal('modal-calzone');
-      alert('Calzone adicionado ao carrinho!');
-    }
-
-    // Sistema do carrinho
-    function adicionarAoCarrinho(nome, preco, detalhes = '', observacao = '') {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      
-      const itemExistenteIndex = cart.findIndex(item => 
-        item.name === nome && item.detalhes === detalhes
-      );
-      
-      if (itemExistenteIndex !== -1) {
-        cart[itemExistenteIndex].quantity += 1;
-      } else {
-        cart.push({
-          name: nome,
-          price: preco,
-          quantity: 1,
-          detalhes: detalhes,
-          observacao: observacao
-        });
-      }
-      
-      localStorage.setItem("cart", JSON.stringify(cart));
-      atualizarAbinhaCarrinho();
-    }
-
-    function removerItemCarrinho(index) {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      
-      if (index >= 0 && index < cart.length) {
-        cart.splice(index, 1);
-        localStorage.setItem("cart", JSON.stringify(cart));
-        atualizarAbinhaCarrinho();
-      }
-    }
-
-    function atualizarAbinhaCarrinho() {
-      let cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const lista = document.getElementById("carrinho-itens");
-      const totalSpan = document.getElementById("carrinho-total");
-      lista.innerHTML = "";
-      let total = 0;
-
-      cart.forEach((item, index) => {
-        const li = document.createElement("li");
-        const valorTotalItem = item.price * item.quantity;
-        li.innerHTML = `
-          <div style="flex: 1;">
-            <div class="carrinho-item-nome">${item.name} - ${item.quantity}x</div>
-            ${item.detalhes ? `<div class="carrinho-item-detalhes">${item.detalhes}</div>` : ''}
-          </div>
-          <div style="text-align: right;">
-            <div class="carrinho-item-preco">R$ ${valorTotalItem.toFixed(2)}</div>
-            <button class="btn-remover" onclick="removerItemCarrinho(${index})">Remover</button>
-          </div>
-        `;
-        
-        lista.appendChild(li);
-        total += valorTotalItem;
-      });
-
-      totalSpan.textContent = total.toFixed(2);
-      
-      if (cart.length === 0) {
-        document.getElementById('carrinho-abinha').style.display = 'none';
-      }
-    }
-
-    // Fechar modal ao clicar fora
-    window.addEventListener('click', function(event) {
-      if (event.target === document.getElementById('modal-calzone')) {
-        fecharModal('modal-calzone');
-      }
-    });
-
-    // Gerenciar carrinho hover
-    document.getElementById('carrinho-container').addEventListener('mouseenter', function() {
-      document.getElementById('carrinho-abinha').style.display = 'block';
-    });
-
-    document.getElementById('carrinho-container').addEventListener('mouseleave', function(e) {
-      if (!e.relatedTarget || !e.relatedTarget.closest('#carrinho-container')) {
-        document.getElementById('carrinho-abinha').style.display = 'none';
-      }
-    });
-
-    // Inicializar carrinho
-    document.addEventListener("DOMContentLoaded", function() {
-      atualizarAbinhaCarrinho();
-    });
-  </script>
-</body>
-</html>
+        detalhes += `\nOb
