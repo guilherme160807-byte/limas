@@ -32,7 +32,6 @@
       text-align: center;
     }
 
-    /* ===== ABAS ===== */
     .tabs-menu {
       display: flex;
       gap: 10px;
@@ -179,7 +178,11 @@
       background: #c82333;
     }
 
-    /* ===== FORMULÁRIO DE PRODUTOS ===== */
+    .btn-success {
+      background: #28a745;
+      color: white;
+    }
+
     .form-produto {
       background: white;
       padding: 25px;
@@ -251,7 +254,6 @@
       border: 2px solid #ddd;
     }
 
-    /* ===== GRID DE PRODUTOS ===== */
     .produtos-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -290,6 +292,7 @@
     .produto-imagem-placeholder {
       color: #999;
       font-size: 14px;
+      text-align: center;
     }
 
     .produto-info {
@@ -394,23 +397,6 @@
       opacity: 0.65;
     }
 
-    .produto-card.inativo .produto-imagem {
-      position: relative;
-    }
-
-    .produto-card.inativo .produto-imagem::after {
-      content: 'Sem Estoque';
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #dc3545;
-      color: white;
-      font-size: 12px;
-      font-weight: bold;
-      padding: 4px 10px;
-      border-radius: 4px;
-    }
-
     .toggle-label {
       display: flex;
       align-items: center;
@@ -451,6 +437,122 @@
 
     .toggle-label input:checked + .toggle-switch::after {
       left: 22px;
+    }
+
+    /* Editor de Modais */
+    .modal-editor-container {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .modal-selector {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .modal-selector select {
+      padding: 12px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      min-width: 250px;
+      margin-left: 10px;
+    }
+
+    .modal-config {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .opcoes-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    .opcoes-table th,
+    .opcoes-table td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    .opcoes-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+
+    .opcoes-table input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .toggle-opcao {
+      width: 50px;
+      height: 24px;
+      background: #dc3545;
+      border-radius: 12px;
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .toggle-opcao.active {
+      background: #28a745;
+    }
+
+    .toggle-opcao::after {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      transition: left 0.3s;
+    }
+
+    .toggle-opcao.active::after {
+      left: 28px;
+    }
+
+    .status-badge-opcao {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 8px;
+    }
+
+    .status-ativo {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-inativo {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .info-box {
+      background: #e7f3ff;
+      border-left: 4px solid #2196f3;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 6px;
     }
 
     .pedidos-grid {
@@ -544,82 +646,6 @@
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-
-    .comprovante-section {
-      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-      padding: 15px;
-      border-radius: 8px;
-      margin: 15px 0;
-      border: 2px solid #4caf50;
-    }
-
-    .comprovante-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-      color: #2e7d32;
-      font-weight: 600;
-    }
-
-    .comprovante-preview {
-      background: white;
-      padding: 10px;
-      border-radius: 6px;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-
-    .comprovante-preview img {
-      max-width: 100%;
-      max-height: 150px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: transform 0.3s;
-    }
-
-    .comprovante-preview img:hover {
-      transform: scale(1.02);
-    }
-
-    .comprovante-actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .comprovante-actions .btn {
-      flex: 1;
-      justify-content: center;
-      font-size: 13px;
-      padding: 8px 12px;
-    }
-
-    .btn-comprovante {
-      background: #4caf50;
-      color: white;
-    }
-
-    .btn-comprovante:hover {
-      background: #43a047;
-    }
-
-    .btn-drive {
-      background: #1a73e8;
-      color: white;
-    }
-
-    .btn-drive:hover {
-      background: #1557b0;
-    }
-
-    .sem-comprovante {
-      background: #fff3cd;
-      padding: 12px;
-      border-radius: 6px;
-      text-align: center;
-      color: #856404;
-      font-size: 13px;
     }
 
     .itens-box {
@@ -722,87 +748,13 @@
       grid-column: 1 / -1;
     }
 
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .modal-overlay.show {
-      display: flex;
-    }
-
-    .modal-content {
-      background: white;
-      border-radius: 12px;
-      max-width: 90%;
-      max-height: 90%;
-      overflow: auto;
-      position: relative;
-    }
-
-    .modal-header {
-      padding: 15px 20px;
-      background: #28a745;
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-    }
-
-    .modal-header h3 {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-      padding: 5px;
-    }
-
-    .modal-body {
-      padding: 20px;
-      text-align: center;
-    }
-
-    .modal-body img {
-      max-width: 100%;
-      max-height: 70vh;
-      border-radius: 8px;
-    }
-
-    .modal-body iframe {
-      width: 100%;
-      height: 70vh;
-      border: none;
-      border-radius: 8px;
-    }
-
-    .modal-footer {
-      padding: 15px 20px;
-      background: #f8f9fa;
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
     @media print {
+      @page {
+        margin: 0 !important;
+        padding: 0 !important;
+        size: auto !important;
+      }
+      
       body * {
         visibility: hidden !important;
         display: none !important;
@@ -818,99 +770,77 @@
         position: absolute;
         left: 0;
         top: 0;
-        width: 80mm !important;
-        max-width: 80mm !important;
-        min-width: 80mm !important;
+        width: 100% !important;
         margin: 0 !important;
-        padding: 2mm !important;
-        font-family: 'Courier New', monospace !important;
-        font-size: 10pt !important;
-        line-height: 1.2 !important;
+        padding: 0 !important;
         background: white !important;
-        color: black !important;
-        box-sizing: border-box !important;
+        font-family: 'Courier New', monospace !important;
       }
       
       .comanda-print {
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 2mm !important;
-        border: 1px solid #000 !important;
-        border-radius: 0 !important;
+        width: 95mm !important;
+        max-width: 95mm !important;
+        margin: 0 auto !important;
+        padding: 2mm 2mm 4mm 2mm !important;
+        font-family: 'Courier New', monospace !important;
+        font-size: 8pt !important;
+        line-height: 1.15 !important;
+        color: black !important;
         background: white !important;
-        font-size: 10pt !important;
         box-sizing: border-box !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
       }
       
       .comanda-print h2 {
-        font-size: 14pt !important;
-        margin: 0 0 2mm 0 !important;
-        text-align: center !important;
-      }
-      
-      .comanda-print h3 {
-        font-size: 12pt !important;
-        margin: 2mm 0 !important;
+        font-size: 10pt !important;
+        font-weight: bold !important;
+        margin: 0 0 0.5mm 0 !important;
         text-align: center !important;
       }
       
       .comanda-print p {
-        margin: 1mm 0 !important;
-        font-size: 10pt !important;
+        margin: 0.3mm 0 !important;
+        font-size: 8pt !important;
+        line-height: 1.15 !important;
       }
       
       .comanda-print hr {
-        margin: 2mm 0 !important;
-        border: 0.5px dashed #000 !important;
+        margin: 0.5mm 0 !important;
+        border: 0.3px dashed #000 !important;
       }
       
-      .comanda-print strong {
+      .comanda-print .total {
+        font-size: 9pt !important;
         font-weight: bold !important;
+        text-align: center !important;
+        margin: 1mm 0 !important;
+        padding-top: 0.5mm !important;
+      }
+      
+      .comanda-print .assinatura {
+        margin-top: 2mm !important;
+        text-align: center !important;
+        font-size: 7pt !important;
+      }
+      
+      .comanda-print .item {
+        margin: 0.2mm 0 !important;
+        white-space: pre-wrap !important;
+        word-wrap: break-word !important;
       }
     }
 
     .comanda-print {
       font-family: 'Courier New', monospace;
-      max-width: 80mm;
+      max-width: 95mm;
       margin: 0 auto;
-      padding: 3mm;
-      border: 1px solid #000;
+      padding: 2mm;
       background: white;
-      font-size: 10pt;
+      font-size: 8pt;
       line-height: 1.2;
       box-sizing: border-box;
-    }
-
-    @media (max-width: 768px) {
-      .pedidos-grid {
-        grid-template-columns: 1fr;
-      }
-      .produtos-grid {
-        grid-template-columns: 1fr;
-      }
-      .controls {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .controls select, .controls input, .controls .btn {
-        width: 100%;
-      }
-      .pedido-actions {
-        flex-direction: column;
-      }
-      .comprovante-actions {
-        flex-direction: column;
-      }
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-      .form-actions {
-        flex-direction: column;
-      }
-      .form-actions button {
-        width: 100%;
-      }
+      border: 1px solid #ddd;
     }
   </style>
 </head>
@@ -921,7 +851,6 @@
       <p>Gerencie seus pedidos e produtos em tempo real</p>
     </header>
 
-    <!-- ===== MENU DE ABAS ===== -->
     <div class="tabs-menu">
       <button class="tab-button active" onclick="abrirAba('pedidos', event)">
         <i class="fas fa-receipt"></i> Pedidos
@@ -929,9 +858,11 @@
       <button class="tab-button" onclick="abrirAba('produtos', event)">
         <i class="fas fa-pizza-slice"></i> Produtos
       </button>
+      <button class="tab-button" onclick="abrirAba('modal-editor', event)">
+        <i class="fas fa-edit"></i> Editar Modais
+      </button>
     </div>
 
-    <!-- ===== ABA PEDIDOS ===== -->
     <div id="pedidos" class="tab-content active">
       <div class="stats-grid" id="header-stats">
         <div class="stat-card"><h3>📊 Total</h3><div class="number" id="stat-total">0</div></div>
@@ -958,7 +889,6 @@
         <input type="date" id="filter-date" value="" onchange="filtrarPedidos()">
         <input type="text" id="busca-cliente" placeholder="Buscar cliente..." oninput="filtrarPedidos()">
         <a href="https://docs.google.com/spreadsheets/d/1IMPwck_qROKy8eyJExuXl-Pw9IG_3ElBuFJVaA7euSc/edit" target="_blank" class="btn btn-secondary"><i class="fas fa-table"></i> Planilha</a>
-        <a href="https://drive.google.com/drive/folders/1cnnY5J_58N9rR0qd45u1XBH4ypfcFTw0" target="_blank" class="btn btn-info"><i class="fab fa-google-drive"></i> Comprovantes</a>
         <button onclick="exportarParaExcel()" class="btn btn-dark"><i class="fas fa-download"></i> Exportar</button>
       </div>
 
@@ -967,17 +897,7 @@
       </div>
     </div>
 
-    <!-- ===== ABA PRODUTOS ===== -->
     <div id="produtos" class="tab-content">
-      <div id="aviso-importar" style="background:#fff3cd;border:1px solid #ffc107;border-radius:10px;padding:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:15px;flex-wrap:wrap;">
-        <div>
-          <strong>📦 Planilha vazia?</strong>
-          <p style="margin-top:5px;color:#555;font-size:14px;">Clique no botão para importar os produtos padrão da Lima's Pizzaria (Pizza, Lanche, Calzone, Bebida, Açaí, Pastel) para a nova planilha.</p>
-        </div>
-        <button onclick="importarProdutosPadrao()" class="btn btn-primary" id="btn-importar">
-          <i class="fas fa-upload"></i> Importar Produtos Padrão
-        </button>
-      </div>
       <div class="form-produto">
         <h2><i class="fas fa-plus"></i> <span id="form-titulo">Novo Produto</span></h2>
         <form id="form-produto" onsubmit="salvarProduto(event)">
@@ -1021,7 +941,7 @@
 
           <div class="form-group">
             <label for="prod-imagem-url">URL da Imagem</label>
-            <input type="text" id="prod-imagem-url" placeholder="https://... (cole a URL da imagem)" oninput="previewImagemUrl()">
+            <input type="text" id="prod-imagem-url" placeholder="https://..." oninput="previewImagemUrl()">
           </div>
 
           <div class="form-group">
@@ -1029,18 +949,53 @@
             <input type="file" id="prod-foto" accept="image/*" onchange="previewFoto()">
           </div>
 
+          <div class="preview-foto" id="preview-foto"></div>
+
           <div class="form-group">
             <label for="prod-descricao">Descrição</label>
             <textarea id="prod-descricao" placeholder="Descrição detalhada do produto..."></textarea>
           </div>
 
           <div class="form-group">
-            <label for="prod-opcoes">Opções do Modal (uma por linha, ex: "300ml - R$15,00"):</label>
-            <textarea id="prod-opcoes" rows="4" placeholder="300ml - R$15,00&#10;500ml - R$20,00&#10;700ml - R$25,00"></textarea>
-            <small style="color:#888;">Deixe vazio para não mostrar seletor de opções no modal</small>
+            <label for="prod-opcoes">Opções do Modal (formato: Nome|Preço|Descrição) - uma por linha:</label>
+            <textarea id="prod-opcoes" rows="6" placeholder="4 Queijos|34.00|Molho especial, queijo mussarela..."></textarea>
+            <small style="color: #666;">Use o formato: Nome|Preço|Descrição (separe com | )</small>
           </div>
 
-          <div class="preview-foto" id="preview-foto"></div>
+          <div class="form-group">
+            <label for="prod-bordas">Opções de Borda (formato: Nome|Preço) - uma por linha:</label>
+            <textarea id="prod-bordas" rows="3" placeholder="Borda de Cheddar|14.00"></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prod-modal-titulo">Título do Modal</label>
+              <input type="text" id="prod-modal-titulo" placeholder="Ex: Pizza Grande 2 Sabores">
+            </div>
+            <div class="form-group">
+              <label for="prod-modal-preco-base">Preço Base do Modal (R$)</label>
+              <input type="number" id="prod-modal-preco-base" step="0.01">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="prod-modal-descricao">Descrição do Modal</label>
+            <textarea id="prod-modal-descricao" rows="3" placeholder="Descrição que aparece no modal..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prod-max-opcoes">Máximo de Opções</label>
+              <input type="number" id="prod-max-opcoes" value="1" min="1">
+            </div>
+            <div class="form-group">
+              <label>Obrigatório Escolher</label>
+              <label class="toggle-label">
+                <input type="checkbox" id="prod-opcoes-obrigatorio" checked>
+                <span class="toggle-switch"></span>
+              </label>
+            </div>
+          </div>
 
           <div class="form-actions">
             <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> <span id="btn-salvar-txt">Salvar Produto</span></button>
@@ -1051,22 +1006,87 @@
       </div>
 
       <div id="container-produtos" class="produtos-grid">
-        <div class="no-produtos"><i class="fas fa-box"></i><h3>Nenhum produto cadastrado</h3><p>Adicione seu primeiro produto acima!</p></div>
+        <div class="loading"><div class="spinner"></div><p>Carregando produtos...</p></div>
       </div>
     </div>
-  </div>
 
-  <div class="modal-overlay" id="modal-comprovante">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3><i class="fas fa-file-invoice"></i> <span id="modal-titulo">Comprovante PIX</span></h3>
-        <button class="modal-close" onclick="fecharModal()"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="modal-body" id="modal-body"></div>
-      <div class="modal-footer">
-        <a href="#" id="modal-link-drive" target="_blank" class="btn btn-drive"><i class="fab fa-google-drive"></i> Abrir no Drive</a>
-        <a href="#" id="modal-link-download" target="_blank" class="btn btn-primary"><i class="fas fa-download"></i> Download</a>
-        <button onclick="fecharModal()" class="btn btn-secondary"><i class="fas fa-times"></i> Fechar</button>
+    <div id="modal-editor" class="tab-content">
+      <div class="modal-editor-container">
+        <div class="info-box">
+          <i class="fas fa-info-circle"></i> 
+          <strong>Editor Completo de Modais</strong><br>
+          Aqui você pode editar todos os elementos dos modais: títulos, descrições, preços, sabores e bordas.
+          Todas as alterações são salvas automaticamente e aparecem no site da pizzaria!
+        </div>
+
+        <div class="modal-selector">
+          <label><strong><i class="fas fa-pizza-slice"></i> Selecione um produto:</strong></label>
+          <select id="select-produto-modal" onchange="carregarModalCompleto()">
+            <option value="">-- Escolha um produto --</option>
+          </select>
+        </div>
+
+        <div id="modal-editor-content" style="display: none;">
+          <div class="modal-config">
+            <h3><i class="fas fa-info-circle"></i> Configurações do Modal</h3>
+            <div class="form-group">
+              <label>Título do Modal</label>
+              <input type="text" id="edit-modal-titulo">
+            </div>
+            <div class="form-group">
+              <label>Descrição do Modal</label>
+              <textarea id="edit-modal-descricao" rows="3"></textarea>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Preço Base (R$)</label>
+                <input type="number" id="edit-modal-preco-base" step="0.01">
+              </div>
+              <div class="form-group">
+                <label>Máximo de Opções</label>
+                <input type="number" id="edit-modal-max-opcoes" min="1">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="edit-modal-opcoes-obrigatorio"> 
+                Obrigatório escolher opções
+              </label>
+            </div>
+          </div>
+
+          <div class="modal-config">
+            <h3><i class="fas fa-list"></i> Sabores / Opções</h3>
+            <div class="opcoes-table-container">
+              <table class="opcoes-table">
+                <thead>
+                  <tr><th>Status</th><th>Nome</th><th>Preço (R$)</th><th>Descrição</th><th>Ação</th>  </thead>
+                <tbody id="tabela-sabores-body"></tbody>
+                </table>
+            </div>
+            <button class="btn btn-info" onclick="adicionarSabor()" style="margin-top: 10px">
+              <i class="fas fa-plus"></i> Adicionar Sabor
+            </button>
+          </div>
+
+          <div class="modal-config">
+            <h3><i class="fas fa-cheese"></i> Opções de Borda</h3>
+            <div class="opcoes-table-container">
+              <table class="opcoes-table">
+                <thead>
+                  <tr><th>Status</th><th>Nome</th><th>Preço (R$)</th><th>Ação</th>  </thead>
+                <tbody id="tabela-bordas-body"></tbody>
+                </table>
+            </div>
+            <button class="btn btn-info" onclick="adicionarBorda()" style="margin-top: 10px">
+              <i class="fas fa-plus"></i> Adicionar Borda
+            </button>
+          </div>
+
+          <button class="btn btn-success" onclick="salvarModalCompleto()" style="width: 100%; margin-top: 20px; padding: 12px;">
+            <i class="fas fa-save"></i> Salvar Todas as Alterações no Site
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1075,145 +1095,135 @@
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxDI4G-ODEtByxxf_9BzfEzW5QJPQjYP4sk8tO8mOT5skWRXk_BoFNq7smRVFZ6kmMK/exec';
-    const PLANILHA_URL = 'https://docs.google.com/spreadsheets/d/1QPiQTId5d904Q4hRFTiDeRSydRr3D_YhcD1xahQuFTQ/edit';
-    const DRIVE_URL = 'https://drive.google.com/drive/folders/1cnnY5J_58N9rR0qd45u1XBH4ypfcFTw0';
 
     let todosPedidos = [];
     let pedidosFiltrados = [];
     let todosProdutos = [];
     let produtoEmEdicao = null;
     let fotoSelecionada = null;
+    let produtoSelecionadoModal = null;
+    let saboresAtuais = [];
+    let bordasAtuais = [];
+
+    // TODOS OS SABORES COMPLETOS
+    const SABORES_COMPLETOS = {
+      "Pizza Grande 1 Sabor": [
+        "4 Queijos|63.00|Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano.",
+        "Atum|66.00|Molho especial, queijo mussarela, atum, cebola, azeitona e orégano.",
+        "Bacon|59.00|Molho especial, queijo mussarela, bacon, azeitona e orégano.",
+        "Baiacatu|63.00|Molho especial, queijo mussarela, calabresa ralada, requeijão cremoso, pimenta calabaresa, azeitona e orégano.",
+        "Calabacon|60.00|Molho especial, queijo mussarela, calabresa, bacon, azeitona e orégano.",
+        "Calabacon Especial Cheddar|68.00|Molho especial, queijo mussarela, calabresa, bacon, cheddar, azeitona e orégano.",
+        "Calabacon Especial Requeijao|68.00|Molho especial, queijo mussarela, calabresa, bacon, requeijão cremoso, azeitona e orégano.",
+        "Calabresa Acebolada|56.00|Molho especial, calabresa, queijo mussarela, cebola, azeitona e orégano.",
+        "Calabresa Cremosa Requeijao|62.00|Molho especial, queijo mussarela, calabresa ralada, requeijão cremoso, azeitona e orégano.",
+        "Calabresa Cremosa Cheddar|62.00|Molho especial, queijo mussarela, calabresa ralada, cheddar, azeitona e orégano.",
+        "Carijó|65.00|Molho especial, bacon, milho, frango desfiado, ovo, requeijão cremoso, queijo mussarela, azeitona e orégano.",
+        "Frango com Requeijão|64.00|Molho especial, frango desfiado, requeijão cremoso, queijo mussarela, tomate, azeitona e orégano.",
+        "Frango Crocante|64.00|Molho especial, frango desfiado, bacon, queijo mussarela, tomate, azeitona e orégano.",
+        "Lima's|64.00|Molho especial, queijo mussarela, presunto, calabresa, palmito, milho, requeijão cremoso, azeitona e orégano.",
+        "Milho Verde|51.00|Molho especial, queijo mussarela, milho verde, azeitona e orégano.",
+        "Mussarela|50.00|Molho especial, queijo mussarela, azeitona e orégano.",
+        "Mussarela Cremosa|58.00|Molho especial , queijo mussarela , requeijão cremoso , azeitona e orégano.",
+        "Napolitana|51.00|Molho especial, presunto, queijo mussarela, tomate, azeitona e orégano.",
+        "Portuguesa|62.00|Molho especial, queijo mussarela, presunto, milho, ovo, cebola, azeitona e orégano.",
+        "Calabresa sem Cebola|56.00|Molho especial, calabresa, queijo mussarela, azeitona e orégano.",
+        "Palmito|52.00|Molho especial , mussarela , palmito orégano e azeitona.",
+        "Vegetariana|55.00|Molho especial , mussarela , milho verde , palmito , tomate orégano e azeitona."
+      ],
+      "Pizza Grande 2 Sabores": [
+        "4 Queijos 1/2|34.00|Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano.",
+        "Atum 1/2|36.00|Molho especial, queijo mussarela, atum, cebola, azeitona e orégano.",
+        "Bacon 1/2|31.00|Molho especial, queijo mussarela, bacon, azeitona e orégano.",
+        "Baiacatu 1/2|35.00|Molho especial, queijo mussarela, calabresa ralada, requeijão cremoso, pimenta calabaresa, azeitona e orégano.",
+        "Calabacon 1/2|32.00|Molho especial, queijo mussarela, calabresa, bacon, azeitona e orégano.",
+        "Calabacon Especial 1/2 Requeijao|35.00|Molho especial, queijo mussarela, calabresa, bacon, requeijão cremoso, azeitona e orégano.",
+        "Calabacon Especial Cheddar1/2|35.00|Molho especial, queijo mussarela, calabresa, bacon, cheddar, azeitona e orégano.",
+        "Calabresa Acebolada 1/2|30.00|Molho especial, queijo mussarela, cebola, azeitona e orégano.",
+        "Calabresa Cremosa Cheddar 1/2|35.00|Molho especial, queijo mussarela, calabresa ralada, cheddar, azeitona e orégano.",
+        "Calabresa Cremosa Requejao 1/2|35.00|Molho especial, queijo mussarela, calabresa ralada, requeijão cremoso, azeitona e orégano.",
+        "Carijó 1/2|35.00|Molho especial, bacon, milho, frango desfiado, ovo, requeijão cremoso, queijo mussarela, azeitona e orégano.",
+        "Frango com Requeijão 1/2|34.00|Molho especial, frango desfiado, requeijão cremoso, queijo mussarela, tomate, azeitona e orégano.",
+        "Frango Crocante 1/2|34.00|Molho especial, frango desfiado, bacon, queijo mussarela, tomate, azeitona e orégano.",
+        "Lima's 1/2|34.00|Molho especial, queijo mussarela, presunto, calabresa, palmito, milho, requeijão cremoso, azeitona e orégano.",
+        "Milho Verde 1/2|26.00|Molho especial, queijo mussarela, milho verde, azeitona e orégano.",
+        "Mussarela 1/2|26.00|Molho especial, queijo mussarela, azeitona e orégano.",
+        "Mussarela Cremosa 1/2|30.00|Molho especial, queijo mussarela, requeijão cremoso, azeitona e orégano.",
+        "Napolitana 1/2|26.00|Molho especial, presunto, queijo mussarela, tomate, azeitona e orégano.",
+        "Portuguesa 1/2|33.00|Molho especial, queijo mussarela, presunto, milho, ovo, cebola, azeitona e orégano.",
+        "Calabresa 1/2 sem Cebola|30.00|Molho especial, calabresa, queijo mussarela, azeitona e orégano.",
+        "Palmito 1/2|27.00|Molho especial , mussarela , palmito orégano e azeitona.",
+        "Vegetariana 1/2|28.00|Molho especial , mussarela , milho verde , palmito , tomate orégano e azeitona."
+      ],
+      "Pizza Broto Salgada": [
+        "4 Queijos - BROTO|37.00|Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano.",
+        "Atum - BROTO|36.00|Molho especial, queijo mussarela, atum, cebola, azeitona e orégano.",
+        "Baiacatu - Broto|36.00|Molho especial, queijo mussarela, calabresa ralada, requeijão cremoso, pimenta calabaresa, azeitona e orégano.",
+        "Calabacon Broto|35.00|Molho especial, queijo mussarela, calabresa, bacon, azeitona e orégano.",
+        "Calabresa Acebolada Broto|32.00|Molho especial, calabresa, queijo mussarela, cebola, azeitona e orégano.",
+        "Frango com Requeijão Cremoso Broto|36.00|Molho especial, frango desfiado, requeijão cremoso, queijo mussarela, tomate, azeitona e orégano.",
+        "Milho Verde Broto|32.00|Molho especial, queijo mussarela, milho verde, azeitona e orégano.",
+        "Mussarela Broto|32.00|Molho especial, queijo mussarela, azeitona e orégano.",
+        "Portuguesa Broto|36.00|Molho especial, queijo mussarela, presunto, milho, ovo, cebola, azeitona e orégano.",
+        "Calabresa Broto sem Cebola|32.00|Molho especial, calabresa, queijo mussarela, azeitona e orégano.",
+        "Palmito Broto|30.00|Molho especial, mussarela, palmito, orégano e azeitona.",
+        "Vegetariana Broto|30.00|Molho especial, mussarela, milho verde, palmito, tomate, orégano e azeitona."
+      ],
+      "Pizza Broto Doce": [
+        "Brigadeiro|30.00|Chocolate ao leite e granulado.",
+        "Dois Amores|35.00|Chocolate branco e creme de avelã.",
+        "Ouro Branco|30.00|Chocolate branco, ouro branco e leite condensado.",
+        "Prestígio|35.00|Chocolate ao leite, coco e leite condensado.",
+        "Sonho de Valsa|35.00|Chocolate ao leite, sonho de valsa e leite condensado."
+      ],
+      "Calzone": [
+        "Calzone Frango com Requeijão|35.00|Frango desfiado com requeijão cremoso",
+        "Calzone Pizza|35.00|Mussarela, presunto, tomate e orégano"
+      ]
+    };
+
+    const BORDAS_COMPLETAS = {
+      "Pizza Grande 1 Sabor": ["Borda de Cheddar|14.00", "Borda de Requeijão Cremoso|14.00", "Borda Mussarela|14.00"],
+      "Pizza Grande 2 Sabores": ["Borda de Cheddar|14.00", "Borda de Requeijão Cremoso|14.00", "Borda Mussarela|14.00"],
+      "Pizza Broto Salgada": ["Borda de Cheddar|10.00", "Borda de Requeijão Cremoso|10.00", "Borda Mussarela|12.00"],
+      "Pizza Broto Doce": ["Borda de Cheddar|10.00", "Borda de Requeijão Cremoso|10.00", "Borda Mussarela|12.00"],
+      "Calzone": ["Borda de Cheddar|8.00", "Borda de Requeijão Cremoso|8.00"]
+    };
+
+    const PRODUTOS_PRE_CONFIGURADOS = [
+      { id: "1", nome: "Pizza Grande 1 Sabor", categoria: "Pizza Grande 1 Sabor", preco: 50.00, descricao: "Satisfaça seu apetite com nossa Pizza Grande de 1 sabor", ativo: true, imagem: "", modal_titulo: "PIZZA GRANDE 1 SABOR", modal_descricao: "Satisfaça seu apetite com nossa Pizza Grande de 1 sabor, disponível a partir de R$ 50,00.", modal_preco_base: 50.00, max_opcoes: 1, opcoes_obrigatorio: true },
+      { id: "2", nome: "Pizza Grande 2 Sabores", categoria: "Pizza Grande 2 Sabores", preco: 52.00, descricao: "Aproveite a oportunidade de saborear nossa Pizza Grande 2 Sabores", ativo: true, imagem: "", modal_titulo: "PIZZA GRANDE 2 SABORES", modal_descricao: "Aproveite a oportunidade de saborear nossa Pizza Grande 2 Sabores, com preços a partir de R$ 52,00.", modal_preco_base: 52.00, max_opcoes: 2, opcoes_obrigatorio: true },
+      { id: "3", nome: "Pizza Broto Salgada", categoria: "Pizza Broto Salgada", preco: 30.00, descricao: "Pizza 25cm", ativo: true, imagem: "", modal_titulo: "Pizza Broto Salgada 1 Sabor", modal_descricao: "Pizza 25cm", modal_preco_base: 30.00, max_opcoes: 1, opcoes_obrigatorio: true },
+      { id: "4", nome: "Pizza Broto Doce", categoria: "Pizza Broto Doce", preco: 30.00, descricao: "Pizza doce 25cm", ativo: true, imagem: "", modal_titulo: "Pizza Broto Doce 1 Sabor", modal_descricao: "Pizza doce 25cm", modal_preco_base: 30.00, max_opcoes: 1, opcoes_obrigatorio: true },
+      { id: "5", nome: "Calzone", categoria: "Calzone", preco: 35.00, descricao: "Sabores Frango com Requeijão e Pizza", ativo: true, imagem: "", modal_titulo: "Calzone", modal_descricao: "Sabores Frango com Requeijão e Pizza (mussarela, presunto, tomate e orégano)", modal_preco_base: 35.00, max_opcoes: 1, opcoes_obrigatorio: true }
+    ];
 
     function enviarParaScriptAdmin(dadosObj, callback) {
-      const iframeName = 'iframe-admin-' + Date.now();
       const iframe = document.createElement('iframe');
-      iframe.name = iframeName;
-      iframe.style.cssText = 'position:absolute;width:1px;height:1px;border:none;opacity:0;pointer-events:none;';
+      iframe.style.cssText = 'position:absolute;width:1px;height:1px;border:none;opacity:0;';
       document.body.appendChild(iframe);
-
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = SCRIPT_URL;
-      form.target = iframeName;
+      form.target = iframe.name;
       form.style.display = 'none';
-
-      const inputAcao = document.createElement('input');
-      inputAcao.type = 'hidden';
-      inputAcao.name = 'acao';
-      inputAcao.value = dadosObj.acao || '';
-      form.appendChild(inputAcao);
-
       const inputDados = document.createElement('input');
       inputDados.type = 'hidden';
       inputDados.name = 'dados';
       inputDados.value = JSON.stringify(dadosObj);
       form.appendChild(inputDados);
-
       document.body.appendChild(form);
       form.submit();
-
-      setTimeout(function() {
+      setTimeout(() => {
         try { document.body.removeChild(iframe); } catch(e) {}
         try { document.body.removeChild(form); } catch(e) {}
         if (callback) callback();
-      }, 3000);
-    }
-
-    const PRODUTOS_PADRAO = [
-      // PIZZAS BROTO
-      { nome: "4 Queijos - BROTO", categoria: "Pizza", preco: 37.00, descricao: "Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Atum - BROTO", categoria: "Pizza", preco: 36.00, descricao: "Molho especial, queijo mussarela, atum, cebola, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Bacon - BROTO", categoria: "Pizza", preco: 33.00, descricao: "Molho especial, queijo mussarela, bacon, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Calabacon Broto", categoria: "Pizza", preco: 35.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Calabacon Especial Cheddar Broto", categoria: "Pizza", preco: 36.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Calabacon Especial Requeijão Cremoso Broto", categoria: "Pizza", preco: 36.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Calabresa Acebolada Broto", categoria: "Pizza", preco: 32.00, descricao: "Molho especial, calabresa, queijo mussarela, cebola, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Calabresa Especial Cheddar Broto", categoria: "Pizza", preco: 33.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Calabresa Especial Requeijão Cremoso Broto", categoria: "Pizza", preco: 33.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Carne Seca e Catupiry Broto", categoria: "Pizza", preco: 38.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Chicken Strogonoff Broto", categoria: "Pizza", preco: 37.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Frango com Catupiry Broto", categoria: "Pizza", preco: 36.00, descricao: "Molho especial, queijo mussarela, frango desfiado, catupiry, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Margherita Broto", categoria: "Pizza", preco: 30.00, descricao: "Molho especial, queijo mussarela, tomate fresco, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Moda da Casa Broto", categoria: "Pizza", preco: 36.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Portuguesa Broto", categoria: "Pizza", preco: 36.00, descricao: "Molho especial, queijo mussarela, presunto, ovos, cebola, pimentão, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Strogonoff de Carne Broto", categoria: "Pizza", preco: 37.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Toscana Broto", categoria: "Pizza", preco: 36.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      // PIZZAS GRANDE
-      { nome: "4 Queijos - GRANDE", categoria: "Pizza", preco: 57.00, descricao: "Molho especial, queijo mussarela, queijo prato, queijo provolone, queijo parmesão, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Atum - GRANDE", categoria: "Pizza", preco: 55.00, descricao: "Molho especial, queijo mussarela, atum, cebola, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Bacon - GRANDE", categoria: "Pizza", preco: 52.00, descricao: "Molho especial, queijo mussarela, bacon, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Calabacon Grande", categoria: "Pizza", preco: 55.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Calabacon Especial Cheddar Grande", categoria: "Pizza", preco: 57.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Calabacon Especial Requeijão Cremoso Grande", categoria: "Pizza", preco: 57.00, descricao: "", imagem: "pizza.jpg", ativo: true },
-      { nome: "Calabresa Acebolada Grande", categoria: "Pizza", preco: 50.00, descricao: "Molho especial, calabresa, queijo mussarela, cebola, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Frango com Catupiry Grande", categoria: "Pizza", preco: 55.00, descricao: "Molho especial, queijo mussarela, frango desfiado, catupiry, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Margherita Grande", categoria: "Pizza", preco: 48.00, descricao: "Molho especial, queijo mussarela, tomate fresco, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Portuguesa Grande", categoria: "Pizza", preco: 55.00, descricao: "Molho especial, queijo mussarela, presunto, ovos, cebola, pimentão, azeitona e orégano.", imagem: "pizza.jpg", ativo: true },
-      // LANCHES
-      { nome: "X-Burguer", categoria: "Lanche", preco: 18.00, descricao: "Pão, hamburguer, queijo, alface, tomate e maionese.", imagem: "lanche.jpg", ativo: true },
-      { nome: "X-Bacon", categoria: "Lanche", preco: 22.00, descricao: "Pão, hamburguer, queijo, bacon, alface, tomate e maionese.", imagem: "lanche.jpg", ativo: true },
-      { nome: "X-Tudo", categoria: "Lanche", preco: 25.00, descricao: "Pão, hamburguer, queijo, bacon, ovo, alface, tomate e maionese.", imagem: "lanche.jpg", ativo: true },
-      // CALZONE
-      { nome: "Calzone Tradicional", categoria: "Calzone", preco: 35.00, descricao: "Massa fechada recheada com queijo mussarela e outros ingredientes à escolha.", imagem: "calzone.png", ativo: true },
-      // BEBIDAS
-      { nome: "Coca-Cola 2L", categoria: "Bebida", preco: 12.00, descricao: "Refrigerante Coca-Cola 2 litros.", imagem: "bebida.png", ativo: true },
-      { nome: "Coca-Cola Lata", categoria: "Bebida", preco: 6.00, descricao: "Refrigerante Coca-Cola lata 350ml.", imagem: "bebida.png", ativo: true },
-      { nome: "Guaraná 2L", categoria: "Bebida", preco: 10.00, descricao: "Refrigerante Guaraná Antarctica 2 litros.", imagem: "bebida.png", ativo: true },
-      { nome: "Suco Natural", categoria: "Bebida", preco: 8.00, descricao: "Suco natural de frutas.", imagem: "bebida.png", ativo: true },
-      { nome: "Água Mineral", categoria: "Bebida", preco: 4.00, descricao: "Água mineral 500ml.", imagem: "bebida.png", ativo: true },
-      // AÇAÍ
-      { nome: "Açaí 300ml", categoria: "Açaí", preco: 15.00, descricao: "Açaí cremoso 300ml com granola e banana.", imagem: "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png", ativo: true },
-      { nome: "Açaí 500ml", categoria: "Açaí", preco: 22.00, descricao: "Açaí cremoso 500ml com granola e banana.", imagem: "shop.beetech.com.br_limaspizzaria_acai-lima's-300-ml__w=d1eabe5189&utm_source=ig&utm_medium=social&utm_content=link_in_bio.png", ativo: true },
-      // PASTEL
-      { nome: "Pastel de Carne", categoria: "Pastel", preco: 10.00, descricao: "Pastel frito recheado com carne moída temperada.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Pastel de Queijo", categoria: "Pastel", preco: 9.00, descricao: "Pastel frito recheado com queijo mussarela.", imagem: "pizza.jpg", ativo: true },
-      { nome: "Pastel de Frango", categoria: "Pastel", preco: 10.00, descricao: "Pastel frito recheado com frango desfiado.", imagem: "pizza.jpg", ativo: true },
-    ];
-
-    async function importarProdutosPadrao() {
-      const btn = document.getElementById('btn-importar');
-      if (!confirm('Isso vai adicionar ' + PRODUTOS_PADRAO.length + ' produtos padrão na planilha. Deseja continuar?')) return;
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importando...';
-
-      let total = PRODUTOS_PADRAO.length;
-      let enviados = 0;
-
-      function enviarProximo() {
-        if (enviados >= total) {
-          btn.innerHTML = '<i class="fas fa-check"></i> Importado!';
-          btn.style.background = '#28a745';
-          document.getElementById('aviso-importar').style.display = 'none';
-          setTimeout(() => carregarProdutos(), 3500);
-          return;
-        }
-        const produto = PRODUTOS_PADRAO[enviados];
-        const dadosObj = {
-          acao: 'salvarProduto',
-          id: '',
-          nome: produto.nome,
-          categoria: produto.categoria,
-          preco: produto.preco,
-          descricao: produto.descricao,
-          imagem: produto.imagem,
-          ativo: produto.ativo
-        };
-        enviarParaScriptAdmin(dadosObj, function() {
-          enviados++;
-          btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Importando ' + enviados + '/' + total + '...';
-          setTimeout(enviarProximo, 500);
-        });
-      }
-
-      enviarProximo();
+      }, 2000);
     }
 
     document.addEventListener('DOMContentLoaded', function() {
       const hoje = new Date();
-      const ano = hoje.getFullYear();
-      const mes = String(hoje.getMonth() + 1).padStart(2, '0');
-      const dia = String(hoje.getDate()).padStart(2, '0');
-      document.getElementById('filter-date').value = `${ano}-${mes}-${dia}`;
+      document.getElementById('filter-date').value = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(hoje.getDate()).padStart(2,'0')}`;
       carregarPedidos();
       carregarProdutos();
     });
@@ -1223,8 +1233,8 @@
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
       document.getElementById(nomeAba).classList.add('active');
-      const btn = event.currentTarget.closest('.tab-button') || event.currentTarget;
-      btn.classList.add('active');
+      event.currentTarget.classList.add('active');
+      if (nomeAba === 'modal-editor') atualizarSelectProdutosModal();
     }
 
     async function carregarPedidos() {
@@ -1263,47 +1273,21 @@
       }
       
       pedidosFiltrados = todosPedidos.filter(pedido => {
-        if (filtroData) {
-          if (!pedido.data) return false;
+        if (filtroData && pedido.data) {
           try {
             const dataUTC = new Date(pedido.data);
             const dataBrasil = new Date(dataUTC.getTime() - (3 * 60 * 60 * 1000));
-            const ano = dataBrasil.getFullYear();
-            const mes = String(dataBrasil.getMonth() + 1).padStart(2, '0');
-            const dia = String(dataBrasil.getDate()).padStart(2, '0');
-            const dataPedidoFormatada = `${ano}-${mes}-${dia}`;
-            
-            if (dataPedidoFormatada !== filtroData) {
-              return false;
-            }
-          } catch (e) {
-            return false;
-          }
+            const dataPedido = `${dataBrasil.getFullYear()}-${String(dataBrasil.getMonth()+1).padStart(2,'0')}-${String(dataBrasil.getDate()).padStart(2,'0')}`;
+            if (dataPedido !== filtroData) return false;
+          } catch(e) { return false; }
         }
-        
         if (filtroStatus && pedido.status !== filtroStatus) return false;
         if (filtroPagamento && pedido.pagamento !== filtroPagamento) return false;
         if (buscaCliente && pedido.cliente && !pedido.cliente.toLowerCase().includes(buscaCliente)) return false;
-        
         return true;
       });
       
-      pedidosFiltrados.sort((a, b) => {
-        try {
-          return new Date(b.data).getTime() - new Date(a.data).getTime();
-        } catch {
-          return 0;
-        }
-      });
-      
-      const stats = {
-        total: pedidosFiltrados.length,
-        novos: pedidosFiltrados.filter(p => p.status === 'NOVO').length,
-        pix: pedidosFiltrados.filter(p => p.pagamento === 'PIX').length,
-        comComprovante: pedidosFiltrados.filter(p => p.temComprovante).length
-      };
-      
-      atualizarEstatisticas(stats);
+      pedidosFiltrados.sort((a,b) => new Date(b.data) - new Date(a.data));
       mostrarPedidos();
     }
 
@@ -1321,13 +1305,8 @@
           try {
             const dataUTC = new Date(dataExibicao);
             const dataBrasil = new Date(dataUTC.getTime() - (3 * 60 * 60 * 1000));
-            const dia = String(dataBrasil.getDate()).padStart(2, '0');
-            const mes = String(dataBrasil.getMonth() + 1).padStart(2, '0');
-            const ano = dataBrasil.getFullYear();
-            const hora = String(dataBrasil.getHours()).padStart(2, '0');
-            const min = String(dataBrasil.getMinutes()).padStart(2, '0');
-            dataExibicao = `${dia}/${mes}/${ano} ${hora}:${min}`;
-          } catch (e) {}
+            dataExibicao = `${String(dataBrasil.getDate()).padStart(2,'0')}/${String(dataBrasil.getMonth()+1).padStart(2,'0')}/${dataBrasil.getFullYear()} ${String(dataBrasil.getHours()).padStart(2,'0')}:${String(dataBrasil.getMinutes()).padStart(2,'0')}`;
+          } catch(e) {}
         }
         
         const isPix = pedido.pagamento === 'PIX';
@@ -1347,13 +1326,13 @@
           <div class="pedido-info">
             <div class="info-row"><div class="info-label">Cliente:</div><div class="info-value">${pedido.cliente || 'Não informado'}</div></div>
             <div class="info-row"><div class="info-label">Telefone:</div><div class="info-value">${pedido.telefone || 'Não informado'}</div></div>
-            <div class="info-row"><div class="info-label">${pedido.tipo || 'Entrega'}:</div><div class="info-value">${pedido.endereco || 'Não informado'}</div></div>
+            <div class="info-row"><div class="info-label">Endereço:</div><div class="info-value">${pedido.endereco || 'Não informado'}</div></div>
             <div class="info-row"><div class="info-label">Pagamento:</div><div class="info-value">${pedido.pagamento || 'Não informado'}</div></div>
-            <div class="info-row"><div class="info-label">Total:</div><div class="info-value" style="color: #28a745; font-weight: bold;">${pedido.total || 'R$ 0,00'}</div></div>
+            <div class="info-row"><div class="info-label">Total:</div><div class="info-value" style="color:#28a745;font-weight:bold">${pedido.total || 'R$ 0,00'}</div></div>
           </div>
           ${pedido.troco && pedido.troco !== 'Nao precisa' && pedido.troco !== 'Não precisa' ? `<div class="troco-box"><i class="fas fa-coins"></i><span><strong>Troco para:</strong> ${pedido.troco}</span></div>` : ''}
-          ${pedido.itens ? `<div class="itens-box"><div class="itens-title"><i class="fas fa-pizza-slice"></i> Itens do Pedido</div><div class="itens-lista">${pedido.itens.replace(/\n/g, '<br>')}</div></div>` : ''}
-          ${pedido.observacoes && pedido.observacoes !== 'Nenhuma' ? `<div class="observacoes-box"><strong><i class="fas fa-comment"></i> Observações:</strong><p style="margin-top: 5px;">${pedido.observacoes}</p></div>` : ''}
+          ${pedido.itens ? `<div class="itens-box"><div class="itens-lista">${pedido.itens.replace(/\n/g,'<br>')}</div></div>` : ''}
+          ${pedido.observacoes && pedido.observacoes !== 'Nenhuma' ? `<div class="observacoes-box"><strong><i class="fas fa-comment"></i> Observações:</strong><p>${pedido.observacoes}</p></div>` : ''}
           <div class="pedido-actions">
             <button class="btn-imprimir" onclick="imprimirComanda('${pedido.id}')"><i class="fas fa-print"></i> Imprimir</button>
             <button class="btn-preparar" onclick="mudarStatus('${pedido.id}', 'PREPARANDO')"><i class="fas fa-fire"></i> Preparar</button>
@@ -1369,77 +1348,34 @@
       const pedido = pedidosFiltrados.find(p => p.id === pedidoId) || todosPedidos.find(p => p.id === pedidoId);
       if (!pedido) { alert('Pedido não encontrado!'); return; }
       
-      let dataExibicao = pedido.data || '';
-      if (dataExibicao.includes('T')) {
+      let horaExibicao = '';
+      if (pedido.data && pedido.data.includes('T')) {
         try {
-          const dataUTC = new Date(dataExibicao);
+          const dataUTC = new Date(pedido.data);
           const dataBrasil = new Date(dataUTC.getTime() - (3 * 60 * 60 * 1000));
-          const dia = String(dataBrasil.getDate()).padStart(2, '0');
-          const mes = String(dataBrasil.getMonth() + 1).padStart(2, '0');
-          const ano = dataBrasil.getFullYear();
-          const hora = String(dataBrasil.getHours()).padStart(2, '0');
-          const min = String(dataBrasil.getMinutes()).padStart(2, '0');
-          dataExibicao = `${dia}/${mes}/${ano} ${hora}:${min}`;
-        } catch (e) {}
+          horaExibicao = `${String(dataBrasil.getHours()).padStart(2,'0')}:${String(dataBrasil.getMinutes()).padStart(2,'0')}`;
+        } catch(e) {}
+      }
+      
+      let itensFormatados = '';
+      if (pedido.itens) {
+        pedido.itens.split('\n').forEach(linha => {
+          if (linha.trim()) itensFormatados += `<div class="item">${linha}</div>`;
+        });
       }
       
       const comandaHTML = `<div class="comanda-print">
-        <div style="text-align: center; margin-bottom: 2mm;">
-          <h2 style="margin: 0; font-size: 14pt;">LIMA'S PIZZARIA</h2>
-          <p style="margin: 1mm 0; font-size: 10pt;">Comanda de Pedido</p>
-          <hr style="border: 0.5px dashed #000; margin: 2mm 0;">
-        </div>
-        
-        <div style="margin-bottom: 2mm; font-size: 10pt;">
-          <p style="margin: 0.5mm 0;"><strong>Pedido:</strong> ${pedido.id || 'N/A'}</p>
-          <p style="margin: 0.5mm 0;"><strong>Data/Hora:</strong> ${dataExibicao}</p>
-          <p style="margin: 0.5mm 0;"><strong>Cliente:</strong> ${pedido.cliente || 'Não informado'}</p>
-          <p style="margin: 0.5mm 0;"><strong>Telefone:</strong> ${pedido.telefone || 'Não informado'}</p>
-          <p style="margin: 0.5mm 0;"><strong>Tipo:</strong> ${pedido.tipo || 'Entrega'}</p>
-          <p style="margin: 0.5mm 0;"><strong>Endereço:</strong> ${pedido.endereco || 'Não informado'}</p>
-          <p style="margin: 0.5mm 0;"><strong>Pagamento:</strong> ${pedido.pagamento || 'Não informado'}</p>
-          ${pedido.troco && pedido.troco !== 'Não precisa' ? `<p style="margin: 0.5mm 0;"><strong>Troco para:</strong> ${pedido.troco}</p>` : ''}
-        </div>
-        
-        <hr style="border: 0.5px solid #000; margin: 2mm 0;">
-        
-        <div style="margin-bottom: 2mm;">
-          <h3 style="text-align: center; margin: 1mm 0; font-size: 12pt;">ITENS DO PEDIDO</h3>
-          <div style="border: 0.5px solid #ddd; padding: 1mm; border-radius: 0; font-size: 10pt;">
-            ${pedido.itens ? pedido.itens.replace(/\n/g, '<br>') : 'Nenhum item'}
-          </div>
-        </div>
-        
-        ${pedido.observacoes && pedido.observacoes !== 'Nenhuma' ? `
-        <div style="margin-bottom: 2mm; padding: 1mm; background: #f5f5f5; border-radius: 0; font-size: 10pt;">
-          <p style="margin: 0.5mm 0;"><strong>Observações:</strong> ${pedido.observacoes}</p>
-        </div>
-        ` : ''}
-        
-        <hr style="border: 1px solid #000; margin: 2mm 0;">
-        
-        <div style="text-align: center; font-size: 12pt;">
-          <p style="margin: 1mm 0;"><strong>TOTAL: ${pedido.total || 'R$ 0,00'}</strong></p>
-        </div>
-        
-        <div style="text-align: center; margin-top: 3mm; color: #666; font-size: 9pt;">
-          <p style="margin: 0.5mm 0;">_________________________________</p>
-          <p style="margin: 0.5mm 0;">Assinatura do Entregador</p>
-        </div>
+        <div style="text-align:center"><h2>LIMA'S PIZZARIA</h2><hr><p>Pedido: #${pedido.id || 'N/A'} | ${horaExibicao}</p></div>
+        <hr><div><p><strong>Cliente:</strong> ${(pedido.cliente || '-').substring(0,28)}</p><p><strong>Tel:</strong> ${pedido.telefone || '-'}</p><p><strong>End:</strong> ${(pedido.endereco || '-').substring(0,30)}</p><p><strong>Pgto:</strong> ${pedido.pagamento || '-'}</p></div>
+        <hr><div><strong>ITENS</strong>${itensFormatados}</div>
+        <hr><div class="total"><strong>TOTAL: ${pedido.total || 'R$ 0,00'}</strong></div>
+        <div class="assinatura">___________________</div>
       </div>`;
       
       const printDiv = document.getElementById('comanda-unica');
-      printDiv.innerHTML = '';
       printDiv.innerHTML = comandaHTML;
       printDiv.style.display = 'block';
-      
-      setTimeout(() => {
-        window.print();
-        setTimeout(() => {
-          printDiv.innerHTML = '';
-          printDiv.style.display = 'none';
-        }, 100);
-      }, 50);
+      setTimeout(() => { window.print(); setTimeout(() => { printDiv.innerHTML = ''; printDiv.style.display = 'none'; }, 100); }, 50);
     }
 
     async function mudarStatus(pedidoId, novoStatus) {
@@ -1460,291 +1396,267 @@
       let csv = 'ID,Data/Hora,Cliente,Telefone,Tipo,Endereço,Pagamento,Troco,Total,Status,Observações,Itens\n';
       pedidosFiltrados.forEach(p => { csv += `"${p.id}","${p.data}","${p.cliente}","${p.telefone}","${p.tipo}","${p.endereco}","${p.pagamento}","${p.troco}","${p.total}","${p.status}","${p.observacoes}","${p.itens}"\n`; });
       const blob = new Blob(["\ufeff" + csv], { type: 'text/csv' });
-      const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
+      link.href = URL.createObjectURL(blob);
       link.download = `pedidos_${new Date().toISOString().slice(0,10)}.csv`;
       link.click();
-    }
-
-    function fecharModal() {
-      document.getElementById('modal-comprovante').classList.remove('show');
-      document.body.style.overflow = 'auto';
-    }
-
-    function abrirModalComprovante(pedidoId, fileId, viewUrl) {
-      const modal = document.getElementById('modal-comprovante');
-      const modalBody = document.getElementById('modal-body');
-      const modalTitulo = document.getElementById('modal-titulo');
-      const linkDrive = document.getElementById('modal-link-drive');
-      const linkDownload = document.getElementById('modal-link-download');
-      
-      modalTitulo.textContent = `Comprovante - ${pedidoId}`;
-      
-      if (!fileId && !viewUrl) {
-        modalBody.innerHTML = `<div style="padding: 40px 20px; text-align: center;"><i class="fas fa-exclamation-triangle" style="font-size: 60px; color: #ffc107; margin-bottom: 20px;"></i><h3>Comprovante não disponível</h3><p>Este comprovante não foi encontrado.</p></div>`;
-        linkDrive.href = DRIVE_URL;
-        linkDownload.style.display = 'none';
-      } else {
-        const embedUrl = fileId ? `https://drive.google.com/file/d/${fileId}/preview` : viewUrl;
-        const downloadUrl = fileId ? `https://drive.google.com/uc?export=download&id=${fileId}` : '#';
-        linkDrive.href = viewUrl || DRIVE_URL;
-        linkDownload.href = downloadUrl;
-        linkDownload.style.display = fileId ? 'inline-block' : 'none';
-        modalBody.innerHTML = `<iframe src="${embedUrl}" style="width: 100%; height: 70vh; border: none;"></iframe>`;
-      }
-      modal.classList.add('show');
-      document.body.style.overflow = 'hidden';
     }
 
     function mostrarSemPedidos() {
       const dataSelecionada = document.getElementById('filter-date').value;
       const dataFormatada = dataSelecionada.split('-').reverse().join('/');
-      document.getElementById('pedidos-container').innerHTML = `<div class="no-pedidos"><i class="fas fa-inbox"></i><h3>Nenhum pedido encontrado</h3><p style="margin-top: 10px;">Não há pedidos para ${dataFormatada}</p><button onclick="carregarPedidos()" class="btn btn-primary" style="margin-top: 20px;"><i class="fas fa-sync-alt"></i> Recarregar</button></div>`;
+      document.getElementById('pedidos-container').innerHTML = `<div class="no-pedidos"><i class="fas fa-inbox"></i><h3>Nenhum pedido encontrado</h3><p>Não há pedidos para ${dataFormatada}</p><button onclick="carregarPedidos()" class="btn btn-primary">Recarregar</button></div>`;
     }
 
     function mostrarErro(msg) {
-      document.getElementById('pedidos-container').innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i><p>${msg}</p><button onclick="carregarPedidos()" class="btn btn-primary" style="margin-top: 15px;"><i class="fas fa-sync-alt"></i> Tentar Novamente</button></div>`;
+      document.getElementById('pedidos-container').innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i><p>${msg}</p><button onclick="carregarPedidos()" class="btn btn-primary">Tentar Novamente</button></div>`;
     }
 
-    // ===== PRODUTOS =====
     async function carregarProdutos() {
       const container = document.getElementById('container-produtos');
       container.innerHTML = `<div class="loading"><div class="spinner"></div><p>Carregando produtos...</p></div>`;
       try {
         const response = await fetch(SCRIPT_URL + '?acao=listarProdutos&_=' + Date.now());
         const resultado = await response.json();
-        if (resultado.success && resultado.produtos) {
+        if (resultado.success && resultado.produtos && resultado.produtos.length > 0) {
           todosProdutos = resultado.produtos;
-          mostrarProdutos();
         } else {
-          container.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i><p>Erro ao carregar produtos</p><button onclick="carregarProdutos()" class="btn btn-primary" style="margin-top:15px;"><i class="fas fa-sync-alt"></i> Tentar Novamente</button></div>`;
+          todosProdutos = JSON.parse(JSON.stringify(PRODUTOS_PRE_CONFIGURADOS));
+          for (const produto of todosProdutos) {
+            if (SABORES_COMPLETOS[produto.categoria]) {
+              produto.opcoes = SABORES_COMPLETOS[produto.categoria].join('\n');
+            }
+            if (BORDAS_COMPLETAS[produto.categoria]) {
+              produto.bordas = BORDAS_COMPLETAS[produto.categoria].join('\n');
+            }
+          }
         }
+        mostrarProdutos();
+        atualizarSelectProdutosModal();
       } catch (error) {
-        console.error('Erro ao carregar produtos:', error);
-        container.innerHTML = `<div class="error"><i class="fas fa-exclamation-triangle"></i><p>Erro de conexão ao carregar produtos</p><button onclick="carregarProdutos()" class="btn btn-primary" style="margin-top:15px;"><i class="fas fa-sync-alt"></i> Tentar Novamente</button></div>`;
+        container.innerHTML = `<div class="error">Erro ao carregar produtos</div>`;
       }
-    }
-
-    function resolverImagem(imagem) {
-      if (!imagem) return '';
-      if (imagem.startsWith('data:') || imagem.startsWith('http://') || imagem.startsWith('https://')) return imagem;
-      return imagem;
     }
 
     function mostrarProdutos() {
       const container = document.getElementById('container-produtos');
-      
-      if (todosProdutos.length === 0) {
-        container.innerHTML = `<div class="no-produtos"><i class="fas fa-box"></i><h3>Nenhum produto cadastrado</h3><p>Adicione seu primeiro produto acima!</p></div>`;
-        return;
-      }
-
+      if (!todosProdutos.length) { container.innerHTML = `<div class="no-produtos"><i class="fas fa-box"></i><h3>Nenhum produto</h3></div>`; return; }
       let html = '';
       todosProdutos.forEach(produto => {
         const ativo = produto.ativo !== false && produto.ativo !== 'false';
-        const imgSrc = resolverImagem(produto.imagem || produto.foto);
         html += `<div class="produto-card${ativo ? '' : ' inativo'}">
-          <div class="produto-imagem">
-            ${imgSrc ? `<img src="${imgSrc}" alt="${produto.nome}">` : `<div class="produto-imagem-placeholder"><i class="fas fa-image"></i> Sem foto</div>`}
-          </div>
+          <div class="produto-imagem">${(produto.imagem || produto.foto) ? `<img src="${produto.imagem || produto.foto}" onerror="this.src='pizza.jpg'">` : '<div class="produto-imagem-placeholder"><i class="fas fa-image"></i> Sem foto</div>'}</div>
           <div class="produto-info">
-            <div class="produto-nome">${produto.nome}${ativo ? '' : '<span class="badge-inativo">Sem Estoque</span>'}</div>
-            <div class="produto-categoria"><i class="fas fa-tag"></i> ${produto.categoria || 'Sem categoria'}</div>
+            <div class="produto-nome">${produto.nome}${ativo ? '' : '<span class="badge-inativo">Inativo</span>'}</div>
+            <div class="produto-categoria">${produto.categoria || '-'}</div>
             <div class="produto-preco">R$ ${parseFloat(produto.preco || 0).toFixed(2)}</div>
-            <div class="produto-descricao">${produto.descricao || 'Sem descrição'}</div>
             <div class="produto-actions">
-              <button class="btn-toggle${ativo ? ' ativo' : ''}" data-id="${produto.id}" data-ativo="${ativo}" onclick="toggleAtivo(this.dataset.id, this.dataset.ativo==='true')"><i class="fas fa-${ativo ? 'eye' : 'eye-slash'}"></i> ${ativo ? 'Ativo' : 'Inativo'}</button>
-              <button class="btn-editar" data-id="${produto.id}" onclick="editarProduto(this.dataset.id)"><i class="fas fa-edit"></i> Editar</button>
-              <button class="btn-deletar" data-id="${produto.id}" data-nome="${produto.nome.replace(/"/g, '&quot;')}" onclick="confirmarDelecao(this.dataset.id, this.dataset.nome)"><i class="fas fa-trash"></i> Deletar</button>
+              <button class="btn-toggle${ativo ? ' ativo' : ''}" onclick="toggleAtivo('${produto.id}', ${ativo})"><i class="fas fa-${ativo ? 'eye' : 'eye-slash'}"></i> ${ativo ? 'Ativo' : 'Inativo'}</button>
+              <button class="btn-editar" onclick="editarProduto('${produto.id}')"><i class="fas fa-edit"></i> Editar</button>
+              <button class="btn-deletar" onclick="confirmarDelecao('${produto.id}','${produto.nome.replace(/'/g,"\\'")}')"><i class="fas fa-trash"></i> Deletar</button>
             </div>
           </div>
         </div>`;
       });
-      
       container.innerHTML = html;
     }
 
     function previewImagemUrl() {
-      const url = document.getElementById('prod-imagem-url').value.trim();
-      const preview = document.getElementById('preview-foto');
-      if (url) {
-        fotoSelecionada = null;
-        preview.innerHTML = `<img src="${url}" alt="Preview" onerror="this.style.display='none'">`;
-      } else {
-        preview.innerHTML = '';
-      }
+      const url = document.getElementById('prod-imagem-url').value;
+      if (url) document.getElementById('preview-foto').innerHTML = `<img src="${url}">`;
     }
 
     function previewFoto() {
       const input = document.getElementById('prod-foto');
-      const preview = document.getElementById('preview-foto');
-      
       if (input.files && input.files[0]) {
         const reader = new FileReader();
-        reader.onload = function(e) {
-          fotoSelecionada = e.target.result;
-          document.getElementById('prod-imagem-url').value = '';
-          preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-        };
+        reader.onload = e => { fotoSelecionada = e.target.result; document.getElementById('prod-imagem-url').value = ''; document.getElementById('preview-foto').innerHTML = `<img src="${e.target.result}">`; };
         reader.readAsDataURL(input.files[0]);
       }
     }
 
-    function enviarParaScript(dadosObj, callback) {
-      const iframeName = 'iframe-admin-' + Date.now();
-      const iframe = document.createElement('iframe');
-      iframe.name = iframeName;
-      iframe.style.cssText = 'position:absolute; width:1px; height:1px; border:none; opacity:0; pointer-events:none;';
-      document.body.appendChild(iframe);
-
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = SCRIPT_URL;
-      form.target = iframeName;
-      form.style.display = 'none';
-      form.enctype = 'application/x-www-form-urlencoded';
-
-      const inputAcao = document.createElement('input');
-      inputAcao.type = 'hidden';
-      inputAcao.name = 'acao';
-      inputAcao.value = dadosObj.acao || '';
-      form.appendChild(inputAcao);
-
-      const inputDados = document.createElement('input');
-      inputDados.type = 'hidden';
-      inputDados.name = 'dados';
-      inputDados.value = JSON.stringify(dadosObj);
-      form.appendChild(inputDados);
-
-      document.body.appendChild(form);
-
-      let done = false;
-      function concluir() {
-        if (done) return;
-        done = true;
-        if (form.parentNode) document.body.removeChild(form);
-        if (iframe.parentNode) document.body.removeChild(iframe);
-        if (callback) callback();
-      }
-
-      iframe.onload = function() { setTimeout(concluir, 500); };
-      setTimeout(concluir, 3000);
-
-      form.submit();
-    }
-
     async function salvarProduto(event) {
       event.preventDefault();
-
-      const idVal = document.getElementById('prod-id').value;
-      const nome = document.getElementById('prod-nome').value;
-      const categoria = document.getElementById('prod-categoria').value;
-      const preco = document.getElementById('prod-preco').value;
-      const descricao = document.getElementById('prod-descricao').value;
-      const ativo = document.getElementById('prod-ativo').checked;
-      const imagemUrl = document.getElementById('prod-imagem-url').value.trim();
-      const imagem = fotoSelecionada || imagemUrl || (produtoEmEdicao?.imagem || produtoEmEdicao?.foto || '');
-
-      const btnSubmit = event.target.querySelector('[type="submit"]');
-      btnSubmit.disabled = true;
-      btnSubmit.textContent = 'Salvando...';
-
-      const dadosObj = {
+      const dados = {
         acao: 'salvarProduto',
-        id: idVal || '',
-        nome, categoria, preco, descricao, ativo, imagem,
-        opcoes: document.getElementById('prod-opcoes').value.trim()
+        id: document.getElementById('prod-id').value,
+        nome: document.getElementById('prod-nome').value,
+        categoria: document.getElementById('prod-categoria').value,
+        preco: document.getElementById('prod-preco').value,
+        descricao: document.getElementById('prod-descricao').value,
+        ativo: document.getElementById('prod-ativo').checked,
+        imagem: fotoSelecionada || document.getElementById('prod-imagem-url').value,
+        opcoes: document.getElementById('prod-opcoes').value,
+        bordas: document.getElementById('prod-bordas').value,
+        modal_titulo: document.getElementById('prod-modal-titulo').value,
+        modal_descricao: document.getElementById('prod-modal-descricao').value,
+        modal_preco_base: document.getElementById('prod-modal-preco-base').value,
+        max_opcoes: document.getElementById('prod-max-opcoes').value,
+        opcoes_obrigatorio: document.getElementById('prod-opcoes-obrigatorio').checked
       };
-
-      enviarParaScriptAdmin(dadosObj, function() {
-        alert(idVal ? 'Produto atualizado com sucesso!' : 'Produto adicionado com sucesso!');
-        btnSubmit.disabled = false;
-        btnSubmit.textContent = 'Salvar Produto';
-        limparForm();
-        if (idVal) cancelarEdicao();
+      enviarParaScriptAdmin(dados, () => {
+        alert('Produto salvo!');
         carregarProdutos();
+        limparForm();
       });
     }
 
     function toggleAtivo(id, ativoAtual) {
-      const novoAtivo = !ativoAtual;
       const produto = todosProdutos.find(p => String(p.id) === String(id));
       if (!produto) return;
-
-      const dadosObj = {
-        acao: 'salvarProduto',
-        id: String(id),
-        nome: produto.nome,
-        categoria: produto.categoria,
-        preco: produto.preco,
-        descricao: produto.descricao,
-        imagem: produto.imagem || produto.foto || '',
-        ativo: novoAtivo,
-        opcoes: produto.opcoes || ''
-      };
-
-      enviarParaScriptAdmin(dadosObj, function() {
-        alert(novoAtivo ? 'Produto reativado!' : 'Produto desativado!');
-        carregarProdutos();
-      });
+      enviarParaScriptAdmin({
+        acao: 'salvarProduto', id: String(id), nome: produto.nome, categoria: produto.categoria,
+        preco: produto.preco, descricao: produto.descricao, imagem: produto.imagem || produto.foto || '',
+        ativo: !ativoAtual, opcoes: produto.opcoes || '', bordas: produto.bordas || '',
+        modal_titulo: produto.modal_titulo || '', modal_descricao: produto.modal_descricao || '',
+        modal_preco_base: produto.modal_preco_base || '', max_opcoes: produto.max_opcoes || 1,
+        opcoes_obrigatorio: produto.opcoes_obrigatorio !== false
+      }, () => carregarProdutos());
     }
 
     function editarProduto(id) {
-      const produto = todosProdutos.find(p => String(p.id) === String(id));
-      if (!produto) return;
-      
-      produtoEmEdicao = produto;
-      
+      const p = todosProdutos.find(p => String(p.id) === String(id));
+      if (!p) return;
+      produtoEmEdicao = p;
       document.getElementById('form-titulo').textContent = 'Editar Produto';
-      document.getElementById('prod-id').value = produto.id;
-      document.getElementById('prod-nome').value = produto.nome;
-      document.getElementById('prod-categoria').value = produto.categoria || '';
-      document.getElementById('prod-preco').value = produto.preco;
-      document.getElementById('prod-descricao').value = produto.descricao || '';
-      document.getElementById('prod-ativo').checked = produto.ativo !== false && produto.ativo !== 'false';
-      document.getElementById('prod-opcoes').value = produto.opcoes || '';
-
-      const imgSrc = produto.imagem || produto.foto || '';
-      if (imgSrc && !imgSrc.startsWith('data:')) {
-        document.getElementById('prod-imagem-url').value = imgSrc;
-      } else {
-        document.getElementById('prod-imagem-url').value = '';
-      }
-      
-      if (imgSrc) {
-        document.getElementById('preview-foto').innerHTML = `<img src="${imgSrc}" alt="${produto.nome}">`;
-        fotoSelecionada = imgSrc.startsWith('data:') ? imgSrc : null;
-      }
-      
+      document.getElementById('prod-id').value = p.id;
+      document.getElementById('prod-nome').value = p.nome;
+      document.getElementById('prod-categoria').value = p.categoria || '';
+      document.getElementById('prod-preco').value = p.preco;
+      document.getElementById('prod-descricao').value = p.descricao || '';
+      document.getElementById('prod-ativo').checked = p.ativo !== false;
+      document.getElementById('prod-opcoes').value = p.opcoes || '';
+      document.getElementById('prod-bordas').value = p.bordas || '';
+      document.getElementById('prod-modal-titulo').value = p.modal_titulo || '';
+      document.getElementById('prod-modal-descricao').value = p.modal_descricao || '';
+      document.getElementById('prod-modal-preco-base').value = p.modal_preco_base || '';
+      document.getElementById('prod-max-opcoes').value = p.max_opcoes || 1;
+      document.getElementById('prod-opcoes-obrigatorio').checked = p.opcoes_obrigatorio !== false;
+      const img = p.imagem || p.foto || '';
+      if (img && !img.startsWith('data:')) document.getElementById('prod-imagem-url').value = img;
+      if (img) document.getElementById('preview-foto').innerHTML = `<img src="${img}">`;
       document.getElementById('btn-salvar-txt').textContent = 'Atualizar Produto';
       document.getElementById('btn-cancelar-edicao').style.display = 'inline-flex';
-      
       document.getElementById('form-produto').scrollIntoView({ behavior: 'smooth' });
     }
 
-    function cancelarEdicao() {
-      produtoEmEdicao = null;
-      limparForm();
-      document.getElementById('form-titulo').textContent = 'Novo Produto';
-      document.getElementById('btn-salvar-txt').textContent = 'Salvar Produto';
-      document.getElementById('btn-cancelar-edicao').style.display = 'none';
+    function cancelarEdicao() { produtoEmEdicao = null; limparForm(); document.getElementById('form-titulo').textContent = 'Novo Produto'; document.getElementById('btn-salvar-txt').textContent = 'Salvar Produto'; document.getElementById('btn-cancelar-edicao').style.display = 'none'; }
+    function limparForm() { document.getElementById('form-produto').reset(); document.getElementById('prod-id').value = ''; document.getElementById('prod-imagem-url').value = ''; document.getElementById('preview-foto').innerHTML = ''; document.getElementById('prod-ativo').checked = true; fotoSelecionada = null; }
+    function confirmarDelecao(id, nome) { if (confirm(`Deletar "${nome}"?`)) enviarParaScriptAdmin({ acao: 'deletarProduto', id: String(id) }, () => { alert('Produto deletado!'); carregarProdutos(); }); }
+
+    function atualizarSelectProdutosModal() {
+      const select = document.getElementById('select-produto-modal');
+      select.innerHTML = '<option value="">-- Escolha um produto --</option>';
+      todosProdutos.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = `${p.nome} (${p.categoria})`;
+        select.appendChild(opt);
+      });
     }
 
-    function limparForm() {
-      document.getElementById('form-produto').reset();
-      document.getElementById('prod-id').value = '';
-      document.getElementById('prod-imagem-url').value = '';
-      document.getElementById('preview-foto').innerHTML = '';
-      document.getElementById('prod-ativo').checked = true;
-      fotoSelecionada = null;
+    function carregarModalCompleto() {
+      const id = document.getElementById('select-produto-modal').value;
+      if (!id) { document.getElementById('modal-editor-content').style.display = 'none'; return; }
+      produtoSelecionadoModal = todosProdutos.find(p => String(p.id) === String(id));
+      if (!produtoSelecionadoModal) return;
+      
+      document.getElementById('edit-modal-titulo').value = produtoSelecionadoModal.modal_titulo || '';
+      document.getElementById('edit-modal-descricao').value = produtoSelecionadoModal.modal_descricao || '';
+      document.getElementById('edit-modal-preco-base').value = produtoSelecionadoModal.modal_preco_base || '';
+      document.getElementById('edit-modal-max-opcoes').value = produtoSelecionadoModal.max_opcoes || 1;
+      document.getElementById('edit-modal-opcoes-obrigatorio').checked = produtoSelecionadoModal.opcoes_obrigatorio !== false;
+      
+      saboresAtuais = [];
+      const opcoesStr = produtoSelecionadoModal.opcoes || (SABORES_COMPLETOS[produtoSelecionadoModal.categoria] || []).join('\n');
+      opcoesStr.split('\n').forEach(linha => {
+        linha = linha.trim();
+        if (!linha) return;
+        const partes = linha.split('|');
+        if (partes.length >= 2) saboresAtuais.push({ nome: partes[0], preco: parseFloat(partes[1]), descricao: partes[2] || '', ativo: true });
+      });
+      
+      bordasAtuais = [];
+      const bordasStr = produtoSelecionadoModal.bordas || (BORDAS_COMPLETAS[produtoSelecionadoModal.categoria] || []).join('\n');
+      bordasStr.split('\n').forEach(linha => {
+        linha = linha.trim();
+        if (!linha) return;
+        const partes = linha.split('|');
+        if (partes.length >= 2) bordasAtuais.push({ nome: partes[0], preco: parseFloat(partes[1]), ativo: true });
+      });
+      
+      renderizarSabores();
+      renderizarBordas();
+      document.getElementById('modal-editor-content').style.display = 'block';
     }
 
-    function confirmarDelecao(id, nome) {
-      if (!confirm('Tem certeza que deseja deletar "' + nome + '"?')) return;
+    function renderizarSabores() {
+      const tbody = document.getElementById('tabela-sabores-body');
+      tbody.innerHTML = '';
+      saboresAtuais.forEach((s, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><div class="toggle-opcao ${s.ativo ? 'active' : ''}" onclick="toggleSabor(${idx})"></div><span class="status-badge-opcao ${s.ativo ? 'status-ativo' : 'status-inativo'}">${s.ativo ? 'Ativo' : 'Inativo'}</span>\(
+          <td><input type="text" value="${s.nome.replace(/"/g, '&quot;')}" onchange="saboresAtuais[${idx}].nome=this.value">\(
+          <td><input type="number" step="0.01" value="${s.preco}" onchange="saboresAtuais[${idx}].preco=parseFloat(this.value)">\(
+          <td><input type="text" value="${(s.descricao || '').replace(/"/g, '&quot;')}" onchange="saboresAtuais[${idx}].descricao=this.value">\(
+          <td><button class="btn btn-danger" style="padding:5px 10px" onclick="removerSabor(${idx})"><i class="fas fa-trash"></i></button>\(
+        `;
+        tbody.appendChild(tr);
+      });
+      const trAdd = document.createElement('tr');
+      trAdd.innerHTML = `<td colspan="5" style="text-align:center"><button class="btn btn-info" onclick="adicionarSabor()"><i class="fas fa-plus"></i> Adicionar Sabor</button>\(`;
+      tbody.appendChild(trAdd);
+    }
 
-      enviarParaScriptAdmin({ acao: 'deletarProduto', id: String(id) }, function() {
-        alert('Produto deletado com sucesso!');
+    function renderizarBordas() {
+      const tbody = document.getElementById('tabela-bordas-body');
+      tbody.innerHTML = '';
+      bordasAtuais.forEach((b, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><div class="toggle-opcao ${b.ativo ? 'active' : ''}" onclick="toggleBorda(${idx})"></div><span class="status-badge-opcao ${b.ativo ? 'status-ativo' : 'status-inativo'}">${b.ativo ? 'Ativo' : 'Inativo'}</span>\(
+          <td><input type="text" value="${b.nome.replace(/"/g, '&quot;')}" onchange="bordasAtuais[${idx}].nome=this.value">\(
+          <td><input type="number" step="0.01" value="${b.preco}" onchange="bordasAtuais[${idx}].preco=parseFloat(this.value)">\(
+          <td><button class="btn btn-danger" style="padding:5px 10px" onclick="removerBorda(${idx})"><i class="fas fa-trash"></i></button>\(
+        `;
+        tbody.appendChild(tr);
+      });
+      const trAdd = document.createElement('tr');
+      trAdd.innerHTML = `<td colspan="4" style="text-align:center"><button class="btn btn-info" onclick="adicionarBorda()"><i class="fas fa-plus"></i> Adicionar Borda</button>\(`;
+      tbody.appendChild(trAdd);
+    }
+
+    function toggleSabor(idx) { saboresAtuais[idx].ativo = !saboresAtuais[idx].ativo; renderizarSabores(); }
+    function toggleBorda(idx) { bordasAtuais[idx].ativo = !bordasAtuais[idx].ativo; renderizarBordas(); }
+    function adicionarSabor() { saboresAtuais.push({ nome: 'Novo Sabor', preco: 0, descricao: '', ativo: true }); renderizarSabores(); }
+    function adicionarBorda() { bordasAtuais.push({ nome: 'Nova Borda', preco: 0, ativo: true }); renderizarBordas(); }
+    function removerSabor(idx) { if (confirm('Remover este sabor?')) { saboresAtuais.splice(idx, 1); renderizarSabores(); } }
+    function removerBorda(idx) { if (confirm('Remover esta borda?')) { bordasAtuais.splice(idx, 1); renderizarBordas(); } }
+
+    function salvarModalCompleto() {
+      if (!produtoSelecionadoModal) return;
+      const opcoesStr = saboresAtuais.map(s => `${s.nome}|${s.preco}|${s.descricao}`).join('\n');
+      const bordasStr = bordasAtuais.map(b => `${b.nome}|${b.preco}`).join('\n');
+      const dados = {
+        acao: 'salvarProduto',
+        id: String(produtoSelecionadoModal.id),
+        nome: produtoSelecionadoModal.nome,
+        categoria: produtoSelecionadoModal.categoria,
+        preco: produtoSelecionadoModal.preco,
+        descricao: produtoSelecionadoModal.descricao,
+        imagem: produtoSelecionadoModal.imagem || '',
+        ativo: produtoSelecionadoModal.ativo,
+        modal_titulo: document.getElementById('edit-modal-titulo').value,
+        modal_descricao: document.getElementById('edit-modal-descricao').value,
+        modal_preco_base: document.getElementById('edit-modal-preco-base').value,
+        max_opcoes: document.getElementById('edit-modal-max-opcoes').value,
+        opcoes_obrigatorio: document.getElementById('edit-modal-opcoes-obrigatorio').checked,
+        opcoes: opcoesStr,
+        bordas: bordasStr
+      };
+      enviarParaScriptAdmin(dados, () => {
+        alert('Modal atualizado com sucesso! As alterações já estão no site.');
         carregarProdutos();
       });
     }
